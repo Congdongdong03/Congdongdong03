@@ -1,0 +1,32 @@
+.menu-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%; // 适应整个页面
+
+  .business-info {
+    background-color: #fff9e6; // 背景色为浅黄色
+    padding: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd; // 添加底部边框区分
+  }
+
+  .content-wrapper {
+    flex: 1; // 让内容区填满剩余空间
+    display: flex;
+    flex-direction: row;
+
+    .category-menu {
+      width: 25%; // 左侧菜单占 25% 宽度
+      background-color: #f7f7f7; // 浅灰色背景
+      border-right: 1px solid #ddd; // 添加右侧边框区分
+      padding: 10px;
+    }
+
+    .product-list {
+      flex: 1; // 剩余空间给商品列表
+      padding: 10px;
+      background-color: #ffffff; // 白色背景
+    }
+  }
+}
