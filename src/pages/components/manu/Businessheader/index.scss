@@ -4,34 +4,28 @@
   border-bottom: 1px solid #ddd;
 
   .header-area {
-    padding: 20px;
-    background-color: #fff9e6;
-
-    .business-info {
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 10px;
+    display: flex;
+    align-items: center; /* 垂直居中对齐 */
+    height: 180rpx; /* 设置高度，确保内容居中有效 */
+    .header-userPicture image {
+      width: 120rpx;
+      height: 120rpx;
+      border-radius: 10rpx;
+      margin: 0rpx 0 0 40rpx;
     }
-
-    .business-details {
-      font-size: 14px;
-      color: #666;
+    .business-info {
+      display: flex;
+      flex-direction: column; /* 保持商家名称和地址上下排列 */
+      justify-content: center; /* 在父容器中上下居中 */
+      margin-left: 20rpx;
     }
   }
-
   .notice-area {
-    padding: 10px;
-    background-color: #fff5e6;
-
-    .notice-title {
-      font-size: 16px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
-
-    .notice-content {
-      font-size: 14px;
-      color: #333;
+    background-color: rgb(254, 251, 234);
+    height: 50rpx;
+    .notice-info {
+      display: flex;
+      margin-left: 20rpx;
     }
   }
 }
