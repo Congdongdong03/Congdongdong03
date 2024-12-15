@@ -1,0 +1,45 @@
+.product-list {
+  height: 100%;
+  padding: 10rpx;
+  .all-food {
+    display: flex;
+    height: 160rpx;
+    background-color: rgb(172, 232, 206);
+    border-radius: 5%;
+    position: relative;
+
+    .product-Picture image {
+      height: 160rpx;
+      width: 160rpx;
+      border-radius: 10rpx;
+    }
+    .food-info {
+      display: flex;
+      flex-direction: column; /* 将内容垂直排列 */
+      margin-left: 10rpx;
+
+      .food-name {
+        font-weight: 800;
+      }
+      .food-describe {
+        width: 400rpx;
+        color: gray;
+        font-size: 20rpx;
+      }
+      .food-sales {
+        font-size: 20rpx;
+        color: rgb(174, 174, 117);
+        flex-direction: column;
+      }
+      .food-price {
+        font-weight: 800;
+        color: red;
+      }
+      .food-inputNumber {
+        position: absolute;
+        top: 103rpx;
+        left: 392rpx;
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+.menu-box {
+  .category-menu {
+  }
+  .menu-item {
+    width: 190rpx;
+    height: 130rpx;
+    background-color: green;
+    white-space: nowrap; /* 禁止文字换行 */
+    border: 2px solid black;
+    // 垂直水平居中
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /* 垂直居中 */
+  }
+}
