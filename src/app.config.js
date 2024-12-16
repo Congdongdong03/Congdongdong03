@@ -1,13 +1,13 @@
 export default defineAppConfig({
   pages: [
-    "pages/manu/MenuPage/index", // 菜单页面
+    "pages/Menu/MenuPage/index", // 菜单页面
     "pages/order/index", // 订单页面
     "pages/profile/index", // 我的页面
   ],
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#fff",
-    navigationBarTitleText: "WeChat",
+    navigationBarTitleText: "菜单",
     navigationBarTextStyle: "black",
   },
   tabBar: {
@@ -16,7 +16,7 @@ export default defineAppConfig({
     backgroundColor: "#ffffff",
     list: [
       {
-        pagePath: "pages/manu/MenuPage/index",
+        pagePath: "pages/Menu/MenuPage/index",
         text: "菜单",
       },
       {

@@ -1,7 +1,10 @@
 .menu-page {
   display: flex;
   flex-direction: column;
-  height: 100%; // 适应整个页面
+  // height: 100%; // 适应整个页面
+  // 新增以下属性
+  height: 100vh; // 改为视口高度
+  // overflow: hidden; // 防止整体滚动
 
   .business-info {
     background-color: rgb(239, 197, 89);
@@ -9,19 +12,17 @@
     font-size: 16px;
     font-weight: bold;
     border-bottom: 1px solid #ddd; // 添加底部边框区分
+    // 新增以下属性
+    position: sticky; // 使用sticky代替fixed
+    top: 0;
+    z-index: 100;
   }
 
   .content-wrapper {
-    flex: 1; // 让内容区填满剩余空间
+    flex: 1;
     display: flex;
     flex-direction: row;
-
-    .category-menu {
-      width: 25%; // 左侧菜单占 25% 宽度
-      background-color: #f7f7f7; // 浅灰色背景
-      border-right: 1px solid #ddd; // 添加右侧边框区分
-      padding: 10px;
-    }
+    height: calc(100vh - 130px); // 根据您头部的实际高度调整
 
     .product-list {
       flex: 1; // 剩余空间给商品列表

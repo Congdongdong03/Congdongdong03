@@ -7,7 +7,7 @@
     background-color: rgb(172, 232, 206);
     border-radius: 5%;
     position: relative;
-
+    margin-bottom: 10rpx;
     .product-Picture image {
       height: 160rpx;
       width: 160rpx;
@@ -15,8 +15,10 @@
     }
     .food-info {
       display: flex;
-      flex-direction: column; /* 将内容垂直排列 */
+      flex-direction: column;
       margin-left: 10rpx;
+      position: relative; // 添加相对定位
+      flex: 1; // 添加弹性布局
 
       .food-name {
         font-weight: 800;
@@ -29,16 +31,23 @@
       .food-sales {
         font-size: 20rpx;
         color: rgb(174, 174, 117);
-        flex-direction: column;
       }
       .food-price {
         font-weight: 800;
         color: red;
       }
+      .food-input image {
+        width: 44rpx;
+        height: 44rpx;
+        position: absolute;
+        right: 61rpx;
+        bottom: 12rpx;
+        z-index: 1; // 添加层级
+      }
       .food-inputNumber {
         position: absolute;
-        top: 103rpx;
-        left: 392rpx;
+        right: 50rpx;
+        bottom: 7rpx;
       }
     }
   }
