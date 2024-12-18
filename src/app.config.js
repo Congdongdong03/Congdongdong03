@@ -7,7 +7,7 @@ export default defineAppConfig({
   window: {
     backgroundTextStyle: "light",
     navigationBarBackgroundColor: "#fff",
-    navigationBarTitleText: "菜单",
+    navigationBarTitleText: "减肥食谱",
     navigationBarTextStyle: "black",
   },
   tabBar: {
@@ -17,15 +17,17 @@ export default defineAppConfig({
     list: [
       {
         pagePath: "pages/Menu/MenuPage/index",
-        text: "菜单",
+        text: "减肥食谱",
+        iconPath: "assets/icons/my-nofood.png", // 未选中时的图标
+        selectedIconPath: "assets/icons/my-food.png", // 选中时的图标
       },
       {
         pagePath: "pages/order/index",
-        text: "订单",
+        text: "训练记录",
       },
       {
         pagePath: "pages/profile/index",
-        text: "我的",
+        text: "干饭冠军",
       },
     ],
   },

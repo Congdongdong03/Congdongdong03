@@ -5,7 +5,10 @@ import "./index.scss";
 import { InputNumber } from "@nutui/nutui-react-taro";
 import plusIcon from "../../../assets/icons/plus.png";
 import shoppingCar from "../../../assets/icons/shoppingcar.png";
-import { Badge, Avatar } from "@nutui/nutui-react-taro";
+import { Badge } from "@nutui/nutui-react-taro";
+// 仅添加 ProductImage 导入
+import ProductImage from "../../../components/index";
+
 const ProductList = ({ categories }) => {
   // 控制输入框显示/隐藏的状态对象, key为dishId
   const [showInputNumbers, setShowInputNumbers] = useState({});
@@ -59,9 +62,9 @@ const ProductList = ({ categories }) => {
           {/* 遍历分类下的菜品 */}
           {category.dishes.map((dish) => (
             <View key={dish.id} className="all-food">
-              {/* 菜品图片 */}
+              {/* 菜品图片：使用 ProductImage 处理 API 图片 */}
               <View className="product-Picture">
-                <image src={dish.image} mode="aspectFit" />
+                <ProductImage src={dish.avatar} mode="aspectFit" />
               </View>
               {/* 菜品信息容器 */}
               <View className="food-info">
@@ -106,7 +109,16 @@ const ProductList = ({ categories }) => {
         </View>
       ))}
       <View className="product-order">
-        <Badge style={{ marginInlineEnd: "44px" }} value={8}>
+        <Badge
+          style={{
+            marginInlineEnd: "10px",
+            "--nutui-badge-height": "12px",
+            "--nutui-badge-padding": "0 3px",
+            "--nutui-badge-font-size": "10px",
+            "--nutui-badge-min-width": "3px",
+          }}
+          value={8}
+        >
           <image src={shoppingCar} mode="aspectFit" />
         </Badge>
         <View className="product-dine">开炫</View>

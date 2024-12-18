@@ -15,7 +15,7 @@ const BusinessHeader = () => {
         </View>
         <View className="business-info">
           <View className="business-details">商家名称</View>
-          <View className="business-details">地址：某某街道</View>
+          {/* <View className="business-details">地址：某某街道</View> */}
         </View>
       </View>
       <View className="notice-area">
