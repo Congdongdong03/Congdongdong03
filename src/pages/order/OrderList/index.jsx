@@ -16,10 +16,10 @@ export default function OrderList() {
   const fetchOrders = async () => {
     try {
       const response = await Taro.request({
-        url: "http://127.0.0.1:7000/order", // 替换为你的接口地址
+        url: "http://127.0.0.1:8000/order", // 替换为你的接口地址
         method: "GET",
         data: {
-          user_id: 3
+          user_id: 2
         }
       });
       if (response.statusCode === 200) {
@@ -42,7 +42,7 @@ export default function OrderList() {
       <View className="image-container">
         {limitedImages.map((cuisine, index) => {
           console.log('cuisine.avatar:', cuisine.avatar); // 打印出 avatar 来检查是否是有效的图片路径
-          const imageUrl = decodeURIComponent("http://127.0.0.1:7000" + cuisine.avatar); // 解码 URL
+          const imageUrl = decodeURIComponent("http://127.0.0.1:8000" + cuisine.avatar); // 解码 URL
           console.log('Decoded imageUrl:', imageUrl); // 打印解码后的路径
           return (  // 这里加上了 return，确保渲染 Image 组件
             <Image
