@@ -23,15 +23,15 @@ export default defineAppConfig({
       },
       {
         pagePath: "pages/order/index",
-        iconPath: "assets/icons/my-noorder.png", // 未选中时的图标
-        selectedIconPath: "assets/icons/my-order.png", // 选中时的图标
+        iconPath: "assets/icons/my-noorder.png",
+        selectedIconPath: "assets/icons/my-order.png",
         text: "训练记录",
       },
       {
         pagePath: "pages/profile/index",
         text: "干饭冠军",
-        iconPath: "assets/icons/my.png", // 未选中时的图标
-        selectedIconPath: "assets/icons/select-my.png", // 选中时的图标
+        iconPath: "assets/icons/my.png",
+        selectedIconPath: "assets/icons/select-my.png",
       },
     ],
   },

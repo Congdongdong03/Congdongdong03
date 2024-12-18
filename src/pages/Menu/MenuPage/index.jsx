@@ -5,29 +5,22 @@ import CategoryMenu from "../CategoryMenu";
 import ProductList from "../ProductList";
 import Taro from "@tarojs/taro";
 import "./index.scss";
-
+import { fetchCategories } from "../../../services/api"; // 引入封装好的接口方法
 const MenuPage = () => {
   // 将 useState 移到组件内部，这是正确的位置
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    Taro.request({
-      url: "http://127.0.0.1:8000/cuisine/",
-      method: "GET",
-      success: (res) => {
-        // 使用箭头函数
-        console.log("接口调用成功");
-        console.log("接口调用成功：", res.data);
-        setCategories(res.data);
-      },
-      fail: (err) => {
-        console.log("接口调用失败：", err);
-      },
-    });
+    // 使用封装的接口方法
+    fetchCategories()
+      .then((data) => {
+        console.log("接口调用成功：", data);
+        setCategories(data);
+      })
+      .catch((err) => {
+        console.error("接口调用失败：", err);
+      });
   }, []);
-
-  console.log("页面开始渲染");
-
   try {
     return (
       <View className="menu-page" style={{ height: "100vh" }}>
