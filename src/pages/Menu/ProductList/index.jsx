@@ -4,7 +4,8 @@ import React, { useState } from "react";
 import "./index.scss";
 import { InputNumber } from "@nutui/nutui-react-taro";
 import plusIcon from "../../../assets/icons/plus.png";
-
+import shoppingCar from "../../../assets/icons/shoppingcar.png";
+import { Badge, Avatar } from "@nutui/nutui-react-taro";
 const ProductList = ({ categories }) => {
   // 控制输入框显示/隐藏的状态对象, key为dishId
   const [showInputNumbers, setShowInputNumbers] = useState({});
@@ -67,9 +68,7 @@ const ProductList = ({ categories }) => {
                 {/* 菜品名称 */}
                 <View className="food-name">{dish.name}</View>
                 {/* 菜品描述 */}
-                <View className="food-describe">
-                  {dish.description || "暂无描述"}
-                </View>
+                <View className="food-describe">{dish.desc || "暂无描述"}</View>
                 {/* 销量信息 */}
                 <View className="food-sales">销量:{dish.sales}</View>
                 {/* 价格信息 */}
@@ -106,6 +105,12 @@ const ProductList = ({ categories }) => {
           ))}
         </View>
       ))}
+      <View className="product-order">
+        <Badge style={{ marginInlineEnd: "44px" }} value={8}>
+          <image src={shoppingCar} mode="aspectFit" />
+        </Badge>
+        <View className="product-dine">开炫</View>
+      </View>
     </View>
   );
 };
