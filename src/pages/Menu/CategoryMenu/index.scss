@@ -1,38 +1,133 @@
 .menu-box {
   overflow: visible;
+
   .category-menu {
-  }
-  .menu-item {
-    position: relative; /* 为伪元素定位准备 */
-    width: 190rpx;
-    height: 130rpx;
-    // background-color: rgb(255, 182, 193);
-    background-color: rgb(255, 220, 230);
+    .menu-item {
+      position: relative;
+      width: 190rpx;
+      height: 130rpx;
+      background-color: rgb(255, 220, 230);
+      white-space: nowrap;
+      border-bottom: 3rpx solid rgb(254, 251, 234);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.3s ease;
+      padding-left: 10rpx;
+    }
 
-    white-space: nowrap; /* 禁止文字换行 */
-    border-bottom: 3rpx solid rgb(254, 251, 234);
-    // 垂直水平居中
-    display: flex;
-    justify-content: center; /* 水平居中 */
-    align-items: center; /* 垂直居中 */
-    transition: all 0.3s ease; // 添加过渡效果让变化更平滑
-    padding-left: 10rpx; /* 给左侧条腾出空间 */
+    .menu-item.active {
+      background-color: rgb(255, 182, 193);
+      color: white;
+      border-radius: 5rpx;
+      font-weight: bold;
+    }
+
+    .menu-item.active::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 10rpx;
+      height: 100%;
+      background-color: rgb(248, 142, 158);
+    }
   }
 
-  .menu-item.active {
-    background-color: rgb(255, 182, 193);
-    color: white; // 可选：文字颜色变为白色
-    border-radius: 5rpx; // 可选：圆角
-    font-weight: bold; /* 加粗字体，让文字更醒目 */
-  }
-  .menu-item.active::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 10rpx; /* 梯形的宽度（左侧） */
+  .product-list {
     height: 100%;
-    background-color: rgb(248, 142, 158); /* 梯形的颜色 */
-    // clip-path: polygon(0% 0%, 100% 20%, 100% 80%, 0% 100%); /* 梯形形状 */
+    padding: 10rpx;
+
+    .all-food {
+      display: flex;
+      height: 160rpx;
+      background-color: rgb(255, 220, 230);
+      border-radius: 5%;
+      position: relative;
+      margin-bottom: 10rpx;
+
+      .product-Picture image {
+        height: 160rpx;
+        width: 160rpx;
+        border-radius: 10rpx;
+      }
+
+      .food-info {
+        display: flex;
+        flex-direction: column;
+        margin-left: 10rpx;
+        position: relative;
+        flex: 1;
+
+        .food-name {
+          font-weight: 800;
+        }
+
+        .food-describe {
+          width: 400rpx;
+          color: gray;
+          font-size: 20rpx;
+        }
+
+        .food-sales {
+          font-size: 20rpx;
+          color: rgb(174, 174, 117);
+        }
+
+        .food-price {
+          font-weight: 800;
+          color: red;
+        }
+
+        .food-input image {
+          width: 44rpx;
+          height: 44rpx;
+          position: absolute;
+          right: 61rpx;
+          bottom: 12rpx;
+          z-index: 1;
+        }
+
+        .food-inputNumber {
+          position: absolute;
+          right: 50rpx;
+          bottom: 7rpx;
+        }
+      }
+    }
+  }
+
+  .product-order {
+    position: fixed;
+    bottom: 24rpx;
+    left: 30rpx;
+    width: 90%;
+    height: 100rpx;
+    background-color: rgb(255, 240, 245);
+    border-top: 1px solid #eee;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 -2rpx 6rpx rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+    border-radius: 40rpx;
+
+    .product-dine {
+      width: 110rpx;
+      height: 75rpx;
+      background-color: rgb(255, 182, 193);
+      margin-right: 25rpx;
+      border-radius: 40rpx;
+      line-height: 75rpx;
+      text-align: center;
+      margin-bottom: 6rpx;
+    }
+
+    image {
+      width: 55rpx;
+      height: 55rpx;
+      margin-left: 40rpx;
+    }
   }
 }
