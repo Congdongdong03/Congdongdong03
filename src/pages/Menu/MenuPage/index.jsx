@@ -44,7 +44,11 @@ const MenuPage = () => {
         >
           <View
             className="category-menu"
-            style={{ overflowY: "auto", backgroundColor: "rgb(255, 220, 230)" }}
+            style={{
+              overflowY: "auto",
+              backgroundColor: "rgb(255, 182, 193)",
+              borderTopRightRadius: "10px",
+            }}
           >
             <CategoryMenu categories={categories} />
           </View>
