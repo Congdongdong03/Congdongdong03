@@ -1,7 +1,7 @@
 export default defineAppConfig({
   pages: [
-    "pages/Menu/MenuPage/index", // 菜单页面
     "pages/order/index", // 订单页面
+    "pages/Menu/MenuPage/index", // 菜单页面
     "pages/profile/index", // 我的页面
   ],
   window: {

@@ -1,32 +1,52 @@
-.image-container {
-    display: flex;
-    align-items: center;
-  }
-  
-  .image-thumbnail {
-    width: 50px;
-    height: 50px;
-    border-radius: 4px;
-    margin-right: 5px;
-    border: 1px solid #ddd;
-  }
-  
-  .image-more {
-    font-size: 14px;
-    color: #888;
-    background-color: #f0f0f0;
-    padding: 5px;
-    border-radius: 4px;
-    text-align: center;
-    line-height: 50px;
-    width: 50px;
-    height: 50px;
-  }
+.order-list-container {
+  margin: 16rpx;
+}
 
-  .no-images-text {
-    font-size: 14px;
-    color: #888;
-    text-align: center;
-    line-height: 40px;
-  }
-  
+.order-item {
+  border: 1rpx solid #e0e0e0;
+  border-radius: 8rpx;
+  padding: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.order-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-info {
+  flex: 1;
+  margin-right: 16rpx;
+}
+
+.order-title,
+.order-date,
+.order-status {
+  margin-bottom: 4rpx;
+}
+
+.image-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10rpx;
+}
+
+.image-thumbnail {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 4rpx;
+  object-fit: cover;
+}
+
+.image-more {
+  font-size: 14rpx;
+  color: #888;
+  background-color: #f0f0f0;
+  padding: 5rpx;
+  border-radius: 4rpx;
+  text-align: center;
+  line-height: 50rpx;
+  width: 50rpx;
+  height: 50rpx;
+}

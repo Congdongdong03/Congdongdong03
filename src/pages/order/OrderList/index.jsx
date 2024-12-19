@@ -1,6 +1,5 @@
 // 第一个版本（更完善的版本）
 import React, { useEffect, useState } from "react";
-import { AtList, AtListItem } from "taro-ui";
 import { View, Image, Text } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import "./index.scss";
@@ -23,7 +22,7 @@ export default function OrderList() {
         url: `${API_BASE_URL}/order`,
         method: "GET",
         data: {
-          user_id: 1, // 用户ID不同
+          user_id: 3, // 用户ID不同
         },
         // ✅ 添加了请求头设置
         header: {
@@ -64,22 +63,28 @@ export default function OrderList() {
     return (
       <View className="order-item" key={order.id}>
         <View className="order-info">
-          <Text className="order-title">订单编号: {order.id}</Text>
-          <Text className="order-date">
-            创建日期:{" "}
-            {new Date(order.time_created).toLocaleString("zh-CN", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-              hour: "2-digit",
-              minute: "2-digit",
-              second: "2-digit",
-            })}
-          </Text>
-          <Text className="order-status">{order.status || "处理中"}</Text>
+          <View>
+            <Text className="order-title">订单编号: {order.id}</Text>
+          </View>
+          <View>
+            <Text className="order-date">
+              创建日期:{" "}
+              {new Date(order.time_created).toLocaleString("zh-CN", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            </Text>
+          </View>
+          <View>
+            <Text className="order-status">{order.status || "处理中"}</Text>
+          </View>
         </View>
         {/* ✅ 更好的图片展示布局 */}
-        <View className="cuisine-images">
+        <View className="image-container">
           {Array.isArray(order.cuisines) &&
             order.cuisines.slice(0, MAX_IMAGES).map((cuisine, index) => {
               if (!cuisine?.avatar) return null;
@@ -88,7 +93,7 @@ export default function OrderList() {
                 <Image
                   key={`${order.id}-${index}`}
                   src={imageUrl}
-                  className="cuisine-image"
+                  className="image-thumbnail"
                   mode="aspectFill"
                   onError={(e) => {
                     console.error("Image load error:", e);
@@ -101,7 +106,7 @@ export default function OrderList() {
               );
             })}
           {order.cuisines?.length > MAX_IMAGES && (
-            <View className="more-images">
+            <View className="image-more">
               +{order.cuisines.length - MAX_IMAGES}
             </View>
           )}
@@ -112,13 +117,15 @@ export default function OrderList() {
 
   // ✅ 添加了空状态展示
   return (
-    <View className="order-list">
-      {orders.map(renderListItem)}
-      {orders.length === 0 && (
-        <View className="empty-state">
-          <Text>暂无订单数据</Text>
-        </View>
-      )}
+    <View className="order-list-container">
+      <View className="order-list">
+        {orders.map(renderListItem)}
+        {orders.length === 0 && (
+          <View className="empty-state">
+            <Text>暂无订单数据</Text>
+          </View>
+        )}
+      </View>
     </View>
   );
 }
