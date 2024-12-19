@@ -1,11 +1,13 @@
 import React from "react";
 import { View, Text } from "@tarojs/components";
+import OrderList from "./OrderList";
 import "./index.scss";
 
 function OrderPage() {
   return (
     <View>
-      <Text>订单页面</Text>
+      <h1 className="title">我的订单</h1>
+      <OrderList />
     </View>
   );
 }
