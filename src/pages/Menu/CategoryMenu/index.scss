@@ -1,15 +1,38 @@
 .menu-box {
+  overflow: visible;
   .category-menu {
   }
   .menu-item {
+    position: relative; /* 为伪元素定位准备 */
     width: 190rpx;
     height: 130rpx;
-    background-color: rgb(255, 182, 193);
+    // background-color: rgb(255, 182, 193);
+    background-color: rgb(255, 220, 230);
+
     white-space: nowrap; /* 禁止文字换行 */
     border-bottom: 3rpx solid rgb(254, 251, 234);
     // 垂直水平居中
     display: flex;
     justify-content: center; /* 水平居中 */
     align-items: center; /* 垂直居中 */
+    transition: all 0.3s ease; // 添加过渡效果让变化更平滑
+    padding-left: 10rpx; /* 给左侧条腾出空间 */
+  }
+
+  .menu-item.active {
+    background-color: rgb(255, 182, 193);
+    color: white; // 可选：文字颜色变为白色
+    border-radius: 5rpx; // 可选：圆角
+    font-weight: bold; /* 加粗字体，让文字更醒目 */
+  }
+  .menu-item.active::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 10rpx; /* 梯形的宽度（左侧） */
+    height: 100%;
+    background-color: rgb(248, 142, 158); /* 梯形的颜色 */
+    // clip-path: polygon(0% 0%, 100% 20%, 100% 80%, 0% 100%); /* 梯形形状 */
   }
 }
