@@ -11,6 +11,9 @@ export default function OrderList() {
   const MAX_IMAGES = 3;
   // ✅ 将API基础URL抽取为常量，便于维护
   const API_BASE_URL = "http://127.0.0.1:8000";
+  const getStatusText = (status) => {
+    return status === 1 ? "已完成" : "进行中";
+  }
 
   useEffect(() => {
     fetchOrders();
@@ -80,7 +83,7 @@ export default function OrderList() {
             </Text>
           </View>
           <View>
-            <Text className="order-status">{order.status || "处理中"}</Text>
+            <Text className="order-status">订单状态: {getStatusText(order.status)}</Text>
           </View>
         </View>
         {/* ✅ 更好的图片展示布局 */}
