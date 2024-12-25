@@ -1,5 +1,6 @@
-import { View } from "@tarojs/components";
-import React, { useState } from "react";
+import { View, ScrollView } from "@tarojs/components";
+import React, { useState, useEffect, useRef } from "react";
+import Taro from "@tarojs/taro";
 import { InputNumber, Badge } from "@nutui/nutui-react-taro";
 import ProductImage from "../../../components/index";
 import plusIcon from "../../../assets/icons/plus.png";
@@ -11,24 +12,52 @@ const CategoryMenu = ({ categories }) => {
   const [showInputNumbers, setShowInputNumbers] = useState({});
   const [inputValues, setInputValues] = useState({});
 
+  useEffect(() => {
+    if (categories?.length > 0) {
+      setSelectedCategory(categories[0].id);
+    }
+  }, [categories]);
+
+  const handleScroll = (e) => {
+    const { scrollTop, scrollHeight, scrollLeft } = e.detail;
+    console.log("滚动事件:", {
+      scrollTop,
+      scrollHeight,
+      scrollLeft,
+    });
+  };
+
   const handleCategoryClick = (id) => {
     setSelectedCategory(id);
+    // 滚动到对应的分类区域
+    Taro.createSelectorQuery()
+      .select(`#category-${id}`)
+      .boundingClientRect((rect) => {
+        if (rect) {
+          Taro.pageScrollTo({
+            selector: `#category-${id}`,
+            duration: 300,
+            offsetTop: 0,
+          });
+        }
+      })
+      .exec();
   };
 
   const toggleInputNumber = (dishId) => {
-    setShowInputNumbers((prevState) => ({
-      ...prevState,
-      [dishId]: !prevState[dishId],
+    setShowInputNumbers((prev) => ({
+      ...prev,
+      [dishId]: !prev[dishId],
     }));
-    setInputValues((prevState) => ({
-      ...prevState,
+    setInputValues((prev) => ({
+      ...prev,
       [dishId]: 1,
     }));
   };
 
   const handleValueChange = (value, dishId) => {
-    setInputValues((prevState) => ({
-      ...prevState,
+    setInputValues((prev) => ({
+      ...prev,
       [dishId]: value,
     }));
   };
@@ -36,8 +65,8 @@ const CategoryMenu = ({ categories }) => {
   const handleMinusClick = (dishId) => {
     const currentValue = inputValues[dishId];
     if (currentValue === 1) {
-      setShowInputNumbers((prevState) => ({
-        ...prevState,
+      setShowInputNumbers((prev) => ({
+        ...prev,
         [dishId]: false,
       }));
     }
@@ -46,23 +75,35 @@ const CategoryMenu = ({ categories }) => {
   return (
     <View className="menu-box">
       <View className="category-menu">
-        {categories.map((item) => (
-          <View
-            key={item.id}
-            value={item.name}
-            className={`menu-item ${
-              selectedCategory === item.id ? "active" : ""
-            }`}
-            onClick={() => handleCategoryClick(item.id)}
-          >
-            {item.name}
-          </View>
-        ))}
+        <ScrollView scrollY className="category-scroll">
+          {categories.map((item) => (
+            <View
+              key={item.id}
+              className={`menu-item ${
+                selectedCategory === item.id ? "active" : ""
+              }`}
+              onClick={() => handleCategoryClick(item.id)}
+            >
+              {item.name}
+            </View>
+          ))}
+        </ScrollView>
       </View>
 
-      <View className="product-list">
+      <ScrollView
+        scrollY
+        enhanced
+        className="product-list"
+        onScroll={handleScroll}
+        scrollWithAnimation
+        scrollIntoView={`category-${selectedCategory}`}
+      >
         {categories.map((category) => (
-          <View key={category.id}>
+          <View
+            key={category.id}
+            id={`category-${category.id}`}
+            className="category-content"
+          >
             <View className="category-title">{category.name}</View>
             {category.dishes?.map((dish) => (
               <View key={dish.id} className="all-food">
@@ -89,14 +130,10 @@ const CategoryMenu = ({ categories }) => {
                     </View>
                   ) : (
                     <View
-                      className={`food-input ${
-                        inputValues[dish.id] === 1 && !showInputNumbers[dish.id]
-                          ? "warning"
-                          : ""
-                      }`}
+                      className="food-input"
                       onClick={() => toggleInputNumber(dish.id)}
                     >
-                      <image src={plusIcon}></image>
+                      <image src={plusIcon} />
                     </View>
                   )}
                 </View>
@@ -104,10 +141,11 @@ const CategoryMenu = ({ categories }) => {
             ))}
           </View>
         ))}
-      </View>
+      </ScrollView>
 
       <View className="product-order">
         <Badge
+          value={8}
           style={{
             marginInlineEnd: "10px",
             "--nutui-badge-height": "12px",
@@ -115,7 +153,6 @@ const CategoryMenu = ({ categories }) => {
             "--nutui-badge-font-size": "10px",
             "--nutui-badge-min-width": "3px",
           }}
-          value={8}
         >
           <image src={shoppingCar} mode="aspectFit" />
         </Badge>
