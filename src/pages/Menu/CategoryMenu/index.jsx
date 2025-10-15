@@ -1,11 +1,18 @@
 import { View, ScrollView, Text } from "@tarojs/components";
 import React, { useState, useEffect, useCallback } from "react";
 import Taro from "@tarojs/taro";
-import { InputNumber, Badge, Button, Toast } from "@nutui/nutui-react-taro";
+import {
+  InputNumber,
+  Badge,
+  Button,
+  Toast,
+  Avatar,
+} from "@nutui/nutui-react-taro";
 import ProductImage from "../../../components/index";
 import plusIcon from "../../../assets/icons/plus.png";
 import shoppingCar from "../../../assets/icons/shoppingcar.png";
 import { createOrder, getCurrentUser } from "../../../services/api";
+import { sendOrderNotification } from "../../../services/notification";
 import "./index.scss";
 
 const CategoryMenu = ({ categories }) => {
@@ -17,6 +24,7 @@ const CategoryMenu = ({ categories }) => {
   const [selectedItems, setSelectedItems] = useState({}); // 存储选中的商品信息
   const [currentUser, setCurrentUser] = useState(null);
   const [showCartModal, setShowCartModal] = useState(false);
+  const [cartShake, setCartShake] = useState(false);
 
   useEffect(() => {
     if (categories?.length > 0) {
@@ -47,21 +55,76 @@ const CategoryMenu = ({ categories }) => {
     }
   }, []);
 
-  // 保存购物车到本地存储
-  const saveCartToStorage = useCallback((items, values, showNumbers, total) => {
-    try {
-      Taro.setStorageSync("shopping_cart", {
-        selectedItems: items,
-        inputValues: values,
-        showInputNumbers: showNumbers,
-        cartTotal: total,
-      });
-      // 更新菜品种类数量
-      setCartItemCount(Object.keys(items).length);
-    } catch (error) {
-      console.error("保存购物车失败:", error);
-    }
+  // 购物车抖动动画
+  const triggerCartShake = useCallback(() => {
+    setCartShake(true);
+    setTimeout(() => {
+      setCartShake(false);
+    }, 500);
   }, []);
+
+  // 检查购物建议
+  const checkShoppingSuggestions = async (items) => {
+    try {
+      const suggestions = [];
+      for (const item of Object.values(items)) {
+        // 这里应该调用API检查菜品所需的原材料
+        // 暂时使用模拟数据
+        if (item.name === "番茄炒蛋") {
+          suggestions.push("番茄");
+        }
+        if (item.name === "可乐鸡翅") {
+          suggestions.push("可乐", "鸡翅");
+        }
+        if (item.name === "红烧肉") {
+          suggestions.push("五花肉", "老抽");
+        }
+      }
+      return [...new Set(suggestions)]; // 去重
+    } catch (error) {
+      console.error("检查购物建议失败:", error);
+      return [];
+    }
+  };
+
+  // 获取共享购物车数据
+  const getSharedCartData = () => {
+    // 模拟共享购物车数据
+    const sharedItems = {
+      ...selectedItems,
+      // 添加其他用户的购物车项目
+      shared_item_001: {
+        _id: "shared_item_001",
+        name: "蒜蓉西兰花",
+        price: 35,
+        quantity: 1,
+        addedBy: "朋友A",
+        addedByAvatar: "/assets/icons/default-avatar.png",
+      },
+    };
+    return sharedItems;
+  };
+
+  // 保存购物车到本地存储
+  const saveCartToStorage = useCallback(
+    (items, values, showNumbers, total) => {
+      try {
+        Taro.setStorageSync("shopping_cart", {
+          selectedItems: items,
+          inputValues: values,
+          showInputNumbers: showNumbers,
+          cartTotal: total,
+        });
+        // 更新菜品种类数量
+        setCartItemCount(Object.keys(items).length);
+        // 触发购物车抖动动画
+        triggerCartShake();
+      } catch (error) {
+        console.error("保存购物车失败:", error);
+      }
+    },
+    [triggerCartShake]
+  );
 
   const handleCategoryClick = (id) => {
     setSelectedCategory(id);
@@ -146,25 +209,54 @@ const CategoryMenu = ({ categories }) => {
 
   const handleMinusClick = (dishId) => {
     const currentValue = Number(inputValues[dishId]) || 1;
-    if (currentValue === 1) {
+    if (currentValue <= 1) {
+      // 移除菜品
       const newShowInputNumbers = { ...showInputNumbers };
       delete newShowInputNumbers[dishId];
       const newInputValues = { ...inputValues };
       delete newInputValues[dishId];
-      const newCartTotal = cartTotal - 1;
       const newSelectedItems = { ...selectedItems };
       delete newSelectedItems[dishId];
+
+      const newCartTotal = Object.values(newSelectedItems).reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
 
       setShowInputNumbers(newShowInputNumbers);
       setInputValues(newInputValues);
       setCartTotal(newCartTotal);
       setSelectedItems(newSelectedItems);
+      setCartItemCount(Object.keys(newSelectedItems).length);
 
       // 保存到本地存储
       saveCartToStorage(
         newSelectedItems,
         newInputValues,
         newShowInputNumbers,
+        newCartTotal
+      );
+    } else {
+      // 减少数量
+      const newValue = currentValue - 1;
+      const newInputValues = { ...inputValues, [dishId]: newValue };
+      const newSelectedItems = { ...selectedItems };
+      newSelectedItems[dishId].quantity = newValue;
+
+      const newCartTotal = Object.values(newSelectedItems).reduce(
+        (total, item) => total + item.price * item.quantity,
+        0
+      );
+
+      setInputValues(newInputValues);
+      setSelectedItems(newSelectedItems);
+      setCartTotal(newCartTotal);
+
+      // 保存到本地存储
+      saveCartToStorage(
+        newSelectedItems,
+        newInputValues,
+        showInputNumbers,
         newCartTotal
       );
     }
@@ -212,14 +304,34 @@ const CategoryMenu = ({ categories }) => {
       // 创建订单
       const order = await createOrder(cartItems, totalPoints);
 
+      // 发送订单通知
+      try {
+        await sendOrderNotification(order);
+        console.log("订单通知发送成功");
+      } catch (error) {
+        console.error("订单通知发送失败:", error);
+      }
+
       // 清空购物车
       clearCart();
 
-      Toast.show({
-        type: "success",
-        content: "下单成功！大厨马上开始准备~",
-        duration: 2000,
-      });
+      // 检查是否需要添加购物建议
+      const shoppingSuggestions = await checkShoppingSuggestions(selectedItems);
+
+      if (shoppingSuggestions.length > 0) {
+        const suggestionText = shoppingSuggestions.join("、");
+        Toast.show({
+          type: "success",
+          content: `下单成功！温馨提示：做这些菜可能需要${suggestionText}哦，已经帮你加入购物清单！`,
+          duration: 4000,
+        });
+      } else {
+        Toast.show({
+          type: "success",
+          content: "下单成功！大厨马上开始准备~",
+          duration: 2000,
+        });
+      }
 
       // 跳转到订单页面
       setTimeout(() => {
@@ -243,6 +355,7 @@ const CategoryMenu = ({ categories }) => {
     setInputValues({});
     setShowInputNumbers({});
     setCartTotal(0);
+    setCartItemCount(0);
     setShowCartModal(false);
 
     // 清空本地存储
@@ -251,6 +364,13 @@ const CategoryMenu = ({ categories }) => {
     } catch (error) {
       console.error("清空购物车存储失败:", error);
     }
+
+    // 显示清空成功提示
+    Toast.show({
+      type: "success",
+      content: "购物车已清空",
+      duration: 1500,
+    });
   };
 
   // 显示购物车详情
@@ -358,7 +478,12 @@ const CategoryMenu = ({ categories }) => {
             "--nutui-badge-min-width": "3px",
           }}
         >
-          <image src={shoppingCar} mode="aspectFit" onClick={showCartDetails} />
+          <image
+            src={shoppingCar}
+            mode="aspectFit"
+            onClick={showCartDetails}
+            className={cartShake ? "cart-shake" : ""}
+          />
         </Badge>
         <View className="product-dine" onClick={handleSubmitOrder}>
           下单 ({calculateTotalPoints() || 0} 积分)
@@ -374,32 +499,56 @@ const CategoryMenu = ({ categories }) => {
           <View className="cart-modal" onClick={(e) => e.stopPropagation()}>
             <View className="cart-header">
               <Text className="cart-title">购物车</Text>
-              <Text
-                className="cart-close"
-                onClick={() => setShowCartModal(false)}
-              >
-                ×
-              </Text>
+              <View className="cart-header-actions">
+                <Text className="cart-clear" onClick={clearCart}>
+                  清空
+                </Text>
+                <Text
+                  className="cart-close"
+                  onClick={() => setShowCartModal(false)}
+                >
+                  ×
+                </Text>
+              </View>
             </View>
             <ScrollView scrollY className="cart-content">
-              {Object.values(selectedItems).map((item) => (
-                <View key={item._id} className="cart-item">
-                  <View className="cart-item-info">
-                    <Text className="cart-item-name">{item.name}</Text>
-                    <Text className="cart-item-price">
-                      {item.price} 积分 × {item.quantity}
-                    </Text>
-                  </View>
-                  <View className="cart-item-actions">
-                    <InputNumber
-                      value={item.quantity || 1}
-                      min={1}
-                      onChange={(value) => handleValueChange(value, item)}
-                      onMinus={() => handleMinusClick(item._id)}
-                    />
-                  </View>
+              {Object.keys(selectedItems).length === 0 ? (
+                <View className="cart-empty">
+                  <Text className="cart-empty-text">购物车是空的哦~</Text>
+                  <Text className="cart-empty-hint">
+                    去添加一些美味的菜品吧！
+                  </Text>
                 </View>
-              ))}
+              ) : (
+                Object.values(selectedItems).map((item) => (
+                  <View key={item._id} className="cart-item">
+                    <View className="cart-item-info">
+                      <View className="cart-item-header">
+                        <Text className="cart-item-name">{item.name}</Text>
+                        {item.addedBy && (
+                          <View className="added-by-info">
+                            <Avatar src={item.addedByAvatar} size="mini" />
+                            <Text className="added-by-name">
+                              {item.addedBy}
+                            </Text>
+                          </View>
+                        )}
+                      </View>
+                      <Text className="cart-item-price">
+                        {item.price} 积分 × {item.quantity}
+                      </Text>
+                    </View>
+                    <View className="cart-item-actions">
+                      <InputNumber
+                        value={item.quantity || 1}
+                        min={1}
+                        onChange={(value) => handleValueChange(value, item)}
+                        onMinus={() => handleMinusClick(item._id)}
+                      />
+                    </View>
+                  </View>
+                ))
+              )}
             </ScrollView>
             <View className="cart-footer">
               <View className="cart-total">
@@ -417,8 +566,11 @@ const CategoryMenu = ({ categories }) => {
                 size="large"
                 onClick={handleSubmitOrder}
                 disabled={Object.keys(selectedItems).length === 0}
+                className="confirm-order-btn"
               >
-                确认下单
+                {Object.keys(selectedItems).length === 0
+                  ? "购物车为空"
+                  : "选好了，下单！"}
               </Button>
             </View>
           </View>

@@ -103,6 +103,29 @@ const InventoryPage = () => {
     }
   };
 
+  const handleDeleteItem = async (itemId) => {
+    try {
+      // 这里应该调用删除API
+      // await deleteInventoryItem(itemId);
+
+      // 暂时从本地状态中删除
+      setInventory((prev) => prev.filter((item) => item._id !== itemId));
+
+      Toast.show({
+        type: "success",
+        content: "删除成功",
+        duration: 2000,
+      });
+    } catch (error) {
+      console.error("删除失败:", error);
+      Toast.show({
+        type: "fail",
+        content: "删除失败，请重试",
+        duration: 2000,
+      });
+    }
+  };
+
   const getStatusText = (status) => {
     return status === "out_of_stock" ? "缺货" : "正常";
   };
@@ -131,19 +154,14 @@ const InventoryPage = () => {
     <View className="inventory-page">
       <View className="inventory-header">
         <Text className="page-title">🧊 我们的冰箱</Text>
-        <Text className="page-subtitle">共享库存管理</Text>
-      </View>
-
-      <View className="inventory-actions">
+        <Text className="page-subtitle">看看家里还有什么食材</Text>
         <Button
           type="primary"
           size="small"
           onClick={() => setShowAddForm(!showAddForm)}
+          className="add-item-btn"
         >
-          {showAddForm ? "取消添加" : "添加物品"}
-        </Button>
-        <Button type="default" size="small" onClick={loadInventory}>
-          刷新
+          {showAddForm ? "取消添加" : "➕ 添加物品"}
         </Button>
       </View>
 
@@ -211,15 +229,25 @@ const InventoryPage = () => {
                 </Text>
               </View>
 
-              <View className="item-quantity">
-                <Text className="quantity-label">数量</Text>
-                <InputNumber
-                  value={item.quantity}
-                  onChange={(value) => handleQuantityChange(item._id, value)}
-                  min={0}
-                  className="quantity-input"
-                />
-                <Text className="quantity-unit">{item.unit}</Text>
+              <View className="item-actions">
+                <View className="item-quantity">
+                  <Text className="quantity-label">数量</Text>
+                  <InputNumber
+                    value={item.quantity}
+                    onChange={(value) => handleQuantityChange(item._id, value)}
+                    min={0}
+                    className="quantity-input"
+                  />
+                  <Text className="quantity-unit">{item.unit}</Text>
+                </View>
+                <Button
+                  type="primary"
+                  size="small"
+                  onClick={() => handleDeleteItem(item._id)}
+                  className="delete-btn"
+                >
+                  删除
+                </Button>
               </View>
             </View>
           ))

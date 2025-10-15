@@ -1,0 +1,263 @@
+.points-page {
+  min-height: 100vh;
+  background-color: #ffffff; // 纯白背景
+
+  .points-header {
+    background: linear-gradient(135deg, #f9dde6, #f4f6f8); // 晨曦粉到冰川灰渐变
+    padding: 60rpx 40rpx 40rpx; // 增加内边距
+    color: #4a4a4a; // 主文本色
+    text-align: center;
+
+    .page-title {
+      font-size: 40rpx;
+      font-weight: 600; // 中等字重
+      display: block;
+      margin-bottom: 10rpx;
+    }
+
+    .page-subtitle {
+      font-size: 28rpx;
+      color: #888888; // 次文本色
+    }
+  }
+
+  .points-content {
+    padding: 30rpx; // 增加内边距
+    height: calc(100vh - 200rpx);
+  }
+
+  .loading {
+    text-align: center;
+    padding: 100rpx 0;
+    color: #888888; // 次文本色
+    font-size: 32rpx;
+  }
+
+  .points-balance-card {
+    background: linear-gradient(135deg, #f9dde6, #f4f6f8); // 晨曦粉到冰川灰渐变
+    border-radius: 20rpx;
+    padding: 40rpx;
+    margin-bottom: 30rpx;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4rpx 12rpx rgba(249, 221, 230, 0.3);
+    border: 1rpx solid #f9dde6; // 晨曦粉边框
+
+    .balance-info {
+      flex: 1;
+
+      .balance-label {
+        font-size: 28rpx;
+        color: #888888; // 次文本色
+        display: block;
+        margin-bottom: 10rpx;
+      }
+
+      .balance-amount {
+        font-size: 48rpx;
+        font-weight: 600;
+        color: #4a4a4a; // 主文本色
+      }
+    }
+
+    .balance-actions {
+      .reward-btn {
+        background-color: #ffffff; // 白色背景
+        border: 2rpx solid #f9dde6; // 晨曦粉边框
+        color: #f9dde6; // 晨曦粉文字
+        border-radius: 25rpx;
+        font-size: 24rpx;
+        padding: 15rpx 25rpx;
+      }
+    }
+  }
+
+  .points-history {
+    .section-title {
+      font-size: 32rpx;
+      font-weight: 600;
+      color: #4a4a4a; // 主文本色
+      display: block;
+      margin-bottom: 20rpx;
+    }
+
+    .empty-history {
+      text-align: center;
+      padding: 60rpx 20rpx;
+      background-color: #f4f6f8; // 冰川灰背景
+      border-radius: 15rpx;
+      border: 1rpx solid #f9dde6; // 晨曦粉边框
+
+      .empty-text {
+        font-size: 32rpx;
+        color: #4a4a4a; // 主文本色
+        display: block;
+        margin-bottom: 15rpx;
+        font-weight: 500;
+      }
+
+      .empty-hint {
+        font-size: 28rpx;
+        color: #888888; // 次文本色
+        line-height: 1.5;
+      }
+    }
+
+    .history-list {
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 25rpx 0;
+        border-bottom: 1rpx solid #f4f6f8; // 冰川灰边框
+
+        &:last-child {
+          border-bottom: none;
+        }
+
+        .history-info {
+          flex: 1;
+
+          .history-desc {
+            font-size: 30rpx;
+            color: #4a4a4a; // 主文本色
+            display: block;
+            margin-bottom: 8rpx;
+            font-weight: 500;
+          }
+
+          .history-time {
+            font-size: 24rpx;
+            color: #888888; // 次文本色
+          }
+        }
+
+        .history-points {
+          .points-text {
+            font-size: 28rpx;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+  // 积分奖励面板
+  .reward-panel-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .reward-panel {
+    width: 90%;
+    max-width: 600rpx;
+    background-color: #ffffff; // 纯白背景
+    border-radius: 20rpx;
+    padding: 40rpx;
+    box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+
+    .reward-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30rpx;
+      padding-bottom: 20rpx;
+      border-bottom: 1rpx solid #f4f6f8; // 冰川灰边框
+
+      .reward-title {
+        font-size: 36rpx;
+        font-weight: 600;
+        color: #4a4a4a; // 主文本色
+      }
+
+      .reward-close {
+        font-size: 48rpx;
+        color: #888888; // 次文本色
+        line-height: 1;
+      }
+    }
+
+    .reward-content {
+      .reward-section {
+        margin-bottom: 30rpx;
+
+        .reward-label {
+          font-size: 28rpx;
+          color: #4a4a4a; // 主文本色
+          display: block;
+          margin-bottom: 15rpx;
+          font-weight: 500;
+        }
+
+        .user-list {
+          .user-item {
+            display: flex;
+            align-items: center;
+            padding: 15rpx 20rpx;
+            border-radius: 10rpx;
+            margin-bottom: 10rpx;
+            border: 2rpx solid transparent;
+            transition: all 0.2s ease;
+
+            &.selected {
+              background-color: #f4f6f8; // 冰川灰背景
+              border-color: #f9dde6; // 晨曦粉边框
+            }
+
+            .user-name {
+              margin-left: 15rpx;
+              font-size: 28rpx;
+              color: #4a4a4a; // 主文本色
+            }
+          }
+        }
+
+        .amount-buttons {
+          display: flex;
+          gap: 15rpx;
+          flex-wrap: wrap;
+
+          .amount-btn {
+            background-color: #f4f6f8; // 冰川灰背景
+            border: 2rpx solid #f4f6f8; // 冰川灰边框
+            color: #4a4a4a; // 主文本色
+            border-radius: 20rpx;
+            font-size: 24rpx;
+            padding: 12rpx 20rpx;
+
+            &.nut-button--primary {
+              background-color: #f9dde6 !important; // 晨曦粉背景
+              border-color: #f9dde6 !important; // 晨曦粉边框
+              color: #4a4a4a !important; // 主文本色
+            }
+          }
+        }
+      }
+    }
+
+    .reward-footer {
+      margin-top: 30rpx;
+      padding-top: 20rpx;
+      border-top: 1rpx solid #f4f6f8; // 冰川灰边框
+
+      .confirm-reward-btn {
+        width: 100%;
+        background-color: #f9dde6; // 晨曦粉背景
+        border: none;
+        border-radius: 50rpx;
+        font-size: 32rpx;
+        font-weight: 600;
+        color: #4a4a4a; // 主文本色
+      }
+    }
+  }
+}

@@ -84,7 +84,12 @@ const ProfilePage = () => {
             <Text className="user-role">
               {currentUser?.role === "chef" ? "👨‍🍳 大厨" : "🍽️ 食客"}
             </Text>
-            <Text className="user-points">💰 {currentUser?.points} 积分</Text>
+            <Text
+              className="user-points"
+              onClick={() => Taro.navigateTo({ url: "/pages/points/index" })}
+            >
+              💰 {currentUser?.points} 积分
+            </Text>
           </View>
         </View>
       </View>

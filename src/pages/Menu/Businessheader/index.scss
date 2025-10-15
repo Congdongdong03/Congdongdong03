@@ -1,31 +1,75 @@
 .business-header {
   display: flex;
   flex-direction: column;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #f4f6f8; // 冰川灰边框
+  background-color: #ffffff; // 纯白背景，更简洁
 
   .header-area {
     display: flex;
     align-items: center; /* 垂直居中对齐 */
     height: 180rpx; /* 设置高度，确保内容居中有效 */
+    justify-content: space-between; /* 左右分布 */
+    padding: 0 40rpx; // 增加左右内边距，制造呼吸感
+
     .header-userPicture image {
       width: 120rpx;
       height: 120rpx;
       border-radius: 10rpx;
-      margin: 0rpx 0 0 40rpx;
     }
+
     .business-info {
       display: flex;
-      flex-direction: column; /* 保持商家名称和地址上下排列 */
+      flex-direction: column; /* 保持用户名称和角色上下排列 */
       justify-content: center; /* 在父容器中上下居中 */
-      margin-left: 20rpx;
+      flex: 1;
+      margin-left: 30rpx; // 增加间距
+      color: #4a4a4a; // 主文本色
+
+      .business-details {
+        font-size: 32rpx;
+        font-weight: 600;
+        color: #4a4a4a; // 主文本色
+        margin-bottom: 5rpx;
+      }
+
+      .business-role {
+        font-size: 24rpx;
+        color: #888888; // 次文本色
+      }
+    }
+
+    .add-dish-btn {
+      background-color: #ffffff; // 白色背景
+      border: 2rpx solid #f9dde6; // 晨曦粉边框
+      border-radius: 25rpx;
+      padding: 12rpx 20rpx; // 减少内边距，更轻量
+      box-shadow: 0 2rpx 8rpx rgba(249, 221, 230, 0.2); // 更柔和的阴影
+      transition: all 0.2s ease;
+
+      &:active {
+        transform: scale(0.95);
+        background-color: #f4f6f8; // 点击时变冰川灰
+      }
+
+      .add-dish-text {
+        color: #f9dde6; // 晨曦粉文字
+        font-size: 22rpx; // 稍微减小
+        font-weight: 500; // 中等字重
+      }
     }
   }
   .notice-area {
-    background-color: rgb(254, 251, 234);
-    height: 50rpx;
+    background-color: #f4f6f8; // 冰川灰背景
+    height: 60rpx; // 增加高度
+    padding: 0 40rpx; // 增加左右内边距
+    display: flex;
+    align-items: center;
+
     .notice-info {
       display: flex;
-      margin-left: 20rpx;
+      align-items: center;
+      color: #4a4a4a; // 主文本色
+      font-size: 26rpx;
     }
   }
 }

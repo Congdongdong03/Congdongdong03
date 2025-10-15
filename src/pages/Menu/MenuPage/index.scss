@@ -2,12 +2,13 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background-color: #ffffff; // 纯白背景
 
   // 加载状态样式
   &.loading-page {
     justify-content: center;
     align-items: center;
-    background-color: #f5f5f5;
+    background-color: #f4f6f8; // 冰川灰背景
 
     .loading-container {
       text-align: center;
@@ -15,7 +16,7 @@
 
       .loading-text {
         font-size: 32rpx;
-        color: #666;
+        color: #888888; // 次文本色
         animation: pulse 1.5s ease-in-out infinite;
       }
     }
@@ -25,7 +26,7 @@
   &.error-page {
     justify-content: center;
     align-items: center;
-    background-color: #f5f5f5;
+    background-color: #f4f6f8; // 冰川灰背景
 
     .error-container {
       text-align: center;
@@ -33,17 +34,17 @@
 
       .error-text {
         font-size: 32rpx;
-        color: #ff6b6b;
+        color: #4a4a4a; // 主文本色
       }
     }
   }
 
   .business-info {
-    background-color: rgb(255, 220, 230);
+    // background-color: #f9dde6; // 晨曦粉背景
     padding: 20px;
     font-size: 16px;
     font-weight: bold;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #f4f6f8; // 冰川灰边框
     position: sticky;
     top: 0;
     z-index: 100;
@@ -54,6 +55,8 @@
     display: flex;
     height: calc(100vh - 130px);
     overflow: hidden;
+    background-color: #ffffff; // 纯白背景
+    padding: 0 12rpx 0 0; // 增加左右外边距，制造呼吸感
 
     // menu-box样式会从CategoryMenu组件的样式文件中继承
     .menu-box {
@@ -62,15 +65,16 @@
 
       .category-menu {
         width: 190rpx;
-        background-color: rgb(255, 182, 193);
+        background-color: #f4f6f8; // 冰川灰背景
         border-top-right-radius: 10px;
         overflow-y: auto;
+        margin-right: 20rpx; // 增加分类菜单和菜品列表的间距
       }
 
       .product-list {
         flex: 1;
         overflow-y: auto;
-        background-color: #ffffff;
+        background-color: #ffffff; // 纯白背景
       }
     }
   }

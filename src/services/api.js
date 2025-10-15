@@ -93,6 +93,12 @@ export const rewardPoints = async (targetUserOpenid, points) => {
   return MockDataService.rewardPoints(targetUserOpenid, points);
 };
 
+// 获取积分历史
+export const getPointsHistory = async () => {
+  await delay();
+  return MockDataService.getPointsHistory();
+};
+
 // 获取所有用户（Chef用）
 export const fetchAllUsers = async () => {
   await delay();

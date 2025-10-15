@@ -115,7 +115,7 @@ function OrderPage() {
                 {order.status === "pending" && (
                   <Button
                     size="small"
-                    type="danger"
+                    type="primary"
                     onClick={() => {
                       Toast.show({
                         type: "text",

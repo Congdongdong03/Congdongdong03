@@ -187,7 +187,7 @@ const AdminPage = () => {
                           </Button>
                           <Button
                             size="small"
-                            type="danger"
+                            type="primary"
                             onClick={() =>
                               handleOrderStatusChange(order._id, "cancelled")
                             }
@@ -278,7 +278,7 @@ const AdminPage = () => {
                 <View className="dish-actions">
                   <Button
                     size="small"
-                    type="danger"
+                    type="primary"
                     onClick={() => {
                       Toast.show({
                         type: "text",

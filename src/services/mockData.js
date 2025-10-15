@@ -6,7 +6,7 @@ export const mockUsers = [
   {
     _id: "user_chef_001",
     openid: "chef_openid_001",
-    nickname: "大厨",
+    nickname: "亲爱的",
     avatar: "/assets/icons/my.png",
     role: "chef",
     points: 9999,
@@ -15,7 +15,7 @@ export const mockUsers = [
   {
     _id: "user_diner_001",
     openid: "diner_openid_001",
-    nickname: "贝儿",
+    nickname: "小美",
     avatar: "/assets/icons/my.png",
     role: "diner",
     points: 1500,
@@ -378,7 +378,7 @@ export const mockShoppingList = [
 ];
 
 // 当前登录用户（模拟）
-export const currentUser = mockUsers[1]; // 默认登录为"贝儿"
+export const currentUser = mockUsers[1]; // 默认登录为"小美"
 
 // 数据服务类
 export class MockDataService {
@@ -445,6 +445,15 @@ export class MockDataService {
     const user = mockUsers.find((u) => u.openid === currentUser.openid);
     if (user) {
       user.points -= totalPoints;
+
+      // 添加积分历史记录
+      const dishNames = cartItems.map((item) => item.name).join("、");
+      this.addPointsHistory(
+        currentUser.openid,
+        -totalPoints,
+        `点了${dishNames}`,
+        "order"
+      );
     }
 
     // 生成购物建议
@@ -556,6 +565,10 @@ export class MockDataService {
     const user = mockUsers.find((u) => u.openid === targetUserOpenid);
     if (user) {
       user.points += points;
+
+      // 添加积分历史记录
+      this.addPointsHistory(targetUserOpenid, points, "大厨的奖励", "reward");
+
       return { success: true, newPoints: user.points };
     }
     return { success: false };
@@ -565,4 +578,51 @@ export class MockDataService {
   static getAllUsers() {
     return mockUsers.filter((user) => user.role === "diner");
   }
+
+  // 获取积分历史
+  static getPointsHistory() {
+    return mockPointsHistory;
+  }
+
+  // 添加积分历史记录
+  static addPointsHistory(userId, points, description, type = "order") {
+    const historyRecord = {
+      _id: `history_${Date.now()}`,
+      userId: userId,
+      points: points,
+      description: description,
+      createTime: new Date().toISOString(),
+      type: type,
+    };
+    mockPointsHistory.unshift(historyRecord);
+    return historyRecord;
+  }
 }
+
+// 积分历史记录
+export const mockPointsHistory = [
+  {
+    _id: "history_001",
+    userId: "diner_openid_001",
+    points: -65,
+    description: "点了可乐鸡翅",
+    createTime: "2024-01-15T18:30:00Z",
+    type: "order",
+  },
+  {
+    _id: "history_002",
+    userId: "diner_openid_001",
+    points: 50,
+    description: "大厨的奖励",
+    createTime: "2024-01-15T17:00:00Z",
+    type: "reward",
+  },
+  {
+    _id: "history_003",
+    userId: "diner_openid_001",
+    points: -45,
+    description: "点了番茄炒蛋",
+    createTime: "2024-01-14T19:15:00Z",
+    type: "order",
+  },
+];

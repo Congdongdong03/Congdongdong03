@@ -1,30 +1,30 @@
 .shopping-list-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #ffffff; // 纯白背景
 
   .shopping-header {
-    background: linear-gradient(135deg, #ffecd2, #fcb69f);
-    padding: 60rpx 30rpx 40rpx;
-    color: #333;
+    background: linear-gradient(135deg, #f9dde6, #f4f6f8); // 晨曦粉到冰川灰渐变
+    padding: 60rpx 40rpx 40rpx; // 增加内边距
+    color: #4a4a4a; // 主文本色
     text-align: center;
 
     .page-title {
       font-size: 40rpx;
-      font-weight: bold;
+      font-weight: 600; // 中等字重
       display: block;
       margin-bottom: 10rpx;
     }
 
     .page-subtitle {
       font-size: 28rpx;
-      opacity: 0.8;
+      color: #888888; // 次文本色
     }
   }
 
   .shopping-actions {
-    padding: 20rpx 30rpx;
-    background-color: white;
-    border-bottom: 1rpx solid #f0f0f0;
+    padding: 30rpx; // 增加内边距
+    background-color: #f4f6f8; // 冰川灰背景
+    border-bottom: 1rpx solid #f9dde6; // 晨曦粉边框
   }
 
   .shopping-content {
@@ -101,7 +101,7 @@
 
       .item-quantity {
         font-size: 28rpx;
-        color: #ff6b6b;
+        color: #f9dde6; // 晨曦粉
         font-weight: 500;
         display: block;
         margin-bottom: 10rpx;
@@ -115,6 +115,18 @@
 
     .item-actions {
       margin-left: 20rpx;
+
+      // 自定义按钮样式
+      .nut-button {
+        background-color: #f9dde6 !important; // 晨曦粉背景
+        border-color: #f9dde6 !important; // 晨曦粉边框
+        color: #4a4a4a !important; // 主文本色
+
+        &:hover {
+          background-color: #f4f6f8 !important; // 悬停时变冰川灰
+          border-color: #f4f6f8 !important;
+        }
+      }
     }
   }
 }

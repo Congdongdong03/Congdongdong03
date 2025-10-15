@@ -1,12 +1,26 @@
 .inventory-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #ffffff; // 纯白背景
+
+  // 全局覆盖 NutUI 按钮样式
+  :global(.nut-button--primary) {
+    background-color: #f9dde6 !important;
+    border-color: #f9dde6 !important;
+    color: #4a4a4a !important;
+  }
+
+  :global(.nut-button--danger) {
+    background-color: #f9dde6 !important;
+    border-color: #f9dde6 !important;
+    color: #4a4a4a !important;
+  }
 
   .inventory-header {
-    background: linear-gradient(135deg, #a8edea, #fed6e3);
+    background: linear-gradient(135deg, #f9dde6, #f4f6f8); // 晨曦粉到冰川灰渐变
     padding: 60rpx 30rpx 40rpx;
-    color: #333;
+    color: #4a4a4a; // 主文本色
     text-align: center;
+    position: relative;
 
     .page-title {
       font-size: 40rpx;
@@ -18,23 +32,39 @@
     .page-subtitle {
       font-size: 28rpx;
       opacity: 0.8;
+      margin-bottom: 20rpx;
+    }
+
+    .add-item-btn {
+      background-color: #f9dde6; // 晨曦粉背景
+      border: none;
+      border-radius: 25rpx;
+      font-size: 26rpx;
+      padding: 15rpx 30rpx;
+      box-shadow: 0 4rpx 12rpx rgba(249, 221, 230, 0.3);
+      color: #4a4a4a; // 主文本色
     }
   }
 
-  .inventory-actions {
-    padding: 20rpx 30rpx;
-    display: flex;
-    gap: 20rpx;
-    background-color: white;
-    border-bottom: 1rpx solid #f0f0f0;
-  }
-
   .add-form {
-    background-color: white;
+    background-color: #f4f6f8; // 冰川灰背景
     padding: 30rpx;
     margin: 20rpx;
     border-radius: 20rpx;
     box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+    border: 1rpx solid #f9dde6; // 晨曦粉边框
+
+    // 自定义按钮样式
+    .nut-button {
+      background-color: #f9dde6 !important; // 晨曦粉背景
+      border-color: #f9dde6 !important; // 晨曦粉边框
+      color: #4a4a4a !important; // 主文本色
+
+      &:hover {
+        background-color: #f4f6f8 !important; // 悬停时变冰川灰
+        border-color: #f4f6f8 !important;
+      }
+    }
 
     .form-item {
       margin-bottom: 30rpx;
@@ -49,7 +79,7 @@
 
       .form-input {
         width: 100%;
-        border: 1rpx solid #e0e0e0;
+        border: 1rpx solid #f9dde6; // 晨曦粉边框
         border-radius: 10rpx;
         padding: 20rpx;
         font-size: 28rpx;
@@ -63,7 +93,6 @@
   }
 
   .inventory-content {
-    padding: 20rpx;
     height: calc(100vh - 300rpx);
   }
 
@@ -92,11 +121,12 @@
   }
 
   .inventory-item {
-    background-color: white;
+    background-color: #f4f6f8; // 冰川灰背景
     border-radius: 20rpx;
     margin-bottom: 20rpx;
     padding: 30rpx;
     box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+    border: 1rpx solid #f9dde6; // 晨曦粉边框
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -128,24 +158,40 @@
       }
     }
 
-    .item-quantity {
+    .item-actions {
       display: flex;
-      align-items: center;
-      gap: 10rpx;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 15rpx;
 
-      .quantity-label {
-        font-size: 28rpx;
-        color: #666;
+      .item-quantity {
+        display: flex;
+        align-items: center;
+        gap: 10rpx;
+
+        .quantity-label {
+          font-size: 28rpx;
+          color: #888888; // 次文本色
+        }
+
+        .quantity-input {
+          width: 120rpx;
+        }
+
+        .quantity-unit {
+          font-size: 28rpx;
+          color: #888888; // 次文本色
+          min-width: 40rpx;
+        }
       }
 
-      .quantity-input {
-        width: 120rpx;
-      }
-
-      .quantity-unit {
-        font-size: 28rpx;
-        color: #666;
-        min-width: 40rpx;
+      .delete-btn {
+        background-color: #f9dde6 !important; // 晨曦粉背景
+        border: 1rpx solid #f9dde6 !important; // 晨曦粉边框
+        color: #4a4a4a !important; // 主文本色
+        border-radius: 15rpx;
+        font-size: 22rpx;
+        padding: 8rpx 15rpx;
       }
     }
   }

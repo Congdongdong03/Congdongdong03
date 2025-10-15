@@ -1,78 +1,108 @@
 .order-page {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #ffffff; // 纯白背景
+
+  // 全局覆盖 NutUI 按钮样式
+  :global(.nut-button--primary) {
+    background-color: #f9dde6 !important;
+    border-color: #f9dde6 !important;
+    color: #4a4a4a !important;
+  }
+
+  :global(.nut-button--danger) {
+    background-color: #f9dde6 !important;
+    border-color: #f9dde6 !important;
+    color: #4a4a4a !important;
+  }
 
   .order-header {
-    background-color: #ff6b6b;
-    color: white;
-    padding: 30rpx;
+    background: linear-gradient(135deg, #f9dde6, #f4f6f8); // 晨曦粉到冰川灰渐变
+    color: #4a4a4a; // 主文本色
+    padding: 40rpx; // 增加内边距
     display: flex;
     justify-content: space-between;
     align-items: center;
 
     .page-title {
       font-size: 36rpx;
-      font-weight: bold;
+      font-weight: 600; // 中等字重
     }
 
     .user-points {
       font-size: 28rpx;
-      opacity: 0.9;
+      color: #888888; // 次文本色
     }
   }
 
   .order-content {
-    padding: 20rpx;
     height: calc(100vh - 120rpx);
+    padding: 30rpx; // 增加内容区域的内边距
+
+    // 自定义按钮样式
+    .nut-button {
+      background-color: #f9dde6 !important; // 晨曦粉背景
+      border-color: #f9dde6 !important; // 晨曦粉边框
+      color: #4a4a4a !important; // 主文本色
+
+      &:hover {
+        background-color: #f4f6f8 !important; // 悬停时变冰川灰
+        border-color: #f4f6f8 !important;
+      }
+    }
   }
 
   .loading {
     text-align: center;
     padding: 100rpx 0;
-    color: #666;
+    color: #888888; // 次文本色
     font-size: 32rpx;
   }
 
   .empty-orders {
     text-align: center;
     padding: 100rpx 0;
-    color: #999;
+    color: #888888; // 次文本色
 
     .empty-text {
       font-size: 36rpx;
       display: block;
       margin-bottom: 20rpx;
+      color: #4a4a4a; // 主文本色
+      font-weight: 500;
     }
 
     .empty-hint {
       font-size: 28rpx;
-      opacity: 0.7;
+      color: #888888; // 次文本色
+      line-height: 1.5;
     }
   }
 
   .order-item {
-    background-color: white;
+    background-color: #f4f6f8; // 冰川灰背景
     border-radius: 20rpx;
-    margin-bottom: 20rpx;
-    padding: 30rpx;
-    box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+    margin-bottom: 25rpx; // 增加间距
+    padding: 30rpx; // 增加内边距
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+    border: 1rpx solid #f9dde6; // 晨曦粉边框
 
     .order-header-info {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20rpx;
+      margin-bottom: 25rpx; // 增加间距
       padding-bottom: 20rpx;
-      border-bottom: 1rpx solid #f0f0f0;
+      border-bottom: 1rpx solid #f9dde6; // 晨曦粉边框
 
       .order-time {
         font-size: 28rpx;
-        color: #666;
+        color: #888888; // 次文本色
       }
 
       .order-status {
         font-size: 28rpx;
-        font-weight: bold;
+        font-weight: 600; // 中等字重
+        color: #4a4a4a; // 主文本色
       }
     }
 
@@ -87,20 +117,25 @@
 
         .item-name {
           flex: 1;
-          font-size: 32rpx;
-          color: #333;
+          font-size: 30rpx;
+          color: #4a4a4a; // 主文本色
+          font-weight: 500;
         }
 
         .item-quantity {
-          font-size: 28rpx;
-          color: #666;
-          margin: 0 20rpx;
+          font-size: 26rpx;
+          color: #888888; // 次文本色
+          margin: 0 15rpx;
+          min-width: 60rpx;
+          text-align: center;
         }
 
         .item-price {
           font-size: 28rpx;
-          color: #ff6b6b;
-          font-weight: bold;
+          color: #f9dde6; // 晨曦粉
+          font-weight: 600;
+          min-width: 80rpx;
+          text-align: right;
         }
       }
     }
@@ -110,12 +145,12 @@
       justify-content: space-between;
       align-items: center;
       padding-top: 20rpx;
-      border-top: 1rpx solid #f0f0f0;
+      border-top: 1rpx solid #f9dde6; // 晨曦粉边框
 
       .order-total {
         font-size: 32rpx;
         font-weight: bold;
-        color: #ff6b6b;
+        color: #f9dde6; // 晨曦粉
       }
     }
   }

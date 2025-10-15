@@ -44,6 +44,35 @@ const AddDishPage = () => {
     }));
   };
 
+  // 选择图片
+  const handleChooseImage = () => {
+    Taro.chooseImage({
+      count: 1,
+      sizeType: ["compressed"],
+      sourceType: ["album", "camera"],
+      success: (res) => {
+        const tempFilePath = res.tempFilePaths[0];
+        setFormData((prev) => ({
+          ...prev,
+          image: tempFilePath,
+        }));
+        Toast.show({
+          type: "success",
+          content: "图片选择成功",
+          duration: 1500,
+        });
+      },
+      fail: (error) => {
+        console.error("选择图片失败:", error);
+        Toast.show({
+          type: "fail",
+          content: "选择图片失败",
+          duration: 2000,
+        });
+      },
+    });
+  };
+
   const handleSubmit = async () => {
     // 表单验证
     if (!formData.name.trim()) {
@@ -81,8 +110,8 @@ const AddDishPage = () => {
       if (nameExists) {
         Toast.show({
           type: "fail",
-          content: "菜品名称已存在，请换个名字",
-          duration: 2000,
+          content: "这道菜好像已经有了哦，换个名字试试吧~",
+          duration: 3000,
         });
         return;
       }
@@ -92,7 +121,7 @@ const AddDishPage = () => {
 
       Toast.show({
         type: "success",
-        content: "菜品添加成功！",
+        content: "🎉 新菜品添加成功！",
         duration: 2000,
       });
 
@@ -146,6 +175,27 @@ const AddDishPage = () => {
           </View>
 
           <View className="form-item">
+            <Text className="form-label">菜品图片</Text>
+            <View className="image-upload-section">
+              <View className="image-preview">
+                <image
+                  src={formData.image}
+                  mode="aspectFill"
+                  className="preview-image"
+                />
+              </View>
+              <Button
+                type="primary"
+                size="small"
+                onClick={handleChooseImage}
+                className="upload-btn"
+              >
+                📷 选择图片
+              </Button>
+            </View>
+          </View>
+
+          <View className="form-item">
             <Text className="form-label">菜品分类</Text>
             <Picker
               options={categories}
@@ -161,7 +211,7 @@ const AddDishPage = () => {
           </View>
 
           <View className="form-item">
-            <Text className="form-label">积分价格 *</Text>
+            <Text className="form-label">所需积分 *</Text>
             <InputNumber
               value={formData.price}
               onChange={(value) => handleInputChange("price", value)}

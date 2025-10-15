@@ -1,13 +1,26 @@
 .menu-box {
   overflow: visible;
 
+  // 全局覆盖 NutUI 按钮样式
+  :global(.nut-button--primary) {
+    background-color: #f9dde6 !important;
+    border-color: #f9dde6 !important;
+    color: #4a4a4a !important;
+  }
+
+  :global(.nut-button--danger) {
+    background-color: #f9dde6 !important;
+    border-color: #f9dde6 !important;
+    color: #4a4a4a !important;
+  }
+
   // 空状态样式
   &.empty-state {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
-    background-color: #f5f5f5;
+    background-color: #f4f6f8; // 冰川灰背景
 
     .empty-container {
       text-align: center;
@@ -15,14 +28,14 @@
 
       .empty-text {
         font-size: 32rpx;
-        color: #666;
+        color: #4a4a4a; // 主文本色
         display: block;
         margin-bottom: 20rpx;
       }
 
       .empty-hint {
         font-size: 28rpx;
-        color: #999;
+        color: #888888; // 次文本色
       }
     }
   }
@@ -32,86 +45,116 @@
       position: relative;
       width: 190rpx;
       height: 130rpx;
-      background-color: rgb(255, 220, 230);
+      background-color: transparent; // 透明背景
       white-space: nowrap;
-      border-bottom: 3rpx solid rgb(254, 251, 234);
       display: flex;
       justify-content: center;
       align-items: center;
       transition: all 0.3s ease;
       padding-left: 10rpx;
+      color: #888888; // 次文本色
+      font-size: 26rpx;
+      font-weight: 400; // 正常字重
     }
 
     .menu-item.active {
-      background-color: rgb(255, 182, 193);
-      color: white;
+      background-color: transparent; // 保持透明
+      color: #f9dde6; // 晨曦粉文字
       border-radius: 5rpx;
-      font-weight: bold;
+      font-weight: 600; // 加粗
     }
 
     .menu-item.active::before {
       content: "";
       position: absolute;
       left: 0;
-      top: 0;
-      width: 10rpx;
-      height: 100%;
-      background-color: rgb(248, 142, 158);
+      top: 20%;
+      width: 6rpx; // 更细的指示器
+      height: 60%;
+      background-color: #f9dde6; // 晨曦粉指示器
+      border-radius: 3rpx;
     }
   }
 
   .product-list {
     height: 100%;
-    padding: 10rpx;
+    padding: 20rpx 0; // 增加上下内边距
+
+    .category-title {
+      font-size: 28rpx;
+      font-weight: 600;
+      color: #4a4a4a; // 主文本色
+      margin: 20rpx 0 15rpx 0; // 增加上下间距
+      padding-left: 10rpx;
+    }
 
     .all-food {
       display: flex;
-      height: 160rpx;
-      background-color: rgb(255, 220, 230);
-      border-radius: 5%;
+      height: 180rpx; // 增加卡片高度
+      background-color: #f4f6f8; // 冰川灰背景
+      border-radius: 15rpx; // 增加圆角，更柔和
       position: relative;
-      margin-bottom: 10rpx;
+      margin-bottom: 20rpx; // 增加卡片间距
+      border: 1rpx solid #f9dde6; // 晨曦粉边框
+      padding: 20rpx; // 增加内边距
 
       .product-Picture image {
-        height: 160rpx;
-        width: 160rpx;
-        border-radius: 10rpx;
+        height: 140rpx; // 调整图片大小
+        width: 140rpx;
+        border-radius: 12rpx; // 增加圆角，更柔和
       }
 
       .food-info {
         display: flex;
         flex-direction: column;
-        margin-left: 10rpx;
+        margin-left: 20rpx; // 增加间距
         position: relative;
         flex: 1;
+        justify-content: space-between; // 垂直分布
 
         .food-name {
-          font-weight: 800;
+          font-weight: 600; // 中等字重
+          color: #4a4a4a; // 主文本色
+          font-size: 32rpx; // 加大字号
+          margin-bottom: 8rpx; // 增加间距
         }
 
         .food-describe {
           width: 400rpx;
-          color: gray;
-          font-size: 20rpx;
+          color: #888888; // 次文本色
+          font-size: 24rpx; // 稍微加大
+          margin-bottom: 8rpx; // 增加间距
+          line-height: 1.4; // 增加行高
         }
 
         .food-sales {
-          font-size: 20rpx;
-          color: rgb(174, 174, 117);
+          font-size: 22rpx; // 稍微加大
+          color: #888888; // 次文本色
+          margin-bottom: 8rpx; // 增加间距
         }
 
         .food-price {
-          font-weight: 800;
-          color: red;
+          font-weight: 600; // 中等字重
+          color: #f9dde6; // 晨曦粉
+          font-size: 28rpx; // 调整字号
         }
 
-        .food-input image {
-          width: 44rpx;
-          height: 44rpx;
+        .food-input {
           position: absolute;
           right: 61rpx;
           bottom: 12rpx;
           z-index: 1;
+          transition: transform 0.2s ease;
+
+          &:active {
+            transform: scale(0.9);
+          }
+
+          image {
+            width: 44rpx;
+            height: 44rpx;
+            display: block;
+          }
         }
 
         .food-inputNumber {
@@ -125,35 +168,42 @@
 
   .product-order {
     position: fixed;
-    bottom: 24rpx;
-    left: 30rpx;
-    width: 90%;
-    height: 100rpx;
-    background-color: rgb(255, 240, 245);
-    border-top: 1px solid #eee;
-    padding: 0 16px;
+    bottom: 40rpx; // 增加底部距离
+    left: 40rpx; // 增加左边距离
+    right: 40rpx; // 增加右边距离
+    height: 120rpx; // 增加高度
+    background-color: #ffffff; // 纯白背景
+    border: 2rpx solid #f9dde6; // 晨曦粉边框
+    padding: 0 30rpx; // 增加内边距
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 -2rpx 6rpx rgba(0, 0, 0, 0.05);
+    box-shadow: 0 8rpx 24rpx rgba(249, 221, 230, 0.3); // 柔和阴影
     z-index: 1000;
-    border-radius: 40rpx;
+    border-radius: 60rpx; // 更圆润
 
     .product-dine {
-      width: 110rpx;
-      height: 75rpx;
-      background-color: rgb(255, 182, 193);
-      margin-right: 25rpx;
+      flex: 1; // 占据更多空间
+      height: 80rpx; // 增加高度
+      background-color: #f9dde6; // 晨曦粉背景
+      margin-left: 20rpx; // 增加间距
       border-radius: 40rpx;
-      line-height: 75rpx;
+      line-height: 80rpx;
       text-align: center;
-      margin-bottom: 6rpx;
+      color: #4a4a4a; // 主文本色
+      font-weight: 600; // 中等字重
+      font-size: 28rpx; // 加大字号
     }
 
     image {
       width: 55rpx;
       height: 55rpx;
       margin-left: 40rpx;
+      transition: transform 0.3s ease;
+
+      &.cart-shake {
+        animation: shake 0.5s ease-in-out;
+      }
     }
   }
 
@@ -173,7 +223,7 @@
   .cart-modal {
     width: 100%;
     max-height: 70vh;
-    background-color: white;
+    background-color: #ffffff; // 纯白背景
     border-radius: 20rpx 20rpx 0 0;
     display: flex;
     flex-direction: column;
@@ -189,23 +239,51 @@
     }
   }
 
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-5rpx);
+    }
+    75% {
+      transform: translateX(5rpx);
+    }
+  }
+
   .cart-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 30rpx;
-    border-bottom: 1rpx solid #eee;
+    border-bottom: 1rpx solid #f4f6f8; // 冰川灰边框
 
     .cart-title {
       font-size: 36rpx;
       font-weight: bold;
-      color: #333;
+      color: #4a4a4a; // 主文本色
     }
 
-    .cart-close {
-      font-size: 48rpx;
-      color: #999;
-      line-height: 1;
+    .cart-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 20rpx;
+
+      .cart-clear {
+        font-size: 26rpx;
+        color: #888888; // 次文本色
+        padding: 8rpx 16rpx;
+        border: 1rpx solid #f4f6f8; // 冰川灰边框
+        border-radius: 20rpx;
+        background-color: #f4f6f8; // 冰川灰背景
+      }
+
+      .cart-close {
+        font-size: 48rpx;
+        color: #888888; // 次文本色
+        line-height: 1;
+      }
     }
   }
 
@@ -213,6 +291,26 @@
     flex: 1;
     padding: 20rpx 30rpx;
     max-height: 400rpx;
+
+    .cart-empty {
+      text-align: center;
+      padding: 100rpx 20rpx; // 增加内边距
+      color: #888888; // 次文本色
+
+      .cart-empty-text {
+        font-size: 32rpx;
+        display: block;
+        margin-bottom: 20rpx;
+        color: #4a4a4a; // 主文本色
+        font-weight: 500;
+      }
+
+      .cart-empty-hint {
+        font-size: 28rpx;
+        color: #888888; // 次文本色
+        line-height: 1.5;
+      }
+    }
   }
 
   .cart-item {
@@ -220,21 +318,38 @@
     justify-content: space-between;
     align-items: center;
     padding: 20rpx 0;
-    border-bottom: 1rpx solid #f5f5f5;
+    border-bottom: 1rpx solid #f4f6f8; // 冰川灰边框
 
     .cart-item-info {
       flex: 1;
 
-      .cart-item-name {
-        font-size: 32rpx;
-        font-weight: 500;
-        color: #333;
+      .cart-item-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 10rpx;
+
+        .cart-item-name {
+          font-size: 32rpx;
+          font-weight: 500;
+          color: #4a4a4a; // 主文本色
+        }
+
+        .added-by-info {
+          display: flex;
+          align-items: center;
+          gap: 8rpx;
+
+          .added-by-name {
+            font-size: 22rpx;
+            color: #888888; // 次文本色
+          }
+        }
       }
 
       .cart-item-price {
         font-size: 28rpx;
-        color: #ff6b6b;
+        color: #f9dde6; // 晨曦粉
       }
     }
 
@@ -245,8 +360,8 @@
 
   .cart-footer {
     padding: 30rpx;
-    border-top: 1rpx solid #eee;
-    background-color: #fafafa;
+    border-top: 1rpx solid #f9dde6; // 晨曦粉边框
+    background-color: #f4f6f8; // 冰川灰背景
 
     .cart-total {
       margin-bottom: 20rpx;
@@ -263,6 +378,23 @@
         font-size: 28rpx;
         color: #666;
       }
+    }
+
+    .confirm-order-btn {
+      background-color: #f9dde6 !important; // 晨曦粉背景
+      border: none !important;
+      border-radius: 50rpx;
+      font-size: 32rpx;
+      font-weight: 600; // 中等字重
+      color: #4a4a4a !important; // 主文本色
+      box-shadow: 0 4rpx 12rpx rgba(249, 221, 230, 0.3);
+    }
+
+    // 覆盖 NutUI 按钮默认样式
+    :global(.nut-button--primary) {
+      background-color: #f9dde6 !important;
+      border-color: #f9dde6 !important;
+      color: #4a4a4a !important;
     }
   }
 }
