@@ -1,19 +1,22 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useEffect, useState } from "react";
 import { View, Text } from "@tarojs/components";
 import BusinessHeader from "../BusinessHeader";
 import CategoryMenu from "../CategoryMenu";
 import Taro from "@tarojs/taro";
 import "./index.scss";
-import { fetchCategories } from "../../../services/api";
+import { fetchCategoriesWithDishes } from "../../../services/api";
 
 const MenuPage = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchCategories()
+    console.log("MenuPage useEffect 开始执行");
+    fetchCategoriesWithDishes()
       .then((data) => {
         console.log("接口调用成功：", data);
+        console.log("数据长度：", data?.length);
         setCategories(data);
         setLoading(false);
       })
@@ -33,6 +36,10 @@ const MenuPage = () => {
       </View>
     );
   }
+
+  // 调试信息
+  console.log("MenuPage render - categories:", categories);
+  console.log("MenuPage render - loading:", loading);
 
   try {
     return (

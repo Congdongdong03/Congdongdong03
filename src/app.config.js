@@ -8,6 +8,7 @@ export default {
     "pages/shopping-list/index", // 购物清单页面
     "pages/add-dish/index", // 添加菜品页面
     "pages/points/index", // 积分中心页面
+    "pages/category-management/index", // 分类管理页面
   ],
   window: {
     backgroundTextStyle: "light",

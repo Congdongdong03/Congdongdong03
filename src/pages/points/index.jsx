@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
 import { Button, Toast, Avatar, Cell } from "@nutui/nutui-react-taro";
 import {

@@ -121,6 +121,114 @@
     }
   }
 
+  .category-selector {
+    .category-picker {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20rpx 30rpx;
+      background-color: #f4f6f8; // 冰川灰背景
+      border: 2rpx solid #e0e0e0;
+      border-radius: 15rpx;
+      margin-bottom: 15rpx;
+
+      .category-picker-text {
+        font-size: 28rpx;
+        color: #4a4a4a; // 主文本色
+        flex: 1;
+      }
+
+      .category-picker-arrow {
+        font-size: 24rpx;
+        color: #888888; // 次文本色
+        margin-left: 20rpx;
+      }
+    }
+
+    .category-hint {
+      font-size: 24rpx;
+      color: #888888; // 次文本色
+      line-height: 1.4;
+      margin-top: 15rpx;
+    }
+
+    // 分类选择弹窗样式
+    .category-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .category-modal-content {
+        background-color: #ffffff;
+        border-radius: 20rpx;
+        width: 80%;
+        max-height: 60%;
+        overflow: hidden;
+
+        .category-modal-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 30rpx;
+          border-bottom: 1rpx solid #e0e0e0;
+
+          .category-modal-title {
+            font-size: 32rpx;
+            font-weight: bold;
+            color: #4a4a4a;
+          }
+
+          .category-modal-close {
+            font-size: 36rpx;
+            color: #888888;
+            padding: 10rpx;
+          }
+        }
+
+        .category-modal-list {
+          max-height: 400rpx;
+
+          .category-modal-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30rpx;
+            border-bottom: 1rpx solid #f0f0f0;
+
+            &.selected {
+              background-color: #f9dde6;
+            }
+
+            .category-modal-item-text {
+              font-size: 28rpx;
+              color: #4a4a4a;
+            }
+
+            .category-modal-item-check {
+              font-size: 32rpx;
+              color: #f9dde6;
+              font-weight: bold;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .loading-categories {
+    padding: 20rpx;
+    text-align: center;
+    color: #888888;
+    font-size: 28rpx;
+  }
+
   .form-actions {
     padding: 20rpx 0;
 

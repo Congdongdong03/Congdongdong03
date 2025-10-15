@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
 import {
   Button,
@@ -11,6 +12,7 @@ import {
   fetchInventory,
   updateInventory,
   addInventoryItem,
+  deleteInventoryItem,
 } from "../../services/api";
 import "./index.scss";
 
@@ -105,11 +107,10 @@ const InventoryPage = () => {
 
   const handleDeleteItem = async (itemId) => {
     try {
-      // 这里应该调用删除API
-      // await deleteInventoryItem(itemId);
+      await deleteInventoryItem(itemId);
 
-      // 暂时从本地状态中删除
-      setInventory((prev) => prev.filter((item) => item._id !== itemId));
+      // 从本地状态中删除
+      setInventory((prev) => prev.filter((item) => item.id !== itemId));
 
       Toast.show({
         type: "success",
@@ -234,7 +235,7 @@ const InventoryPage = () => {
                   <Text className="quantity-label">数量</Text>
                   <InputNumber
                     value={item.quantity}
-                    onChange={(value) => handleQuantityChange(item._id, value)}
+                    onChange={(value) => handleQuantityChange(item.id, value)}
                     min={0}
                     className="quantity-input"
                   />
@@ -243,7 +244,7 @@ const InventoryPage = () => {
                 <Button
                   type="primary"
                   size="small"
-                  onClick={() => handleDeleteItem(item._id)}
+                  onClick={() => handleDeleteItem(item.id)}
                   className="delete-btn"
                 >
                   删除

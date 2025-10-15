@@ -1,5 +1,6 @@
 import { View, Text } from "@tarojs/components";
 import Taro from "@tarojs/taro";
+import React from "react";
 import { useState, useEffect } from "react";
 import { getCurrentUser } from "../../../services/api";
 

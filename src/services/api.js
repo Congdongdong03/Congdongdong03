@@ -1,126 +1,129 @@
-import { MockDataService } from "./mockData";
+// 选择使用真实API还是模拟数据
+// import { MockDataService } from "./mockData";
+import * as RealApi from "./realApi";
 
 // 模拟网络延迟
 const delay = (ms = 500) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // 获取分类信息接口
 export const fetchCategories = async () => {
-  await delay();
-  return MockDataService.getCategories();
+  return RealApi.fetchCategories();
+};
+
+// 获取分类和菜品
+export const fetchCategoriesWithDishes = async () => {
+  return RealApi.fetchCategoriesWithDishes();
+};
+
+// 分类管理API
+export const addCategory = async (categoryData) => {
+  return RealApi.addCategory(categoryData);
+};
+
+export const updateCategory = async (categoryId, categoryData) => {
+  return RealApi.updateCategory(categoryId, categoryData);
+};
+
+export const deleteCategory = async (categoryId) => {
+  return RealApi.deleteCategory(categoryId);
 };
 
 // 获取所有菜品
 export const fetchAllDishes = async () => {
-  await delay();
-  return MockDataService.getAllDishes();
+  return RealApi.fetchAllDishes();
 };
 
 // 根据ID获取菜品
 export const fetchDishById = async (dishId) => {
-  await delay();
-  return MockDataService.getDishById(dishId);
+  return RealApi.fetchDishById(dishId);
 };
 
 // 添加新菜品
 export const addDish = async (dishData) => {
-  await delay();
-  return MockDataService.addDish(dishData);
+  return RealApi.addDish(dishData);
+};
+
+// 更新菜品
+export const updateDish = async (dishId, dishData) => {
+  return RealApi.updateDish(dishId, dishData);
+};
+
+// 删除菜品
+export const deleteDish = async (dishId) => {
+  return RealApi.deleteDish(dishId);
 };
 
 // 检查菜品名称是否重复
 export const checkDishNameExists = async (name) => {
-  await delay();
-  return MockDataService.checkDishNameExists(name);
+  return RealApi.checkDishNameExists(name);
 };
 
 // 获取当前用户信息
 export const getCurrentUser = async () => {
-  await delay();
-  return MockDataService.getCurrentUser();
+  return RealApi.getCurrentUser();
 };
 
 // 获取用户订单
 export const fetchUserOrders = async (userOpenid) => {
-  await delay();
-  return MockDataService.getUserOrders(userOpenid);
+  return RealApi.fetchUserOrders(userOpenid);
 };
 
 // 创建订单
 export const createOrder = async (cartItems, totalPoints) => {
-  await delay();
-  return MockDataService.createOrder(cartItems, totalPoints);
+  return RealApi.createOrder(cartItems, totalPoints);
 };
 
 // 更新订单状态
 export const updateOrderStatus = async (orderId, newStatus) => {
-  await delay();
-  return MockDataService.updateOrderStatus(orderId, newStatus);
+  return RealApi.updateOrderStatus(orderId, newStatus);
 };
 
 // 获取所有订单（Chef用）
 export const fetchAllOrders = async () => {
-  await delay();
-  return MockDataService.getAllOrders();
+  return RealApi.fetchAllOrders();
 };
 
 // 获取库存
 export const fetchInventory = async () => {
-  await delay();
-  return MockDataService.getInventory();
+  return RealApi.fetchInventory();
 };
 
 // 更新库存
 export const updateInventory = async (itemId, newQuantity) => {
-  await delay();
-  return MockDataService.updateInventory(itemId, newQuantity);
+  return RealApi.updateInventory(itemId, newQuantity);
 };
 
 // 添加库存物品
 export const addInventoryItem = async (name, quantity, unit) => {
-  await delay();
-  return MockDataService.addInventoryItem(name, quantity, unit);
+  return RealApi.addInventoryItem(name, quantity, unit);
+};
+
+// 删除库存物品
+export const deleteInventoryItem = async (itemId) => {
+  return RealApi.deleteInventoryItem(itemId);
 };
 
 // 获取购物清单
 export const fetchShoppingList = async () => {
-  await delay();
-  return MockDataService.getShoppingList();
+  return RealApi.fetchShoppingList();
 };
 
 // 奖励积分
 export const rewardPoints = async (targetUserOpenid, points) => {
-  await delay();
-  return MockDataService.rewardPoints(targetUserOpenid, points);
+  return RealApi.rewardPoints(targetUserOpenid, points);
 };
 
 // 获取积分历史
 export const getPointsHistory = async () => {
-  await delay();
-  return MockDataService.getPointsHistory();
+  return RealApi.getPointsHistory();
 };
 
 // 获取所有用户（Chef用）
 export const fetchAllUsers = async () => {
-  await delay();
-  return MockDataService.getAllUsers();
+  return RealApi.fetchAllUsers();
 };
 
 // 模拟登录接口
 export const login = async (code) => {
-  await delay(1000);
-  const user = MockDataService.getCurrentUser();
-  return {
-    code: 200,
-    data: {
-      token: "mock_token_" + code,
-      userInfo: {
-        nickName: user.nickname,
-        avatarUrl: user.avatar,
-        openid: user.openid,
-        role: user.role,
-        points: user.points,
-      },
-    },
-    msg: "登录成功",
-  };
+  return RealApi.login(code);
 };

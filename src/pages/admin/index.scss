@@ -258,4 +258,32 @@
       margin-left: 20rpx;
     }
   }
+
+  // 分类管理部分样式
+  .category-management-section {
+    padding: 40rpx;
+    text-align: center;
+
+    .section-title {
+      font-size: 36rpx;
+      font-weight: bold;
+      color: #4a4a4a;
+      margin-bottom: 20rpx;
+    }
+
+    .section-desc {
+      font-size: 28rpx;
+      color: #888888;
+      margin-bottom: 60rpx;
+      line-height: 1.5;
+    }
+
+    .manage-category-button {
+      background-color: #f9dde6 !important;
+      border-color: #f9dde6 !important;
+      color: #4a4a4a !important;
+      border-radius: 50rpx;
+      padding: 0 60rpx;
+    }
+  }
 }

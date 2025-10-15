@@ -74,6 +74,19 @@
       background-color: #f9dde6; // 晨曦粉指示器
       border-radius: 3rpx;
     }
+
+    // 管理分类选项样式
+    .manage-category-item {
+      margin-top: 20rpx;
+      border-top: 1rpx solid #e0e0e0;
+      padding-top: 20rpx;
+      color: #888888 !important;
+      font-size: 24rpx;
+
+      &:hover {
+        color: #f9dde6 !important;
+      }
+    }
   }
 
   .product-list {

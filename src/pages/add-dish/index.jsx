@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
 import {
   Button,
@@ -8,7 +9,11 @@ import {
   Cell,
   Picker,
 } from "@nutui/nutui-react-taro";
-import { addDish, checkDishNameExists } from "../../services/api";
+import {
+  addDish,
+  checkDishNameExists,
+  fetchCategories,
+} from "../../services/api";
 import Taro from "@tarojs/taro";
 import "./index.scss";
 
@@ -17,18 +22,44 @@ const AddDishPage = () => {
     name: "",
     description: "",
     price: 50,
-    category: "热菜",
+    categoryId: "",
     image: "/assets/icons/default-food.png", // 默认图片
   });
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
 
-  const categories = [
-    { text: "热菜", value: "热菜" },
-    { text: "凉菜", value: "凉菜" },
-    { text: "汤品", value: "汤品" },
-    { text: "主食", value: "主食" },
-    { text: "甜品", value: "甜品" },
-  ];
+  // 加载分类
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        console.log("开始加载分类...");
+        const data = await fetchCategories();
+        console.log("分类数据加载成功:", data);
+        setCategories(data);
+        // 设置默认分类
+        if (data.length > 0 && !formData.categoryId) {
+          setFormData((prev) => ({
+            ...prev,
+            categoryId: data[0].id,
+          }));
+          console.log("设置默认分类:", data[0].id);
+        }
+      } catch (error) {
+        console.error("加载分类失败:", error);
+        Toast.show({
+          type: "fail",
+          content: "加载分类失败",
+          duration: 2000,
+        });
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    loadCategories();
+  }, []);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -40,7 +71,7 @@ const AddDishPage = () => {
   const handleCategoryChange = (value) => {
     setFormData((prev) => ({
       ...prev,
-      category: value[0],
+      categoryId: value[0],
     }));
   };
 
@@ -88,6 +119,15 @@ const AddDishPage = () => {
       Toast.show({
         type: "fail",
         content: "请输入菜品描述",
+        duration: 2000,
+      });
+      return;
+    }
+
+    if (!formData.categoryId) {
+      Toast.show({
+        type: "fail",
+        content: "请选择菜品分类",
         duration: 2000,
       });
       return;
@@ -196,18 +236,77 @@ const AddDishPage = () => {
           </View>
 
           <View className="form-item">
-            <Text className="form-label">菜品分类</Text>
-            <Picker
-              options={categories}
-              value={[formData.category]}
-              onChange={handleCategoryChange}
-            >
-              <Cell
-                title="选择分类"
-                desc={formData.category}
-                className="picker-cell"
-              />
-            </Picker>
+            <Text className="form-label">菜品分类 *</Text>
+            {categoriesLoading ? (
+              <View className="loading-categories">
+                <Text>加载分类中...</Text>
+              </View>
+            ) : (
+              <View className="category-selector">
+                {console.log(
+                  "渲染分类选择器 - categories:",
+                  categories,
+                  "formData.categoryId:",
+                  formData.categoryId
+                )}
+                <View
+                  className="category-picker"
+                  onClick={() => setShowCategoryModal(true)}
+                >
+                  <Text className="category-picker-text">
+                    {categories.find((cat) => cat.id === formData.categoryId)
+                      ?.name || "请选择分类"}
+                  </Text>
+                  <Text className="category-picker-arrow">▼</Text>
+                </View>
+                <Text className="category-hint">选择菜品所属的分类</Text>
+
+                {/* 分类选择弹窗 */}
+                {showCategoryModal && (
+                  <View className="category-modal">
+                    <View className="category-modal-content">
+                      <View className="category-modal-header">
+                        <Text className="category-modal-title">选择分类</Text>
+                        <Text
+                          className="category-modal-close"
+                          onClick={() => setShowCategoryModal(false)}
+                        >
+                          ✕
+                        </Text>
+                      </View>
+                      <ScrollView className="category-modal-list">
+                        {categories.map((category) => (
+                          <View
+                            key={category.id}
+                            className={`category-modal-item ${
+                              formData.categoryId === category.id
+                                ? "selected"
+                                : ""
+                            }`}
+                            onClick={() => {
+                              setFormData((prev) => ({
+                                ...prev,
+                                categoryId: category.id,
+                              }));
+                              setShowCategoryModal(false);
+                            }}
+                          >
+                            <Text className="category-modal-item-text">
+                              {category.name}
+                            </Text>
+                            {formData.categoryId === category.id && (
+                              <Text className="category-modal-item-check">
+                                ✓
+                              </Text>
+                            )}
+                          </View>
+                        ))}
+                      </ScrollView>
+                    </View>
+                  </View>
+                )}
+              </View>
+            )}
           </View>
 
           <View className="form-item">

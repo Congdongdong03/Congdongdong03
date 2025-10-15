@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
 import {
   Button,
@@ -292,6 +293,30 @@ const AdminPage = () => {
                 </View>
               </View>
             ))}
+          </ScrollView>
+        </Tabs.TabPane>
+
+        <Tabs.TabPane title="分类管理" value={3}>
+          <ScrollView scrollY className="tab-content">
+            <View className="category-management-section">
+              <Text className="section-title">分类管理</Text>
+              <Text className="section-desc">
+                管理菜品分类，添加、编辑或删除分类
+              </Text>
+
+              <Button
+                type="primary"
+                size="large"
+                onClick={() =>
+                  Taro.navigateTo({
+                    url: "/pages/category-management/index",
+                  })
+                }
+                className="manage-category-button"
+              >
+                📂 进入分类管理
+              </Button>
+            </View>
           </ScrollView>
         </Tabs.TabPane>
       </Tabs>

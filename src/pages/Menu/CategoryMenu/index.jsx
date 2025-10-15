@@ -1,5 +1,6 @@
 import { View, ScrollView, Text } from "@tarojs/components";
-import React, { useState, useEffect, useCallback } from "react";
+import React from "react";
+import { useState, useEffect, useCallback } from "react";
 import Taro from "@tarojs/taro";
 import {
   InputNumber,
@@ -143,10 +144,23 @@ const CategoryMenu = ({ categories }) => {
   };
 
   const toggleInputNumber = (dish) => {
-    const { _id: dishId, price } = dish;
+    const { id: dishId, price } = dish;
+    console.log(
+      "toggleInputNumber - dishId:",
+      dishId,
+      "当前showInputNumbers:",
+      showInputNumbers
+    );
+
+    // 如果这个菜品已经在购物车中，直接返回
+    if (showInputNumbers[dishId]) {
+      return;
+    }
+
+    // 添加新菜品到购物车
     const newShowInputNumbers = {
       ...showInputNumbers,
-      [dishId]: !showInputNumbers[dishId],
+      [dishId]: true,
     };
     const newInputValues = {
       ...inputValues,
@@ -160,6 +174,8 @@ const CategoryMenu = ({ categories }) => {
         quantity: 1,
       },
     };
+
+    console.log("toggleInputNumber - 新的selectedItems:", newSelectedItems);
 
     setShowInputNumbers(newShowInputNumbers);
     setInputValues(newInputValues);
@@ -176,7 +192,7 @@ const CategoryMenu = ({ categories }) => {
   };
 
   const handleValueChange = (value, dish) => {
-    const { _id: dishId } = dish;
+    const { id: dishId } = dish;
     const oldValue = Number(inputValues[dishId]) || 0;
     const newValue = Number(value) || 1;
     const difference = newValue - oldValue;
@@ -218,8 +234,9 @@ const CategoryMenu = ({ categories }) => {
       const newSelectedItems = { ...selectedItems };
       delete newSelectedItems[dishId];
 
+      // 正确计算总数量（所有菜品数量之和）
       const newCartTotal = Object.values(newSelectedItems).reduce(
-        (total, item) => total + item.price * item.quantity,
+        (total, item) => total + item.quantity,
         0
       );
 
@@ -243,8 +260,9 @@ const CategoryMenu = ({ categories }) => {
       const newSelectedItems = { ...selectedItems };
       newSelectedItems[dishId].quantity = newValue;
 
+      // 正确计算总数量（所有菜品数量之和）
       const newCartTotal = Object.values(newSelectedItems).reduce(
-        (total, item) => total + item.price * item.quantity,
+        (total, item) => total + item.quantity,
         0
       );
 
@@ -295,7 +313,7 @@ const CategoryMenu = ({ categories }) => {
     try {
       // 准备订单数据
       const cartItems = Object.values(selectedItems).map((item) => ({
-        dishId: item._id,
+        dishId: item.id,
         name: item.name,
         quantity: item.quantity,
         price: item.price,
@@ -413,6 +431,18 @@ const CategoryMenu = ({ categories }) => {
               {item.name}
             </View>
           ))}
+
+          {/* 管理分类选项 */}
+          <View
+            className="menu-item manage-category-item"
+            onClick={() =>
+              Taro.navigateTo({
+                url: "/pages/category-management/index",
+              })
+            }
+          >
+            📂 管理分类
+          </View>
         </ScrollView>
       </View>
 
@@ -431,7 +461,7 @@ const CategoryMenu = ({ categories }) => {
           >
             <View className="category-title">{category.name}</View>
             {category.dishes?.map((dish) => (
-              <View key={dish._id} className="all-food">
+              <View key={dish.id} className="all-food">
                 <View className="product-Picture">
                   <ProductImage src={dish.image} mode="aspectFit" />
                 </View>
@@ -443,13 +473,13 @@ const CategoryMenu = ({ categories }) => {
                   <View className="food-sales">销量: {dish.sales}</View>
                   <View className="food-price">{dish.price} 积分</View>
 
-                  {showInputNumbers[dish._id] ? (
+                  {showInputNumbers[dish.id] ? (
                     <View className="food-inputNumber">
                       <InputNumber
                         min={1}
-                        value={inputValues[dish._id] || 1}
+                        value={inputValues[dish.id] || 1}
                         onChange={(value) => handleValueChange(value, dish)}
-                        onMinus={() => handleMinusClick(dish._id)}
+                        onMinus={() => handleMinusClick(dish.id)}
                       />
                     </View>
                   ) : (
@@ -521,7 +551,7 @@ const CategoryMenu = ({ categories }) => {
                 </View>
               ) : (
                 Object.values(selectedItems).map((item) => (
-                  <View key={item._id} className="cart-item">
+                  <View key={item.id} className="cart-item">
                     <View className="cart-item-info">
                       <View className="cart-item-header">
                         <Text className="cart-item-name">{item.name}</Text>
@@ -543,7 +573,10 @@ const CategoryMenu = ({ categories }) => {
                         value={item.quantity || 1}
                         min={1}
                         onChange={(value) => handleValueChange(value, item)}
-                        onMinus={() => handleMinusClick(item._id)}
+                        onMinus={() => handleMinusClick(item.id)}
+                        onPlus={() =>
+                          handleValueChange((item.quantity || 1) + 1, item)
+                        }
                       />
                     </View>
                   </View>
