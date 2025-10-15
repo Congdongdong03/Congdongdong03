@@ -82,6 +82,7 @@
   .inventory-cell,
   .shopping-cell,
   .admin-cell,
+  .openid-cell,
   .about-cell,
   .version-cell {
     margin-bottom: 10rpx;
@@ -99,8 +100,33 @@
     background: linear-gradient(135deg, #f4f6f8, #f9dde6); // 冰川灰到晨曦粉渐变
   }
 
-  .admin-cell {
+  .admin-cell,
+  .openid-cell {
     background: linear-gradient(135deg, #f9dde6, #f4f6f8); // 晨曦粉到冰川灰渐变
+  }
+
+  .openid-display {
+    margin-top: 20rpx;
+    padding: 20rpx;
+    background: #f4f6f8;
+    border-radius: 12rpx;
+    border: 2rpx dashed #f9dde6;
+
+    .openid-label {
+      display: block;
+      font-size: 24rpx;
+      color: #888888;
+      margin-bottom: 8rpx;
+    }
+
+    .openid-value {
+      display: block;
+      font-size: 26rpx;
+      color: #4a4a4a;
+      font-family: monospace;
+      word-break: break-all;
+      line-height: 1.5;
+    }
   }
 
   .about-cell,

@@ -115,8 +115,8 @@ export const checkDishNameExists = async (name) => {
 
 // 获取当前用户信息
 export const getCurrentUser = async () => {
-  // 使用固定的测试用户openid
-  const testOpenid = "diner_openid_001";
+  // 使用固定的测试用户openid - 临时改为chef以便获取OpenID
+  const testOpenid = "chef_openid_001";
   return request(`/users/${testOpenid}`);
 };
 

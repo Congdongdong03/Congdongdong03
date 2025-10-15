@@ -9,6 +9,7 @@ import "./index.scss";
 const ProfilePage = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [myOpenId, setMyOpenId] = useState("");
 
   useEffect(() => {
     loadUserInfo();
@@ -28,6 +29,59 @@ const ProfilePage = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 获取当前用户的 OpenID
+  const handleGetMyOpenId = async () => {
+    try {
+      Toast.show({
+        type: "loading",
+        content: "正在获取 OpenID...",
+        duration: 0,
+      });
+
+      // 调用微信登录获取 code
+      const loginResult = await Taro.login();
+      const code = loginResult.code;
+
+      console.log("微信登录 code:", code);
+
+      // 调用后端接口获取 OpenID
+      const response = await Taro.request({
+        url: "http://localhost:3001/api/wechat/get-openid",
+        method: "GET",
+        data: { code },
+      });
+
+      Toast.hide();
+
+      if (response.statusCode === 200 && response.data.openid) {
+        const openid = response.data.openid;
+        setMyOpenId(openid);
+
+        // 将 OpenID 复制到剪贴板
+        await Taro.setClipboardData({
+          data: openid,
+        });
+
+        Taro.showModal({
+          title: "✅ OpenID 获取成功",
+          content: `您的 OpenID 是:\n${openid}\n\n已自动复制到剪贴板！\n\n请将此 OpenID 配置到后端 wechat.config.ts 的 adminOpenId 字段中，这样您就可以接收订单推送通知了！`,
+          showCancel: false,
+          confirmText: "我知道了",
+        });
+      } else {
+        throw new Error(response.data.error || "获取 OpenID 失败");
+      }
+    } catch (error) {
+      console.error("获取 OpenID 失败:", error);
+      Toast.hide();
+      Taro.showModal({
+        title: "❌ 获取 OpenID 失败",
+        content: error.errMsg || error.message || "请稍后重试",
+        showCancel: false,
+      });
     }
   };
 
@@ -131,6 +185,18 @@ const ProfilePage = () => {
               onClick={handleAdminPanel}
               className="admin-cell"
             />
+            <Cell
+              title="🔔 获取我的 OpenID"
+              desc="配置后可接收订单推送通知"
+              onClick={handleGetMyOpenId}
+              className="openid-cell"
+            />
+            {myOpenId && (
+              <View className="openid-display">
+                <Text className="openid-label">我的 OpenID:</Text>
+                <Text className="openid-value">{myOpenId}</Text>
+              </View>
+            )}
           </View>
         )}
 

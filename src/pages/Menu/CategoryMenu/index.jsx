@@ -13,7 +13,6 @@ import ProductImage from "../../../components/index";
 import plusIcon from "../../../assets/icons/plus.png";
 import shoppingCar from "../../../assets/icons/shoppingcar.png";
 import { createOrder, getCurrentUser } from "../../../services/api";
-import { sendOrderNotification } from "../../../services/notification";
 import "./index.scss";
 
 const CategoryMenu = ({ categories }) => {
@@ -311,6 +310,18 @@ const CategoryMenu = ({ categories }) => {
     }
 
     try {
+      // 🔔 请求订阅消息授权
+      // 在创建订单前，请求用户授权接收订阅消息
+      try {
+        await Taro.requestSubscribeMessage({
+          tmplIds: ["l-NwvTHE5SEy31njmVT-HvN6q9gwxQmRCLCb1wNQTKU"], // 订阅消息模板ID
+        });
+        console.log("✅ 用户已授权订阅消息");
+      } catch (subscribeError) {
+        // 即使用户拒绝订阅，依然继续下单流程
+        console.warn("用户拒绝订阅消息或订阅失败:", subscribeError);
+      }
+
       // 准备订单数据
       const cartItems = Object.values(selectedItems).map((item) => ({
         dishId: item.id,
@@ -319,16 +330,11 @@ const CategoryMenu = ({ categories }) => {
         price: item.price,
       }));
 
-      // 创建订单
+      // 创建订单（后端会自动发送推送通知）
       const order = await createOrder(cartItems, totalPoints);
 
-      // 发送订单通知
-      try {
-        await sendOrderNotification(order);
-        console.log("订单通知发送成功");
-      } catch (error) {
-        console.error("订单通知发送失败:", error);
-      }
+      console.log("✅ 订单创建成功:", order);
+      console.log("📱 推送通知将由后端自动发送");
 
       // 清空购物车
       clearCart();
