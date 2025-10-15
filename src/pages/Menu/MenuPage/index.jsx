@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View } from "@tarojs/components";
+import { View, Text } from "@tarojs/components";
 import BusinessHeader from "../BusinessHeader";
 import CategoryMenu from "../CategoryMenu";
 import Taro from "@tarojs/taro";
@@ -8,17 +8,31 @@ import { fetchCategories } from "../../../services/api";
 
 const MenuPage = () => {
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchCategories()
       .then((data) => {
         console.log("接口调用成功：", data);
         setCategories(data);
+        setLoading(false);
       })
       .catch((err) => {
         console.error("接口调用失败：", err);
+        setLoading(false);
       });
   }, []);
+
+  // 加载状态
+  if (loading) {
+    return (
+      <View className="menu-page loading-page">
+        <View className="loading-container">
+          <Text className="loading-text">加载中...</Text>
+        </View>
+      </View>
+    );
+  }
 
   try {
     return (
@@ -48,7 +62,13 @@ const MenuPage = () => {
     );
   } catch (error) {
     console.error("MenuPage render error:", error);
-    return <View>加载出错</View>;
+    return (
+      <View className="menu-page error-page">
+        <View className="error-container">
+          <Text className="error-text">加载出错</Text>
+        </View>
+      </View>
+    );
   }
 };
 
