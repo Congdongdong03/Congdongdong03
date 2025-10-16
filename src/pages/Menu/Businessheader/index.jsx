@@ -2,7 +2,7 @@ import { View, Text, Image } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 import React from "react";
 import { useState, useEffect } from "react";
-import { getCurrentUser } from "../../../services/api";
+import { getCurrentUser, getNoticeText } from "../../../services/api";
 import { getUserInfo, requestUserAuthorization } from "../../../utils/userInfo";
 import { Toast } from "@nutui/nutui-react-taro";
 
@@ -17,9 +17,12 @@ const BusinessHeader = () => {
     avatar: userPicture,
     hasAuthorized: false,
   });
+  const [noticeText, setNoticeText] = useState("欢迎光临，请按需点餐~");
+  const [noticeLoading, setNoticeLoading] = useState(true);
 
   useEffect(() => {
     loadCurrentUser();
+    loadNoticeText();
   }, []);
 
   const loadCurrentUser = async () => {
@@ -36,6 +39,20 @@ const BusinessHeader = () => {
       // 使用默认值
       const displayInfo = getUserInfo();
       setUserDisplayInfo(displayInfo);
+    }
+  };
+
+  const loadNoticeText = async () => {
+    try {
+      setNoticeLoading(true);
+      const response = await getNoticeText();
+      setNoticeText(response.noticeText);
+    } catch (error) {
+      console.error("获取温馨提示失败:", error);
+      // 使用默认值
+      setNoticeText("欢迎光临，请按需点餐~");
+    } finally {
+      setNoticeLoading(false);
     }
   };
 
@@ -101,9 +118,7 @@ const BusinessHeader = () => {
         <View className="notice-info">
           <View className="notice-title">💡 温馨提示：</View>
           <View className="notice-content">
-            {currentUser?.role === "chef"
-              ? "有新的点餐订单会及时通知您~"
-              : "点餐后大厨会收到通知，马上开始准备！"}
+            {noticeLoading ? "加载中..." : noticeText}
           </View>
         </View>
       </View>

@@ -1,8 +1,19 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { View, Text, ScrollView } from "@tarojs/components";
-import { Button, Avatar, Cell, Toast } from "@nutui/nutui-react-taro";
-import { getCurrentUser } from "../../services/api";
+import { View, Text, ScrollView, Input } from "@tarojs/components";
+import {
+  Button,
+  Avatar,
+  Cell,
+  Toast,
+  Dialog,
+  TextArea,
+} from "@nutui/nutui-react-taro";
+import {
+  getCurrentUser,
+  getNoticeText,
+  updateNoticeText,
+} from "../../services/api";
 import { getUserInfo, requestUserAuthorization } from "../../utils/userInfo";
 import Taro from "@tarojs/taro";
 import "./index.scss";
@@ -18,6 +29,12 @@ const ProfilePage = () => {
     avatar: userPicture,
     hasAuthorized: false,
   });
+
+  // 温馨提示编辑相关状态
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [noticeText, setNoticeText] = useState("");
+  const [editingNoticeText, setEditingNoticeText] = useState("");
+  const [saveLoading, setSaveLoading] = useState(false);
 
   useEffect(() => {
     loadUserInfo();
@@ -105,6 +122,75 @@ const ProfilePage = () => {
     }
   };
 
+  // 打开编辑温馨提示弹窗
+  const handleEditNotice = async () => {
+    try {
+      // 获取当前温馨提示
+      const response = await getNoticeText();
+      setNoticeText(response.noticeText);
+      setEditingNoticeText(response.noticeText);
+      setShowEditDialog(true);
+    } catch (error) {
+      console.error("获取温馨提示失败:", error);
+      Toast.show({
+        type: "fail",
+        content: "获取温馨提示失败",
+        duration: 2000,
+      });
+    }
+  };
+
+  // 保存温馨提示
+  const handleSaveNotice = async () => {
+    // 验证输入
+    if (!editingNoticeText.trim()) {
+      Toast.show({
+        type: "warn",
+        content: "温馨提示不能为空",
+        duration: 2000,
+      });
+      return;
+    }
+
+    if (editingNoticeText.length > 50) {
+      Toast.show({
+        type: "warn",
+        content: "温馨提示不能超过50个字",
+        duration: 2000,
+      });
+      return;
+    }
+
+    try {
+      setSaveLoading(true);
+      await updateNoticeText(editingNoticeText);
+
+      Toast.show({
+        type: "success",
+        content: "保存成功！",
+        duration: 2000,
+      });
+
+      setNoticeText(editingNoticeText);
+      setShowEditDialog(false);
+    } catch (error) {
+      console.error("保存温馨提示失败:", error);
+      Toast.show({
+        type: "fail",
+        content: error.message || "保存失败，请重试",
+        duration: 2000,
+      });
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
+  // 取消编辑
+  const handleCancelEdit = () => {
+    setShowEditDialog(false);
+    setEditingNoticeText(noticeText);
+  };
+
   if (loading) {
     return (
       <View className="profile-page">
@@ -153,9 +239,41 @@ const ProfilePage = () => {
               onClick={handleAdminPanel}
               className="admin-cell"
             />
+            <Cell
+              title="💬 编辑温馨提示"
+              desc="修改菜单页面顶部的温馨提示文字"
+              onClick={handleEditNotice}
+              className="admin-cell"
+            />
           </View>
         )}
       </ScrollView>
+
+      {/* 编辑温馨提示弹窗 */}
+      <Dialog
+        title="编辑温馨提示"
+        visible={showEditDialog}
+        onConfirm={handleSaveNotice}
+        onCancel={handleCancelEdit}
+        confirmText={saveLoading ? "保存中..." : "保存"}
+        cancelText="取消"
+        closeOnOverlayClick={false}
+      >
+        <View className="edit-notice-dialog">
+          <TextArea
+            value={editingNoticeText}
+            onChange={(value) => setEditingNoticeText(value)}
+            placeholder="请输入温馨提示（最多50字）"
+            maxLength={50}
+            rows={4}
+            limitShow
+            className="notice-textarea"
+          />
+          <Text className="notice-hint">
+            当前字数：{editingNoticeText.length}/50
+          </Text>
+        </View>
+      </Dialog>
     </View>
   );
 };

@@ -246,3 +246,20 @@ export const cancelOrder = async (orderId) => {
     method: "DELETE",
   });
 };
+
+// 获取温馨提示
+export const getNoticeText = async () => {
+  return request("/settings/notice");
+};
+
+// 更新温馨提示
+export const updateNoticeText = async (noticeText) => {
+  const user = await getCurrentUser();
+  return request("/settings/notice", {
+    method: "PUT",
+    data: {
+      noticeText,
+      userId: user.id,
+    },
+  });
+};

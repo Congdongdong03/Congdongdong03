@@ -141,4 +141,34 @@
   .version-cell {
     background: linear-gradient(135deg, #f4f6f8, #f9dde6); // 冰川灰到晨曦粉渐变
   }
+
+  // 编辑温馨提示弹窗样式
+  .edit-notice-dialog {
+    padding: 20rpx 0;
+
+    .notice-textarea {
+      width: 100%;
+      padding: 20rpx;
+      border: 2rpx solid #f9dde6;
+      border-radius: 12rpx;
+      background-color: #f9f9f9;
+      font-size: 28rpx;
+      color: #4a4a4a;
+      line-height: 1.6;
+      min-height: 200rpx;
+
+      &:focus {
+        border-color: #f9dde6;
+        background-color: #ffffff;
+      }
+    }
+
+    .notice-hint {
+      display: block;
+      margin-top: 15rpx;
+      font-size: 24rpx;
+      color: #888888;
+      text-align: right;
+    }
+  }
 }

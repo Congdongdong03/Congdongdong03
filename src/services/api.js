@@ -128,3 +128,13 @@ export const login = async (code) => {
 export const cancelOrder = async (orderId) => {
   return RealApi.cancelOrder(orderId);
 };
+
+// 获取温馨提示
+export const getNoticeText = async () => {
+  return RealApi.getNoticeText();
+};
+
+// 更新温馨提示
+export const updateNoticeText = async (noticeText) => {
+  return RealApi.updateNoticeText(noticeText);
+};
