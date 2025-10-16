@@ -13,7 +13,7 @@ import {
   addDish,
   checkDishNameExists,
   fetchCategories,
-} from "../../services/api";
+} from "../../../services/api";
 import Taro from "@tarojs/taro";
 import "./index.scss";
 

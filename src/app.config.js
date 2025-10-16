@@ -1,14 +1,29 @@
 export default {
   pages: [
-    "pages/Menu/MenuPage/index", // 菜单页面
+    "pages/Menu/MenuPage/index", // 菜单页面（一进小程序必需）
+    "pages/inventory/index", // 库存管理页面
     "pages/order/index", // 订单页面
     "pages/profile/index", // 我的页面
-    "pages/admin/index", // 管理页面（仅Chef可见）
-    "pages/inventory/index", // 库存管理页面
-    "pages/shopping-list/index", // 购物清单页面
-    "pages/add-dish/index", // 添加菜品页面
-    "pages/points/index", // 积分中心页面
-    "pages/category-management/index", // 分类管理页面
+  ],
+  subpackages: [
+    {
+      root: "subpackages/admin",
+      name: "admin",
+      pages: [
+        "admin/index", // 管理页面
+        "category-management/index", // 分类管理页面
+        "add-dish/index", // 添加菜品页面
+        "shopping-list/index", // 购物清单页面
+      ],
+    },
+    {
+      root: "subpackages/user",
+      name: "user",
+      pages: [
+        "points/index", // 积分中心页面
+        "login/index", // 登录页面
+      ],
+    },
   ],
   window: {
     backgroundTextStyle: "light",

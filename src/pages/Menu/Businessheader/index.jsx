@@ -73,7 +73,7 @@ const BusinessHeader = () => {
 
   const handleAddDish = () => {
     Taro.navigateTo({
-      url: "/pages/add-dish/index",
+      url: "/subpackages/admin/add-dish/index",
     });
   };
 

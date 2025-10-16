@@ -446,7 +446,7 @@ const CategoryMenu = ({ categories }) => {
             className="menu-item manage-category-item"
             onClick={() =>
               Taro.navigateTo({
-                url: "/pages/category-management/index",
+                url: "/subpackages/admin/category-management/index",
               })
             }
           >

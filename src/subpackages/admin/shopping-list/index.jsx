@@ -2,8 +2,8 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
 import { Button, Toast, Cell } from "@nutui/nutui-react-taro";
-import { fetchShoppingList } from "../../services/api";
-import { formatDate } from "../../utils/formatDate";
+import { fetchShoppingList } from "../../../services/api";
+import { formatDate } from "../../../utils/formatDate";
 import "./index.scss";
 
 const ShoppingListPage = () => {

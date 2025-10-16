@@ -94,7 +94,7 @@ const ProfilePage = () => {
   const handleAdminPanel = () => {
     if (currentUser?.role === "chef") {
       Taro.navigateTo({
-        url: "/pages/admin/index",
+        url: "/subpackages/admin/admin/index",
       });
     } else {
       Toast.show({
@@ -130,7 +130,9 @@ const ProfilePage = () => {
             </Text>
             <Text
               className="user-points"
-              onClick={() => Taro.navigateTo({ url: "/pages/points/index" })}
+              onClick={() =>
+                Taro.navigateTo({ url: "/subpackages/user/points/index" })
+              }
             >
               💰 {currentUser?.points || 0} 积分
             </Text>

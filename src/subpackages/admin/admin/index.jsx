@@ -15,9 +15,9 @@ import {
   fetchAllUsers,
   rewardPoints,
   fetchAllDishes,
-} from "../../services/api";
-import { formatDate } from "../../utils/formatDate";
-import { getStatusText, getStatusColor } from "../../utils/statusHelper";
+} from "../../../services/api";
+import { formatDate } from "../../../utils/formatDate";
+import { getStatusText, getStatusColor } from "../../../utils/statusHelper";
 import Taro from "@tarojs/taro";
 import "./index.scss";
 
@@ -300,7 +300,7 @@ const AdminPage = () => {
                 size="large"
                 onClick={() =>
                   Taro.navigateTo({
-                    url: "/pages/category-management/index",
+                    url: "/subpackages/admin/category-management/index",
                   })
                 }
                 className="manage-category-button"
