@@ -1,4 +1,5 @@
 import Taro from "@tarojs/taro";
+import { ensureLogin, getOpenId } from "../utils/auth";
 
 // 后端API基础URL
 const BASE_URL = "http://localhost:3001/api";
@@ -126,9 +127,15 @@ export const checkDishNameExists = async (name) => {
 
 // 获取当前用户信息
 export const getCurrentUser = async () => {
-  // 使用固定的测试用户openid - 临时改为chef以便获取OpenID
-  const testOpenid = "chef_openid_001";
-  return request(`/users/${testOpenid}`);
+  // 🆕 使用真实的微信登录流程
+  const openid = await ensureLogin();
+
+  if (!openid) {
+    throw new Error("登录失败，无法获取用户信息");
+  }
+
+  // 使用真实的 openid 获取用户信息
+  return request(`/users/${openid}`);
 };
 
 // 获取用户订单 - 接受userId或openid
@@ -256,10 +263,8 @@ export const getPointsHistory = async () => {
 
 // 获取所有用户（Chef用）
 export const fetchAllUsers = async () => {
-  // 返回测试用户列表
-  const chef = await request("/users/chef_openid_001");
-  const diner = await request("/users/diner_openid_001");
-  return [chef, diner];
+  // 🆕 调用真实的后端接口获取所有用户
+  return request("/users");
 };
 
 // 模拟登录接口

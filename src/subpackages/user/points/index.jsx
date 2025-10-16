@@ -162,9 +162,9 @@ const PointsPage = () => {
                   <View className="history-points">
                     <Text
                       className="points-text"
-                      style={{ color: getPointsColor(record.points) }}
+                      style={{ color: getPointsColor(record.amount) }}
                     >
-                      {getPointsText(record.points)}
+                      {getPointsText(record.amount)}
                     </Text>
                   </View>
                 </View>
