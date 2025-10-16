@@ -226,7 +226,7 @@ const InventoryPage = () => {
                   </Text>
                 </View>
                 <Text className="item-update">
-                  最后更新: {formatDate(item.updateTime)}
+                  最后更新: {formatDate(item.updatedAt)}
                 </Text>
               </View>
 

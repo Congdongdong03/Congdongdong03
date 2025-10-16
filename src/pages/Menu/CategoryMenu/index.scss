@@ -303,26 +303,27 @@
   .cart-content {
     flex: 1;
     padding: 20rpx 30rpx;
-    max-height: 400rpx;
+    /* Removed fixed max-height to allow content to scroll within the modal */
+    overflow-y: auto; /* Ensure content itself scrolls if it overflows */
+  }
 
-    .cart-empty {
-      text-align: center;
-      padding: 100rpx 20rpx; // 增加内边距
+  .cart-empty {
+    text-align: center;
+    padding: 100rpx 20rpx; // 增加内边距
+    color: #888888; // 次文本色
+
+    .cart-empty-text {
+      font-size: 32rpx;
+      display: block;
+      margin-bottom: 20rpx;
+      color: #4a4a4a; // 主文本色
+      font-weight: 500;
+    }
+
+    .cart-empty-hint {
+      font-size: 28rpx;
       color: #888888; // 次文本色
-
-      .cart-empty-text {
-        font-size: 32rpx;
-        display: block;
-        margin-bottom: 20rpx;
-        color: #4a4a4a; // 主文本色
-        font-weight: 500;
-      }
-
-      .cart-empty-hint {
-        font-size: 28rpx;
-        color: #888888; // 次文本色
-        line-height: 1.5;
-      }
+      line-height: 1.5;
     }
   }
 
@@ -408,6 +409,70 @@
       background-color: #f9dde6 !important;
       border-color: #f9dde6 !important;
       color: #4a4a4a !important;
+    }
+  }
+
+  // 订单备注输入框样式
+  .order-remark-section {
+    padding: 24rpx;
+    border-top: 1px solid #f4f6f8;
+    background-color: #ffffff;
+
+    .remark-label {
+      font-size: 28rpx;
+      color: #4a4a4a;
+      font-weight: 500;
+      margin-bottom: 16rpx;
+      display: block;
+    }
+
+    .remark-textarea {
+      width: 100%;
+      min-height: 120rpx;
+      border: 2rpx solid #f4f6f8;
+      border-radius: 12rpx;
+      padding: 16rpx;
+      font-size: 28rpx;
+      color: #4a4a4a;
+      background-color: #ffffff;
+      resize: none;
+
+      &:focus {
+        border-color: #f9dde6;
+        box-shadow: 0 0 0 4rpx rgba(249, 221, 230, 0.2);
+      }
+
+      &::placeholder {
+        color: #888888;
+        font-size: 26rpx;
+      }
+    }
+
+    // 覆盖 NutUI TextArea 默认样式
+    :global(.nut-textarea) {
+      border: 2rpx solid #f4f6f8 !important;
+      border-radius: 12rpx !important;
+      background-color: #ffffff !important;
+
+      &:focus-within {
+        border-color: #f9dde6 !important;
+        box-shadow: 0 0 0 4rpx rgba(249, 221, 230, 0.2) !important;
+      }
+    }
+
+    :global(.nut-textarea__textarea) {
+      color: #4a4a4a !important;
+      font-size: 28rpx !important;
+
+      &::placeholder {
+        color: #888888 !important;
+        font-size: 26rpx !important;
+      }
+    }
+
+    :global(.nut-textarea__limit) {
+      color: #888888 !important;
+      font-size: 24rpx !important;
     }
   }
 }

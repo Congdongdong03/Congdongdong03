@@ -8,6 +8,7 @@ import {
   Button,
   Toast,
   Avatar,
+  TextArea,
 } from "@nutui/nutui-react-taro";
 import ProductImage from "../../../components/index";
 import plusIcon from "../../../assets/icons/plus.png";
@@ -25,6 +26,7 @@ const CategoryMenu = ({ categories }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [showCartModal, setShowCartModal] = useState(false);
   const [cartShake, setCartShake] = useState(false);
+  const [orderRemark, setOrderRemark] = useState(""); // 订单备注
 
   useEffect(() => {
     if (categories?.length > 0) {
@@ -314,7 +316,7 @@ const CategoryMenu = ({ categories }) => {
       // 在创建订单前，请求用户授权接收订阅消息
       try {
         await Taro.requestSubscribeMessage({
-          tmplIds: ["l-NwvTHE5SEy31njmVT-HvN6q9gwxQmRCLCb1wNQTKU"], // 订阅消息模板ID
+          tmplIds: ["uAhvMsr0N9n9bjCu64gxX0oZTAsjgUIxnxsSvgVN16s"], // 新的订阅消息模板ID
         });
         console.log("✅ 用户已授权订阅消息");
       } catch (subscribeError) {
@@ -331,7 +333,7 @@ const CategoryMenu = ({ categories }) => {
       }));
 
       // 创建订单（后端会自动发送推送通知）
-      const order = await createOrder(cartItems, totalPoints);
+      const order = await createOrder(cartItems, totalPoints, orderRemark);
 
       console.log("✅ 订单创建成功:", order);
       console.log("📱 推送通知将由后端自动发送");
@@ -381,6 +383,7 @@ const CategoryMenu = ({ categories }) => {
     setCartTotal(0);
     setCartItemCount(0);
     setShowCartModal(false);
+    setOrderRemark(""); // 清空订单备注
 
     // 清空本地存储
     try {
@@ -589,6 +592,22 @@ const CategoryMenu = ({ categories }) => {
                 ))
               )}
             </ScrollView>
+
+            {/* 订单备注输入框 */}
+            {Object.keys(selectedItems).length > 0 && (
+              <View className="order-remark-section">
+                <Text className="remark-label">订单备注：</Text>
+                <TextArea
+                  placeholder="有什么特殊要求吗？比如少盐、多辣、不要葱等..."
+                  value={orderRemark}
+                  onChange={(value) => setOrderRemark(value)}
+                  maxLength={100}
+                  showWordLimit
+                  className="remark-textarea"
+                />
+              </View>
+            )}
+
             <View className="cart-footer">
               <View className="cart-total">
                 <Text className="total-text">

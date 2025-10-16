@@ -69,8 +69,8 @@ export const fetchUserOrders = async (userOpenid) => {
 };
 
 // 创建订单
-export const createOrder = async (cartItems, totalPoints) => {
-  return RealApi.createOrder(cartItems, totalPoints);
+export const createOrder = async (cartItems, totalPoints, remark = "") => {
+  return RealApi.createOrder(cartItems, totalPoints, remark);
 };
 
 // 更新订单状态

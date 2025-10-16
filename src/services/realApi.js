@@ -128,7 +128,7 @@ export const fetchUserOrders = async (userOpenid) => {
 };
 
 // 创建订单
-export const createOrder = async (cartItems, totalPoints) => {
+export const createOrder = async (cartItems, totalPoints, remark = "") => {
   // 获取当前用户
   const user = await getCurrentUser();
 
@@ -136,6 +136,7 @@ export const createOrder = async (cartItems, totalPoints) => {
     userId: user.id,
     items: cartItems,
     totalPoints,
+    remark, // 添加备注字段
   };
 
   return request("/orders", {

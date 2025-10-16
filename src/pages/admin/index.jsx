@@ -27,22 +27,32 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("🏗️ AdminPage 组件已加载");
     loadData();
   }, []);
 
   const loadData = async () => {
     try {
       setLoading(true);
+      console.log("🔄 开始加载管理页面数据...");
+
       const [ordersData, usersData, dishesData] = await Promise.all([
         fetchAllOrders(),
         fetchAllUsers(),
         fetchAllDishes(),
       ]);
+
+      console.log("📊 数据加载完成:", {
+        orders: ordersData?.length || 0,
+        users: usersData?.length || 0,
+        dishes: dishesData?.length || 0,
+      });
+
       setOrders(ordersData);
       setUsers(usersData);
       setDishes(dishesData);
     } catch (error) {
-      console.error("加载数据失败:", error);
+      console.error("❌ 加载数据失败:", error);
       Toast.show({
         type: "fail",
         content: "加载数据失败",
@@ -123,9 +133,14 @@ const AdminPage = () => {
     }
   };
 
+  // 添加一个简单的备用UI用于测试
   if (loading) {
     return (
       <View className="admin-page">
+        <View className="admin-header">
+          <Text className="page-title">👨‍🍳 管理面板</Text>
+          <Text className="page-subtitle">大厨专用管理界面</Text>
+        </View>
         <View className="loading">加载中...</View>
       </View>
     );
@@ -272,7 +287,9 @@ const AdminPage = () => {
               <View key={dish._id} className="dish-card">
                 <View className="dish-info">
                   <Text className="dish-name">{dish.name}</Text>
-                  <Text className="dish-category">{dish.category}</Text>
+                  <Text className="dish-category">
+                    {dish.category?.name || "未分类"}
+                  </Text>
                   <Text className="dish-price">{dish.price} 积分</Text>
                   <Text className="dish-sales">销量: {dish.sales}</Text>
                 </View>
