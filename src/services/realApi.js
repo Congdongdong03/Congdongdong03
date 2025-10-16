@@ -134,7 +134,7 @@ export const getCurrentUser = async () => {
 // 获取用户订单 - 接受userId或openid
 export const fetchUserOrders = async (userIdOrOpenid) => {
   // 如果传入的是数字ID，直接使用；否则先获取用户信息
-  if (typeof userIdOrOpenid === 'number') {
+  if (typeof userIdOrOpenid === "number") {
     return request(`/orders/${userIdOrOpenid}`);
   } else {
     // openid格式，需要先获取用户信息
@@ -269,13 +269,18 @@ export const getNoticeText = async () => {
 };
 
 // 更新温馨提示
-export const updateNoticeText = async (noticeText) => {
-  const user = await getCurrentUser();
+export const updateNoticeText = async (noticeText, userId = null) => {
+  // 如果没有传入userId，则获取当前用户（向后兼容）
+  if (!userId) {
+    const user = await getCurrentUser();
+    userId = user.id;
+  }
+
   return request("/settings/notice", {
     method: "PUT",
     data: {
       noticeText,
-      userId: user.id,
+      userId,
     },
   });
 };

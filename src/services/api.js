@@ -135,6 +135,6 @@ export const getNoticeText = async () => {
 };
 
 // 更新温馨提示
-export const updateNoticeText = async (noticeText) => {
-  return RealApi.updateNoticeText(noticeText);
+export const updateNoticeText = async (noticeText, userId = null) => {
+  return RealApi.updateNoticeText(noticeText, userId);
 };

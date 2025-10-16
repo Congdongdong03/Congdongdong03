@@ -26,15 +26,15 @@ function OrderPage() {
         setLoading(true);
         const user = await getCurrentUser();
         if (!isMounted) return; // 组件已卸载，停止执行
-        
+
         setCurrentUser(user);
         const userOrders = await fetchUserOrders(user.id); // 使用userId避免重复请求
         if (!isMounted) return; // 组件已卸载，停止执行
-        
+
         setOrders(userOrders);
       } catch (error) {
         if (!isMounted) return; // 组件已卸载，停止执行
-        
+
         console.error("加载订单失败:", error);
         Toast.show({
           type: "fail",
@@ -149,48 +149,52 @@ function OrderPage() {
           </View>
         ) : (
           // 按创建时间降序排列，最新订单在最前面
-          [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((order) => (
-            <View key={order.id} className="order-item">
-              <View className="order-header-info">
-                <Text className="order-time">
-                  {formatDate(order.createdAt)}
-                </Text>
-                <Text
-                  className="order-status"
-                  style={{ color: getStatusColor(order.status) }}
-                >
-                  {getStatusText(order.status)}
-                </Text>
-              </View>
-
-              <View className="order-items">
-                {order.items.map((item, index) => (
-                  <View key={index} className="order-item-detail">
-                    <Text className="item-name">{item.name}</Text>
-                    <Text className="item-quantity">×{item.quantity}</Text>
-                    <Text className="item-price">{item.price}积分</Text>
-                  </View>
-                ))}
-              </View>
-
-              <View className="order-footer">
-                <Text className="order-total">
-                  总计: {order.totalPoints} 积分
-                </Text>
-                {order.status === "pending" && (
-                  <Button
-                    size="small"
-                    type="primary"
-                    loading={isCancelling && selectedOrderForCancel?.id === order.id}
-                    disabled={isCancelling}
-                    onClick={() => handleCancelOrder(order)}
+          [...orders]
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .map((order) => (
+              <View key={order.id} className="order-item">
+                <View className="order-header-info">
+                  <Text className="order-time">
+                    {formatDate(order.createdAt)}
+                  </Text>
+                  <Text
+                    className="order-status"
+                    style={{ color: getStatusColor(order.status) }}
                   >
-                    取消订单
-                  </Button>
-                )}
+                    {getStatusText(order.status)}
+                  </Text>
+                </View>
+
+                <View className="order-items">
+                  {order.items.map((item, index) => (
+                    <View key={index} className="order-item-detail">
+                      <Text className="item-name">{item.name}</Text>
+                      <Text className="item-quantity">×{item.quantity}</Text>
+                      <Text className="item-price">{item.price}积分</Text>
+                    </View>
+                  ))}
+                </View>
+
+                <View className="order-footer">
+                  <Text className="order-total">
+                    总计: {order.totalPoints} 积分
+                  </Text>
+                  {order.status === "pending" && (
+                    <Button
+                      size="small"
+                      type="primary"
+                      loading={
+                        isCancelling && selectedOrderForCancel?.id === order.id
+                      }
+                      disabled={isCancelling}
+                      onClick={() => handleCancelOrder(order)}
+                    >
+                      取消订单
+                    </Button>
+                  )}
+                </View>
               </View>
-            </View>
-          ))
+            ))
         )}
       </ScrollView>
 

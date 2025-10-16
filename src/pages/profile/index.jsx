@@ -102,12 +102,6 @@ const ProfilePage = () => {
     }
   };
 
-  const handleViewInventory = () => {
-    Taro.navigateTo({
-      url: "/pages/inventory/index",
-    });
-  };
-
   const handleAdminPanel = () => {
     if (currentUser?.role === "chef") {
       Taro.navigateTo({
@@ -124,6 +118,16 @@ const ProfilePage = () => {
 
   // 打开编辑温馨提示弹窗
   const handleEditNotice = async () => {
+    // 验证用户角色
+    if (currentUser?.role !== "chef") {
+      Toast.show({
+        type: "warn",
+        content: "只有大厨才能编辑温馨提示",
+        duration: 2000,
+      });
+      return;
+    }
+
     try {
       // 获取当前温馨提示
       const response = await getNoticeText();
@@ -142,6 +146,16 @@ const ProfilePage = () => {
 
   // 保存温馨提示
   const handleSaveNotice = async () => {
+    // 验证用户角色
+    if (currentUser?.role !== "chef") {
+      Toast.show({
+        type: "warn",
+        content: "只有大厨才能编辑温馨提示",
+        duration: 2000,
+      });
+      return;
+    }
+
     // 验证输入
     if (!editingNoticeText.trim()) {
       Toast.show({
@@ -163,7 +177,8 @@ const ProfilePage = () => {
 
     try {
       setSaveLoading(true);
-      await updateNoticeText(editingNoticeText);
+      // 直接传入userId，避免API重复请求
+      await updateNoticeText(editingNoticeText, currentUser.id);
 
       Toast.show({
         type: "success",
@@ -216,9 +231,17 @@ const ProfilePage = () => {
             </Text>
             <Text
               className="user-points"
-              onClick={() =>
-                Taro.navigateTo({ url: "/subpackages/user/points/index" })
-              }
+              onClick={() => {
+                if (!currentUser || loading) {
+                  Toast.show({
+                    type: "text",
+                    content: "加载中，请稍候...",
+                    duration: 1000,
+                  });
+                  return;
+                }
+                Taro.navigateTo({ url: "/subpackages/user/points/index" });
+              }}
             >
               💰 {currentUser?.points || 0} 积分
             </Text>
@@ -254,9 +277,9 @@ const ProfilePage = () => {
         title="编辑温馨提示"
         visible={showEditDialog}
         onConfirm={handleSaveNotice}
-        onCancel={handleCancelEdit}
+        onCancel={saveLoading ? undefined : handleCancelEdit}
         confirmText={saveLoading ? "保存中..." : "保存"}
-        cancelText="取消"
+        cancelText={saveLoading ? "" : "取消"}
         closeOnOverlayClick={false}
       >
         <View className="edit-notice-dialog">
