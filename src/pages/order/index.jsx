@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
 import { Button, Toast, Dialog } from "@nutui/nutui-react-taro";
 import {
@@ -15,12 +14,46 @@ function OrderPage() {
   const [orders, setOrders] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [cancellingOrderId, setCancellingOrderId] = useState(null);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [selectedOrderForCancel, setSelectedOrderForCancel] = useState(null);
+  const [isCancelling, setIsCancelling] = useState(false);
 
   useEffect(() => {
-    loadOrders();
+    let isMounted = true;
+
+    const loadOrdersWithCheck = async () => {
+      try {
+        setLoading(true);
+        const user = await getCurrentUser();
+        if (!isMounted) return; // 组件已卸载，停止执行
+        
+        setCurrentUser(user);
+        const userOrders = await fetchUserOrders(user.id); // 使用userId避免重复请求
+        if (!isMounted) return; // 组件已卸载，停止执行
+        
+        setOrders(userOrders);
+      } catch (error) {
+        if (!isMounted) return; // 组件已卸载，停止执行
+        
+        console.error("加载订单失败:", error);
+        Toast.show({
+          type: "fail",
+          content: "加载订单失败",
+          duration: 2000,
+        });
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadOrdersWithCheck();
+
+    // 清理函数：标记组件已卸载
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const loadOrders = async () => {
@@ -28,7 +61,7 @@ function OrderPage() {
       setLoading(true);
       const user = await getCurrentUser();
       setCurrentUser(user);
-      const userOrders = await fetchUserOrders(user.openid);
+      const userOrders = await fetchUserOrders(user.id); // 使用userId避免重复请求
       setOrders(userOrders);
     } catch (error) {
       console.error("加载订单失败:", error);
@@ -52,31 +85,35 @@ function OrderPage() {
   const confirmCancelOrder = async () => {
     if (!selectedOrderForCancel) return;
 
+    const cancelledPoints = selectedOrderForCancel.totalPoints;
+    const orderId = selectedOrderForCancel.id;
+
     try {
-      setCancellingOrderId(selectedOrderForCancel.id);
+      setIsCancelling(true);
       setShowCancelDialog(false);
 
-      await cancelOrder(selectedOrderForCancel.id);
-
-      Toast.show({
-        type: "success",
-        content: `订单已取消，${selectedOrderForCancel.totalPoints} 积分已退还`,
-        duration: 2000,
-      });
+      await cancelOrder(orderId);
 
       // 刷新订单列表
       await loadOrders();
+
+      // 只有在订单列表刷新成功后才显示成功提示
+      Toast.show({
+        type: "success",
+        content: `订单已取消，${cancelledPoints} 积分已退还`,
+        duration: 2000,
+      });
     } catch (error) {
       console.error("取消订单失败:", error);
       const errorMessage =
-        error.response?.data?.error || error.message || "取消订单失败";
+        error.data?.error || error.errMsg || error.message || "取消订单失败";
       Toast.show({
         type: "fail",
         content: errorMessage,
         duration: 2000,
       });
     } finally {
-      setCancellingOrderId(null);
+      setIsCancelling(false);
       setSelectedOrderForCancel(null);
     }
   };
@@ -111,7 +148,8 @@ function OrderPage() {
             <Text className="empty-hint">去菜单页面点餐吧！</Text>
           </View>
         ) : (
-          orders.map((order) => (
+          // 按创建时间降序排列，最新订单在最前面
+          [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).map((order) => (
             <View key={order.id} className="order-item">
               <View className="order-header-info">
                 <Text className="order-time">
@@ -143,7 +181,8 @@ function OrderPage() {
                   <Button
                     size="small"
                     type="primary"
-                    loading={cancellingOrderId === order.id}
+                    loading={isCancelling && selectedOrderForCancel?.id === order.id}
+                    disabled={isCancelling}
                     onClick={() => handleCancelOrder(order)}
                   >
                     取消订单
@@ -163,7 +202,6 @@ function OrderPage() {
         cancelText="保留订单"
         onOk={confirmCancelOrder}
         onCancel={handleCloseCancelDialog}
-        footer={null}
       >
         <View style={{ padding: "16px 0" }}>
           <Text>确定要取消此订单吗？</Text>
@@ -176,24 +214,6 @@ function OrderPage() {
               </Text>
             </View>
           )}
-          <View style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
-            <Button
-              type="default"
-              size="small"
-              onClick={handleCloseCancelDialog}
-              style={{ flex: 1 }}
-            >
-              保留订单
-            </Button>
-            <Button
-              type="primary"
-              size="small"
-              onClick={confirmCancelOrder}
-              style={{ flex: 1 }}
-            >
-              确认取消
-            </Button>
-          </View>
         </View>
       </Dialog>
     </View>

@@ -19,10 +19,21 @@ const request = async (url, options = {}) => {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       return response.data;
     } else {
-      throw new Error(response.data?.error || "请求失败");
+      // 创建包含完整错误信息的Error对象
+      const error = new Error(response.data?.error || "请求失败");
+      error.statusCode = response.statusCode;
+      error.data = response.data;
+      throw error;
     }
   } catch (error) {
     console.error("API请求失败:", error);
+    // 如果是Taro.request抛出的错误，添加errMsg信息
+    if (error.errMsg && !error.data) {
+      const enhancedError = new Error(error.errMsg);
+      enhancedError.errMsg = error.errMsg;
+      enhancedError.errno = error.errno;
+      throw enhancedError;
+    }
     throw error;
   }
 };
@@ -120,11 +131,16 @@ export const getCurrentUser = async () => {
   return request(`/users/${testOpenid}`);
 };
 
-// 获取用户订单
-export const fetchUserOrders = async (userOpenid) => {
-  // 先获取用户信息
-  const user = await request(`/users/${userOpenid}`);
-  return request(`/orders/${user.id}`);
+// 获取用户订单 - 接受userId或openid
+export const fetchUserOrders = async (userIdOrOpenid) => {
+  // 如果传入的是数字ID，直接使用；否则先获取用户信息
+  if (typeof userIdOrOpenid === 'number') {
+    return request(`/orders/${userIdOrOpenid}`);
+  } else {
+    // openid格式，需要先获取用户信息
+    const user = await request(`/users/${userIdOrOpenid}`);
+    return request(`/orders/${user.id}`);
+  }
 };
 
 // 创建订单

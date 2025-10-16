@@ -1,3 +1,3 @@
 export default {
-  navigationBarTitleText: "训练记录",
+  navigationBarTitleText: "我的订单",
 };

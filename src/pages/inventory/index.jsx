@@ -77,6 +77,7 @@ const InventoryPage = () => {
   };
 
   const handleAddItem = async () => {
+    // 验证名称
     if (!newItem.name.trim()) {
       Toast.show({
         type: "fail",
@@ -86,8 +87,52 @@ const InventoryPage = () => {
       return;
     }
 
+    // 验证名称长度
+    if (newItem.name.trim().length > 20) {
+      Toast.show({
+        type: "fail",
+        content: "物品名称不能超过20个字",
+        duration: 2000,
+      });
+      return;
+    }
+
+    // 验证单位
+    if (!newItem.unit.trim()) {
+      Toast.show({
+        type: "fail",
+        content: "请输入单位",
+        duration: 2000,
+      });
+      return;
+    }
+
+    // 验证单位长度
+    if (newItem.unit.trim().length > 10) {
+      Toast.show({
+        type: "fail",
+        content: "单位不能超过10个字",
+        duration: 2000,
+      });
+      return;
+    }
+
+    // 检查是否已存在同名物品
+    if (inventory.some((item) => item.name.trim() === newItem.name.trim())) {
+      Toast.show({
+        type: "fail",
+        content: "该物品已存在",
+        duration: 2000,
+      });
+      return;
+    }
+
     try {
-      await addInventoryItem(newItem.name, newItem.quantity, newItem.unit);
+      await addInventoryItem(
+        newItem.name.trim(),
+        newItem.quantity,
+        newItem.unit.trim()
+      );
       Toast.show({
         type: "success",
         content: "添加成功",
@@ -175,7 +220,8 @@ const InventoryPage = () => {
             <InputNumber
               value={newItem.quantity}
               onChange={(value) => setNewItem({ ...newItem, quantity: value })}
-              min={0}
+              min={1}
+              max={9999}
               className="form-input"
             />
           </View>
@@ -215,7 +261,7 @@ const InventoryPage = () => {
           </View>
         ) : (
           inventory.map((item) => (
-            <View key={item._id} className="inventory-item">
+            <View key={item.id} className="inventory-item">
               <View className="item-info">
                 <View className="item-header">
                   <Text className="item-name">{item.name}</Text>
@@ -238,6 +284,7 @@ const InventoryPage = () => {
                     value={item.quantity}
                     onChange={(value) => handleQuantityChange(item.id, value)}
                     min={0}
+                    max={9999}
                     className="quantity-input"
                   />
                   <Text className="quantity-unit">{item.unit}</Text>
