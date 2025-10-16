@@ -142,16 +142,6 @@ const ProfilePage = () => {
       </View>
 
       <ScrollView scrollY className="profile-content">
-        <View className="inventory-section">
-          <Text className="section-title">我们的冰箱</Text>
-          <Cell
-            title="🧊 冰箱库存"
-            desc="查看和管理共享库存"
-            onClick={handleViewInventory}
-            className="inventory-cell"
-          />
-        </View>
-
         {currentUser?.role === "chef" && (
           <View className="admin-section">
             <Text className="section-title">管理功能</Text>

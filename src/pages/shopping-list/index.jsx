@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
 import { Button, Toast, Cell } from "@nutui/nutui-react-taro";
 import { fetchShoppingList } from "../../services/api";
+import { formatDate } from "../../utils/formatDate";
 import "./index.scss";
 
 const ShoppingListPage = () => {
@@ -28,14 +29,6 @@ const ShoppingListPage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return `${date.getMonth() + 1}月${date.getDate()}日 ${date
-      .getHours()
-      .toString()
-      .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
   };
 
   const handleMarkPurchased = (itemId) => {

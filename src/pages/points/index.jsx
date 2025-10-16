@@ -6,6 +6,7 @@ import {
   getCurrentUser,
   getPointsHistory,
   rewardPoints,
+  fetchAllUsers,
 } from "../../services/api";
 import Taro from "@tarojs/taro";
 import "./index.scss";
@@ -49,8 +50,8 @@ const PointsPage = () => {
   const getAllUsers = async () => {
     // 获取所有用户列表（用于积分奖励）
     try {
-      const users = await getCurrentUser(); // 这里应该调用获取所有用户的API
-      return [users]; // 暂时返回当前用户
+      const users = await fetchAllUsers();
+      return users;
     } catch (error) {
       console.error("获取用户列表失败:", error);
       return [];

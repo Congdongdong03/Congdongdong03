@@ -14,6 +14,7 @@ import {
   addInventoryItem,
   deleteInventoryItem,
 } from "../../services/api";
+import { formatDate } from "../../utils/formatDate";
 import "./index.scss";
 
 const InventoryPage = () => {
@@ -133,14 +134,6 @@ const InventoryPage = () => {
 
   const getStatusColor = (status) => {
     return status === "out_of_stock" ? "#ff3b30" : "#34c759";
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return `${date.getMonth() + 1}月${date.getDate()}日 ${date
-      .getHours()
-      .toString()
-      .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
   };
 
   if (loading) {

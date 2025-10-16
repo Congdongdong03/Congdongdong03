@@ -1,9 +1,5 @@
 // 选择使用真实API还是模拟数据
-// import { MockDataService } from "./mockData";
 import * as RealApi from "./realApi";
-
-// 模拟网络延迟
-const delay = (ms = 500) => new Promise((resolve) => setTimeout(resolve, ms));
 
 // 获取分类信息接口
 export const fetchCategories = async () => {

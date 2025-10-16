@@ -16,6 +16,8 @@ import {
   rewardPoints,
   fetchAllDishes,
 } from "../../services/api";
+import { formatDate } from "../../utils/formatDate";
+import { getStatusText, getStatusColor } from "../../utils/statusHelper";
 import Taro from "@tarojs/taro";
 import "./index.scss";
 
@@ -61,34 +63,6 @@ const AdminPage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const getStatusText = (status) => {
-    const statusMap = {
-      pending: "待处理",
-      in_progress: "处理中",
-      completed: "已完成",
-      cancelled: "已取消",
-    };
-    return statusMap[status] || status;
-  };
-
-  const getStatusColor = (status) => {
-    const colorMap = {
-      pending: "#ff9500",
-      in_progress: "#007aff",
-      completed: "#34c759",
-      cancelled: "#ff3b30",
-    };
-    return colorMap[status] || "#666";
-  };
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return `${date.getMonth() + 1}月${date.getDate()}日 ${date
-      .getHours()
-      .toString()
-      .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
   };
 
   const handleOrderStatusChange = async (orderId, newStatus) => {
