@@ -202,13 +202,13 @@ export const deleteInventoryItem = async (itemId) => {
   });
 };
 
-// 获取购物清单（暂时返回空数组）
+// 获取购物清单（基于最近订单和原材料库存）
 export const fetchShoppingList = async () => {
-  return [];
+  return request("/shopping-list");
 };
 
 // 奖励积分
-export const rewardPoints = async (targetUserOpenid, points) => {
+export const rewardPoints = async (targetUserOpenid, points, description) => {
   // 先获取目标用户信息
   const user = await request(`/users/${targetUserOpenid}`);
 
@@ -217,6 +217,33 @@ export const rewardPoints = async (targetUserOpenid, points) => {
     data: {
       userId: user.id,
       amount: points,
+      description: description || `管理员奖励 ${points} 积分`,
+    },
+  });
+};
+
+// 扣减积分
+export const deductPoints = async (targetUserOpenid, points, description) => {
+  // 先获取目标用户信息
+  const user = await request(`/users/${targetUserOpenid}`);
+
+  return request("/points/deduct", {
+    method: "POST",
+    data: {
+      userId: user.id,
+      amount: points,
+      description: description || `管理员扣减 ${points} 积分`,
+    },
+  });
+};
+
+// 更新用户信息
+export const updateUserInfo = async (openid, nickname, avatar) => {
+  return request(`/users/${openid}`, {
+    method: "PUT",
+    data: {
+      nickname,
+      avatar,
     },
   });
 };
@@ -283,4 +310,30 @@ export const updateNoticeText = async (noticeText, userId = null) => {
       userId,
     },
   });
+};
+
+// 菜品原材料相关API
+// 获取菜品的原材料列表
+export const fetchDishMaterials = async (dishId) => {
+  return request(`/dishes/${dishId}/materials`);
+};
+
+// 添加菜品原材料
+export const addDishMaterial = async (dishId, itemId, amount) => {
+  return request(`/dishes/${dishId}/materials`, {
+    method: "POST",
+    data: { itemId, amount },
+  });
+};
+
+// 删除菜品原材料
+export const deleteDishMaterial = async (dishId, materialId) => {
+  return request(`/dishes/${dishId}/materials/${materialId}`, {
+    method: "DELETE",
+  });
+};
+
+// 获取所有原材料（用于选择）
+export const fetchAllInventory = async () => {
+  return request("/inventory/all");
 };

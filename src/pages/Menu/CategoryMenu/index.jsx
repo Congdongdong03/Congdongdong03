@@ -309,11 +309,30 @@ const CategoryMenu = ({ categories }) => {
 
     // 检查积分是否足够
     if (currentUser && currentUser.points < totalPoints) {
+      const neededPoints = totalPoints - currentUser.points;
       Toast.show({
         type: "fail",
-        content: `积分不足哦！还需要 ${totalPoints - currentUser.points} 积分`,
+        content: `积分不足哦！还需要 ${neededPoints} 积分`,
         duration: 3000,
       });
+
+      // 显示积分不足引导弹窗
+      setTimeout(() => {
+        Taro.showModal({
+          title: "积分不足",
+          content: `您还需要 ${neededPoints} 积分才能下单。\n\n获取积分的方法：\n• 完成订单可获得10%积分奖励\n• 联系大厨获得积分奖励\n• 等待系统活动`,
+          confirmText: "去积分中心",
+          cancelText: "取消",
+          success: (res) => {
+            if (res.confirm) {
+              Taro.navigateTo({
+                url: "/subpackages/user/points/index",
+              });
+            }
+          },
+        });
+      }, 1000);
+
       return;
     }
 

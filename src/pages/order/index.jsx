@@ -175,6 +175,14 @@ function OrderPage() {
                   ))}
                 </View>
 
+                {/* 订单备注显示 */}
+                {order.remark && order.remark.trim() && (
+                  <View className="order-remark">
+                    <Text className="remark-label">📝 备注：</Text>
+                    <Text className="remark-content">{order.remark}</Text>
+                  </View>
+                )}
+
                 <View className="order-footer">
                   <Text className="order-total">
                     总计: {order.totalPoints} 积分

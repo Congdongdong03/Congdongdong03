@@ -1,4 +1,5 @@
 import Taro from "@tarojs/taro";
+import { updateUserInfo } from "../services/api";
 
 // 默认用户信息
 const DEFAULT_USER_INFO = {
@@ -75,6 +76,17 @@ export const requestUserAuthorization = async () => {
 
       // 保存到本地缓存
       saveUserInfo(nickName, avatarUrl);
+
+      // 同步到后端
+      try {
+        // 获取当前用户的openid（这里需要从登录状态获取）
+        // 由于当前使用的是固定openid，这里暂时跳过同步
+        // 在实际应用中，应该从登录状态获取真实的openid
+        console.log("用户授权成功，信息已保存到本地");
+      } catch (syncError) {
+        console.error("同步用户信息到后端失败:", syncError);
+        // 即使同步失败，本地授权仍然成功
+      }
 
       return {
         success: true,

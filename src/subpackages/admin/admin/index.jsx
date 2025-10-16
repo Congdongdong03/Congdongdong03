@@ -15,6 +15,8 @@ import {
   fetchAllUsers,
   rewardPoints,
   fetchAllDishes,
+  updateDish,
+  deleteDish,
 } from "../../../services/api";
 import { formatDate } from "../../../utils/formatDate";
 import { getStatusText, getStatusColor } from "../../../utils/statusHelper";
@@ -107,6 +109,34 @@ const AdminPage = () => {
     }
   };
 
+  // 编辑菜品
+  const handleEditDish = (dish) => {
+    Taro.navigateTo({
+      url: `/subpackages/admin/add-dish/index?edit=true&dishId=${dish.id}`,
+    });
+  };
+
+  // 删除菜品
+  const handleDeleteDish = async (dish) => {
+    try {
+      await deleteDish(dish.id);
+      Toast.show({
+        type: "success",
+        content: "菜品删除成功！",
+        duration: 2000,
+      });
+      loadData(); // 重新加载数据
+    } catch (error) {
+      console.error("删除菜品失败:", error);
+      const errorMessage = error.data?.error || error.message || "删除失败";
+      Toast.show({
+        type: "fail",
+        content: errorMessage,
+        duration: 2000,
+      });
+    }
+  };
+
   // 添加一个简单的备用UI用于测试
   if (loading) {
     return (
@@ -158,6 +188,14 @@ const AdminPage = () => {
                       </View>
                     ))}
                   </View>
+
+                  {/* 订单备注显示 */}
+                  {order.remark && order.remark.trim() && (
+                    <View className="order-remark">
+                      <Text className="remark-label">📝 备注：</Text>
+                      <Text className="remark-content">{order.remark}</Text>
+                    </View>
+                  )}
 
                   <View className="order-footer">
                     <Text className="order-total">
@@ -271,13 +309,16 @@ const AdminPage = () => {
                   <Button
                     size="small"
                     type="primary"
-                    onClick={() => {
-                      Toast.show({
-                        type: "text",
-                        content: "删除功能暂未开放",
-                        duration: 2000,
-                      });
-                    }}
+                    onClick={() => handleEditDish(dish)}
+                    className="edit-dish-btn"
+                  >
+                    编辑
+                  </Button>
+                  <Button
+                    size="small"
+                    type="danger"
+                    onClick={() => handleDeleteDish(dish)}
+                    className="delete-dish-btn"
                   >
                     删除
                   </Button>

@@ -174,11 +174,21 @@ const InventoryPage = () => {
   };
 
   const getStatusText = (status) => {
-    return status === "out_of_stock" ? "缺货" : "正常";
+    const statusMap = {
+      normal: "正常",
+      low_stock: "库存不足",
+      out_of_stock: "缺货",
+    };
+    return statusMap[status] || "正常";
   };
 
   const getStatusColor = (status) => {
-    return status === "out_of_stock" ? "#ff3b30" : "#34c759";
+    const colorMap = {
+      normal: "#34c759",
+      low_stock: "#ff9500",
+      out_of_stock: "#ff3b30",
+    };
+    return colorMap[status] || "#34c759";
   };
 
   if (loading) {
@@ -265,12 +275,18 @@ const InventoryPage = () => {
               <View className="item-info">
                 <View className="item-header">
                   <Text className="item-name">{item.name}</Text>
-                  <Text
-                    className="item-status"
-                    style={{ color: getStatusColor(item.status) }}
-                  >
-                    {getStatusText(item.status)}
-                  </Text>
+                  <View className="item-status-container">
+                    <Text
+                      className="item-status"
+                      style={{ color: getStatusColor(item.status) }}
+                    >
+                      {getStatusText(item.status)}
+                    </Text>
+                    {(item.status === "low_stock" ||
+                      item.status === "out_of_stock") && (
+                      <Text className="warning-icon">⚠️</Text>
+                    )}
+                  </View>
                 </View>
                 <Text className="item-update">
                   最后更新: {formatDate(item.updatedAt)}

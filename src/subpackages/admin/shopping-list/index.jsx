@@ -1,14 +1,17 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
-import { Button, Toast, Cell } from "@nutui/nutui-react-taro";
-import { fetchShoppingList } from "../../../services/api";
+import { Button, Toast, Cell, Dialog } from "@nutui/nutui-react-taro";
+import { fetchShoppingList, updateInventory } from "../../../services/api";
 import { formatDate } from "../../../utils/formatDate";
 import "./index.scss";
 
 const ShoppingListPage = () => {
   const [shoppingList, setShoppingList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showUpdateDialog, setShowUpdateDialog] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [newQuantity, setNewQuantity] = useState(0);
 
   useEffect(() => {
     loadShoppingList();
@@ -31,13 +34,47 @@ const ShoppingListPage = () => {
     }
   };
 
-  const handleMarkPurchased = (itemId) => {
-    Toast.show({
-      type: "text",
-      content: "购买完成！记得更新库存哦~",
-      duration: 2000,
-    });
-    // 这里可以添加标记为已购买的逻辑
+  // 标记为已购买并更新库存
+  const handleMarkPurchased = (item) => {
+    setSelectedItem(item);
+    setNewQuantity(item.currentStock + item.quantityNeeded);
+    setShowUpdateDialog(true);
+  };
+
+  // 确认更新库存
+  const confirmUpdateInventory = async () => {
+    if (!selectedItem) return;
+
+    try {
+      await updateInventory(selectedItem.itemId, newQuantity);
+
+      Toast.show({
+        type: "success",
+        content: `${selectedItem.materialName} 库存更新成功！`,
+        duration: 2000,
+      });
+
+      setShowUpdateDialog(false);
+      setSelectedItem(null);
+      setNewQuantity(0);
+
+      // 重新加载购物清单
+      loadShoppingList();
+    } catch (error) {
+      console.error("更新库存失败:", error);
+      Toast.show({
+        type: "fail",
+        content: "更新失败，请重试",
+        duration: 2000,
+      });
+    }
+  };
+
+  // 取消更新
+  const cancelUpdate = () => {
+    setShowUpdateDialog(false);
+    setSelectedItem(null);
+    setNewQuantity(0);
   };
 
   if (loading) {
@@ -77,11 +114,14 @@ const ShoppingListPage = () => {
             </View>
 
             {shoppingList.map((item) => (
-              <View key={item._id} className="shopping-item">
+              <View key={item.itemId} className="shopping-item">
                 <View className="item-info">
-                  <Text className="item-name">{item.material_name}</Text>
+                  <Text className="item-name">{item.materialName}</Text>
                   <Text className="item-quantity">
-                    需要: {item.quantity_needed} {item.unit}
+                    需要购买: {item.quantityNeeded} {item.unit}
+                  </Text>
+                  <Text className="item-stock">
+                    当前库存: {item.currentStock} {item.unit}
                   </Text>
                   <Text className="item-time">
                     推荐时间: {formatDate(item.createTime)}
@@ -92,7 +132,7 @@ const ShoppingListPage = () => {
                   <Button
                     size="small"
                     type="success"
-                    onClick={() => handleMarkPurchased(item._id)}
+                    onClick={() => handleMarkPurchased(item)}
                   >
                     已购买
                   </Button>
@@ -102,6 +142,48 @@ const ShoppingListPage = () => {
           </>
         )}
       </ScrollView>
+
+      {/* 更新库存确认弹窗 */}
+      <Dialog
+        title="更新库存"
+        visible={showUpdateDialog}
+        onConfirm={confirmUpdateInventory}
+        onCancel={cancelUpdate}
+        confirmText="确认更新"
+        cancelText="取消"
+        closeOnOverlayClick={false}
+      >
+        <View className="update-dialog">
+          {selectedItem && (
+            <>
+              <Text className="dialog-title">
+                确认已购买 {selectedItem.materialName}？
+              </Text>
+              <View className="quantity-info">
+                <Text className="quantity-label">需要购买:</Text>
+                <Text className="quantity-value">
+                  {selectedItem.quantityNeeded} {selectedItem.unit}
+                </Text>
+              </View>
+              <View className="quantity-info">
+                <Text className="quantity-label">当前库存:</Text>
+                <Text className="quantity-value">
+                  {selectedItem.currentStock} {selectedItem.unit}
+                </Text>
+              </View>
+              <View className="quantity-info">
+                <Text className="quantity-label">更新后库存:</Text>
+                <Text className="quantity-value">
+                  {newQuantity} {selectedItem.unit}
+                </Text>
+              </View>
+              <Text className="dialog-hint">
+                点击"确认更新"后，该物品将从购物清单中移除
+              </Text>
+            </>
+          )}
+        </View>
+      </Dialog>
     </View>
   );
 };
