@@ -23,7 +23,8 @@ const BusinessHeader = () => {
   useEffect(() => {
     loadCurrentUser();
     loadNoticeText();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // 只在组件挂载时执行一次
 
   const loadCurrentUser = async () => {
     try {
@@ -39,6 +40,15 @@ const BusinessHeader = () => {
       // 使用默认值
       const displayInfo = getUserInfo();
       setUserDisplayInfo(displayInfo);
+
+      // 在开发环境显示错误提示
+      if (process.env.NODE_ENV === "development") {
+        Toast.show({
+          type: "text",
+          content: "获取用户信息失败，使用默认信息",
+          duration: 2000,
+        });
+      }
     }
   };
 

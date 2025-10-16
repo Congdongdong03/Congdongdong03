@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { View, Text } from "@tarojs/components";
-import BusinessHeader from "../BusinessHeader";
+import BusinessHeader from "../Businessheader";
 import CategoryMenu from "../CategoryMenu";
 import Taro from "@tarojs/taro";
 import "./index.scss";

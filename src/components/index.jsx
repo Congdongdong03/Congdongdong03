@@ -1,7 +1,7 @@
 // src/components/ProductImage/index.jsx
 import React, { useState, useMemo, useRef } from "react";
 import { View, Image } from "@tarojs/components";
-import defaultImg from "../assets/icons/default-food.png";
+import defaultImg from "@/assets/icons/default-food.png";
 
 const ProductImage = ({
   src,

@@ -14,14 +14,22 @@ import ProductImage from "../../../components/index";
 import plusIcon from "../../../assets/icons/plus.png";
 import shoppingCar from "../../../assets/icons/shoppingcar.png";
 import { createOrder, getCurrentUser } from "../../../services/api";
+import { getIngredientsSuggestions } from "../../../constants/dishIngredients";
+import { WECHAT_CONFIG } from "../../../constants/api";
+import { debounce } from "../../../utils/debounce";
 import "./index.scss";
+
+// 购物车角标显示配置
+// true: 显示菜品种类数（有3种菜就显示3）
+// false: 显示菜品总数量（番茄炒蛋×2 + 鸡翅×3 = 显示5）
+const SHOW_ITEM_TYPES_IN_BADGE = true;
 
 const CategoryMenu = ({ categories }) => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [showInputNumbers, setShowInputNumbers] = useState({});
   const [inputValues, setInputValues] = useState({});
-  const [cartTotal, setCartTotal] = useState(0); // 总数量
-  const [cartItemCount, setCartItemCount] = useState(0); // 菜品种类数量
+  const [cartTotal, setCartTotal] = useState(0); // 菜品总数量（所有菜品的数量之和）
+  const [cartItemCount, setCartItemCount] = useState(0); // 菜品种类数量（不同菜品的个数）
   const [selectedItems, setSelectedItems] = useState({}); // 存储选中的商品信息
   const [currentUser, setCurrentUser] = useState(null);
   const [showCartModal, setShowCartModal] = useState(false);
@@ -39,7 +47,26 @@ const CategoryMenu = ({ categories }) => {
     getCurrentUser().then(setCurrentUser);
     // 从本地存储加载购物车
     loadCartFromStorage();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // 只在组件挂载时执行一次
+
+  // 监听订单备注变化，自动保存到本地存储（使用防抖优化）
+  useEffect(() => {
+    if (Object.keys(selectedItems).length > 0) {
+      const debouncedSave = debounce(() => {
+        saveCartToStorage(
+          selectedItems,
+          inputValues,
+          showInputNumbers,
+          cartTotal,
+          orderRemark
+        );
+      }, 500); // 500ms 防抖延迟
+
+      debouncedSave();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [orderRemark]); // 只在orderRemark变化时执行
 
   // 从本地存储加载购物车
   const loadCartFromStorage = useCallback(() => {
@@ -51,10 +78,19 @@ const CategoryMenu = ({ categories }) => {
         setShowInputNumbers(savedCart.showInputNumbers || {});
         setCartTotal(savedCart.cartTotal || 0);
         setCartItemCount(Object.keys(savedCart.selectedItems || {}).length);
+        setOrderRemark(savedCart.orderRemark || ""); // 恢复订单备注
       }
     } catch (error) {
       console.error("加载购物车失败:", error);
     }
+  }, []);
+
+  // 计算购物车总数量（所有菜品数量之和）
+  const calculateCartTotal = useCallback((items) => {
+    return Object.values(items).reduce(
+      (total, item) => total + item.quantity,
+      0
+    );
   }, []);
 
   // 购物车抖动动画
@@ -66,56 +102,28 @@ const CategoryMenu = ({ categories }) => {
   }, []);
 
   // 检查购物建议
+  // 使用配置文件中的菜品原材料映射
+  // TODO: 未来应该从后端API获取菜品的原材料信息
   const checkShoppingSuggestions = async (items) => {
     try {
-      const suggestions = [];
-      for (const item of Object.values(items)) {
-        // 这里应该调用API检查菜品所需的原材料
-        // 暂时使用模拟数据
-        if (item.name === "番茄炒蛋") {
-          suggestions.push("番茄");
-        }
-        if (item.name === "可乐鸡翅") {
-          suggestions.push("可乐", "鸡翅");
-        }
-        if (item.name === "红烧肉") {
-          suggestions.push("五花肉", "老抽");
-        }
-      }
-      return [...new Set(suggestions)]; // 去重
+      const dishes = Object.values(items);
+      return getIngredientsSuggestions(dishes);
     } catch (error) {
       console.error("检查购物建议失败:", error);
       return [];
     }
   };
 
-  // 获取共享购物车数据
-  const getSharedCartData = () => {
-    // 模拟共享购物车数据
-    const sharedItems = {
-      ...selectedItems,
-      // 添加其他用户的购物车项目
-      shared_item_001: {
-        _id: "shared_item_001",
-        name: "蒜蓉西兰花",
-        price: 35,
-        quantity: 1,
-        addedBy: "朋友A",
-        addedByAvatar: "/assets/icons/default-avatar.png",
-      },
-    };
-    return sharedItems;
-  };
-
   // 保存购物车到本地存储
   const saveCartToStorage = useCallback(
-    (items, values, showNumbers, total) => {
+    (items, values, showNumbers, total, remark = "") => {
       try {
         Taro.setStorageSync("shopping_cart", {
           selectedItems: items,
           inputValues: values,
           showInputNumbers: showNumbers,
           cartTotal: total,
+          orderRemark: remark, // 保存订单备注
         });
         // 更新菜品种类数量
         setCartItemCount(Object.keys(items).length);
@@ -188,7 +196,8 @@ const CategoryMenu = ({ categories }) => {
       newSelectedItems,
       newInputValues,
       newShowInputNumbers,
-      newCartTotal
+      newCartTotal,
+      orderRemark
     );
   };
 
@@ -220,7 +229,8 @@ const CategoryMenu = ({ categories }) => {
       newSelectedItems,
       newInputValues,
       showInputNumbers,
-      newCartTotal
+      newCartTotal,
+      orderRemark
     );
   };
 
@@ -235,11 +245,8 @@ const CategoryMenu = ({ categories }) => {
       const newSelectedItems = { ...selectedItems };
       delete newSelectedItems[dishId];
 
-      // 正确计算总数量（所有菜品数量之和）
-      const newCartTotal = Object.values(newSelectedItems).reduce(
-        (total, item) => total + item.quantity,
-        0
-      );
+      // 使用统一的计算函数
+      const newCartTotal = calculateCartTotal(newSelectedItems);
 
       setShowInputNumbers(newShowInputNumbers);
       setInputValues(newInputValues);
@@ -252,7 +259,8 @@ const CategoryMenu = ({ categories }) => {
         newSelectedItems,
         newInputValues,
         newShowInputNumbers,
-        newCartTotal
+        newCartTotal,
+        orderRemark
       );
     } else {
       // 减少数量
@@ -261,11 +269,8 @@ const CategoryMenu = ({ categories }) => {
       const newSelectedItems = { ...selectedItems };
       newSelectedItems[dishId].quantity = newValue;
 
-      // 正确计算总数量（所有菜品数量之和）
-      const newCartTotal = Object.values(newSelectedItems).reduce(
-        (total, item) => total + item.quantity,
-        0
-      );
+      // 使用统一的计算函数
+      const newCartTotal = calculateCartTotal(newSelectedItems);
 
       setInputValues(newInputValues);
       setSelectedItems(newSelectedItems);
@@ -276,7 +281,8 @@ const CategoryMenu = ({ categories }) => {
         newSelectedItems,
         newInputValues,
         showInputNumbers,
-        newCartTotal
+        newCartTotal,
+        orderRemark
       );
     }
   };
@@ -316,7 +322,7 @@ const CategoryMenu = ({ categories }) => {
       // 在创建订单前，请求用户授权接收订阅消息
       try {
         await Taro.requestSubscribeMessage({
-          tmplIds: ["uAhvMsr0N9n9bjCu64gxX0oZTAsjgUIxnxsSvgVN16s"], // 新的订阅消息模板ID
+          tmplIds: WECHAT_CONFIG.SUBSCRIBE_MESSAGE_TEMPLATE_IDS,
         });
         console.log("✅ 用户已授权订阅消息");
       } catch (subscribeError) {
@@ -508,7 +514,7 @@ const CategoryMenu = ({ categories }) => {
 
       <View className="product-order">
         <Badge
-          value={cartItemCount}
+          value={SHOW_ITEM_TYPES_IN_BADGE ? cartItemCount : cartTotal}
           style={{
             marginInlineEnd: "10px",
             "--nutui-badge-height": "12px",
@@ -602,7 +608,7 @@ const CategoryMenu = ({ categories }) => {
                   value={orderRemark}
                   onChange={(value) => setOrderRemark(value)}
                   maxLength={100}
-                  showWordLimit
+                  limitShow
                   className="remark-textarea"
                 />
               </View>
