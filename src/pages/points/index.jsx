@@ -68,10 +68,10 @@ const PointsPage = () => {
     }
 
     try {
-      await rewardPoints(selectedUser._id, rewardAmount);
+      await rewardPoints(selectedUser.openid, rewardAmount);
       Toast.show({
         type: "success",
-        content: `成功奖励 ${selectedUser.nickName} ${rewardAmount} 积分！`,
+        content: `成功奖励 ${selectedUser.nickname} ${rewardAmount} 积分！`,
         duration: 2000,
       });
       setShowRewardPanel(false);
@@ -151,11 +151,11 @@ const PointsPage = () => {
           ) : (
             <View className="history-list">
               {pointsHistory.map((record) => (
-                <View key={record._id} className="history-item">
+                <View key={record.id} className="history-item">
                   <View className="history-info">
                     <Text className="history-desc">{record.description}</Text>
                     <Text className="history-time">
-                      {formatDate(record.createTime)}
+                      {formatDate(record.createdAt)}
                     </Text>
                   </View>
                   <View className="history-points">
@@ -196,14 +196,14 @@ const PointsPage = () => {
                 <View className="user-list">
                   {allUsers.map((user) => (
                     <View
-                      key={user._id}
+                      key={user.id}
                       className={`user-item ${
-                        selectedUser?._id === user._id ? "selected" : ""
+                        selectedUser?.id === user.id ? "selected" : ""
                       }`}
                       onClick={() => setSelectedUser(user)}
                     >
                       <Avatar src={user.avatar} size="small" />
-                      <Text className="user-name">{user.nickName}</Text>
+                      <Text className="user-name">{user.nickname}</Text>
                     </View>
                   ))}
                 </View>

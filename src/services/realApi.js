@@ -239,3 +239,10 @@ export const login = async (code) => {
     msg: "登录成功",
   };
 };
+
+// 取消订单
+export const cancelOrder = async (orderId) => {
+  return request(`/orders/${orderId}`, {
+    method: "DELETE",
+  });
+};

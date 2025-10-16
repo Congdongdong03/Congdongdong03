@@ -619,17 +619,26 @@ const CategoryMenu = ({ categories }) => {
                   </Text>
                 )}
               </View>
-              <Button
-                type="primary"
-                size="large"
+              <View
+                style={{
+                  backgroundColor: "#f9dde6 !important",
+                  width: "100%",
+                  height: "80rpx",
+                  textAlign: "center",
+                  lineHeight: "80rpx",
+                  borderRadius: "50rpx",
+                  fontSize: "32rpx",
+                  fontWeight: "600",
+                  color: "#4a4a4a !important",
+                  boxShadow: "0 4rpx 12rpx rgba(249, 221, 230, 0.3)",
+                }}
                 onClick={handleSubmitOrder}
                 disabled={Object.keys(selectedItems).length === 0}
-                className="confirm-order-btn"
               >
                 {Object.keys(selectedItems).length === 0
                   ? "购物车为空"
                   : "选好了，下单！"}
-              </Button>
+              </View>
             </View>
           </View>
         </View>

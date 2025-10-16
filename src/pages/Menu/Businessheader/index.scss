@@ -11,10 +11,28 @@
     justify-content: space-between; /* 左右分布 */
     padding: 0 40rpx; // 增加左右内边距，制造呼吸感
 
-    .header-userPicture image {
-      width: 120rpx;
-      height: 120rpx;
-      border-radius: 10rpx;
+    .header-userPicture {
+      position: relative;
+      cursor: pointer;
+
+      Image {
+        width: 120rpx;
+        height: 120rpx;
+        border-radius: 10rpx;
+      }
+
+      .auth-hint {
+        position: absolute;
+        bottom: -5rpx;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: rgba(249, 221, 230, 0.9);
+        color: #fff;
+        font-size: 18rpx;
+        padding: 2rpx 8rpx;
+        border-radius: 8rpx;
+        white-space: nowrap;
+      }
     }
 
     .business-info {

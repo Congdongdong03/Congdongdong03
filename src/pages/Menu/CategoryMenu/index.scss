@@ -241,6 +241,9 @@
     display: flex;
     flex-direction: column;
     animation: slideUp 0.3s ease-out;
+    overflow: hidden;
+    z-index: 2001;
+    pointer-events: auto;
   }
 
   @keyframes slideUp {
@@ -303,8 +306,8 @@
   .cart-content {
     flex: 1;
     padding: 20rpx 30rpx;
-    /* Removed fixed max-height to allow content to scroll within the modal */
-    overflow-y: auto; /* Ensure content itself scrolls if it overflows */
+    overflow-y: auto;
+    min-height: 0;
   }
 
   .cart-empty {
@@ -376,6 +379,9 @@
     padding: 30rpx;
     border-top: 1rpx solid #f9dde6; // 晨曦粉边框
     background-color: #f4f6f8; // 冰川灰背景
+    flex-shrink: 0;
+    z-index: 2002;
+    pointer-events: auto;
 
     .cart-total {
       margin-bottom: 20rpx;
@@ -402,6 +408,8 @@
       font-weight: 600; // 中等字重
       color: #4a4a4a !important; // 主文本色
       box-shadow: 0 4rpx 12rpx rgba(249, 221, 230, 0.3);
+      width: 100%;
+      pointer-events: auto;
     }
 
     // 覆盖 NutUI 按钮默认样式
@@ -428,7 +436,7 @@
 
     .remark-textarea {
       width: 100%;
-      min-height: 120rpx;
+      height: 30rpx;
       border: 2rpx solid #f4f6f8;
       border-radius: 12rpx;
       padding: 16rpx;

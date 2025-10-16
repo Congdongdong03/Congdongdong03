@@ -162,10 +162,10 @@ const AdminPage = () => {
               </View>
             ) : (
               orders.map((order) => (
-                <View key={order._id} className="order-card">
+                <View key={order.id} className="order-card">
                   <View className="order-header">
                     <Text className="order-time">
-                      {formatDate(order.createTime)}
+                      {formatDate(order.createdAt)}
                     </Text>
                     <Text
                       className="order-status"
@@ -196,7 +196,7 @@ const AdminPage = () => {
                             size="small"
                             type="primary"
                             onClick={() =>
-                              handleOrderStatusChange(order._id, "in_progress")
+                              handleOrderStatusChange(order.id, "in_progress")
                             }
                           >
                             接单
@@ -205,7 +205,7 @@ const AdminPage = () => {
                             size="small"
                             type="primary"
                             onClick={() =>
-                              handleOrderStatusChange(order._id, "cancelled")
+                              handleOrderStatusChange(order.id, "cancelled")
                             }
                           >
                             取消
@@ -217,7 +217,7 @@ const AdminPage = () => {
                           size="small"
                           type="success"
                           onClick={() =>
-                            handleOrderStatusChange(order._id, "completed")
+                            handleOrderStatusChange(order.id, "completed")
                           }
                         >
                           完成
@@ -239,7 +239,7 @@ const AdminPage = () => {
               </View>
             ) : (
               users.map((user) => (
-                <View key={user._id} className="user-card">
+                <View key={user.id} className="user-card">
                   <View className="user-info">
                     <Avatar src={user.avatar} size="normal" />
                     <View className="user-details">
@@ -284,7 +284,7 @@ const AdminPage = () => {
             </View>
 
             {dishes.map((dish) => (
-              <View key={dish._id} className="dish-card">
+              <View key={dish.id} className="dish-card">
                 <View className="dish-info">
                   <Text className="dish-name">{dish.name}</Text>
                   <Text className="dish-category">

@@ -1,14 +1,21 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
-import { Button, Toast } from "@nutui/nutui-react-taro";
-import { fetchUserOrders, getCurrentUser } from "../../services/api";
+import { Button, Toast, Dialog } from "@nutui/nutui-react-taro";
+import {
+  fetchUserOrders,
+  getCurrentUser,
+  cancelOrder,
+} from "../../services/api";
 import "./index.scss";
 
 function OrderPage() {
   const [orders, setOrders] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [cancellingOrderId, setCancellingOrderId] = useState(null);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [selectedOrderForCancel, setSelectedOrderForCancel] = useState(null);
 
   useEffect(() => {
     loadOrders();
@@ -61,6 +68,51 @@ function OrderPage() {
       .padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
   };
 
+  // 处理取消订单
+  const handleCancelOrder = (order) => {
+    setSelectedOrderForCancel(order);
+    setShowCancelDialog(true);
+  };
+
+  // 确认取消订单
+  const confirmCancelOrder = async () => {
+    if (!selectedOrderForCancel) return;
+
+    try {
+      setCancellingOrderId(selectedOrderForCancel.id);
+      setShowCancelDialog(false);
+
+      await cancelOrder(selectedOrderForCancel.id);
+
+      Toast.show({
+        type: "success",
+        content: `订单已取消，${selectedOrderForCancel.totalPoints} 积分已退还`,
+        duration: 2000,
+      });
+
+      // 刷新订单列表
+      await loadOrders();
+    } catch (error) {
+      console.error("取消订单失败:", error);
+      const errorMessage =
+        error.response?.data?.error || error.message || "取消订单失败";
+      Toast.show({
+        type: "fail",
+        content: errorMessage,
+        duration: 2000,
+      });
+    } finally {
+      setCancellingOrderId(null);
+      setSelectedOrderForCancel(null);
+    }
+  };
+
+  // 关闭取消弹窗
+  const handleCloseCancelDialog = () => {
+    setShowCancelDialog(false);
+    setSelectedOrderForCancel(null);
+  };
+
   if (loading) {
     return (
       <View className="order-page">
@@ -86,10 +138,10 @@ function OrderPage() {
           </View>
         ) : (
           orders.map((order) => (
-            <View key={order._id} className="order-item">
+            <View key={order.id} className="order-item">
               <View className="order-header-info">
                 <Text className="order-time">
-                  {formatDate(order.createTime)}
+                  {formatDate(order.createdAt)}
                 </Text>
                 <Text
                   className="order-status"
@@ -117,13 +169,8 @@ function OrderPage() {
                   <Button
                     size="small"
                     type="primary"
-                    onClick={() => {
-                      Toast.show({
-                        type: "text",
-                        content: "请联系大厨取消订单",
-                        duration: 2000,
-                      });
-                    }}
+                    loading={cancellingOrderId === order.id}
+                    onClick={() => handleCancelOrder(order)}
                   >
                     取消订单
                   </Button>
@@ -133,6 +180,48 @@ function OrderPage() {
           ))
         )}
       </ScrollView>
+
+      {/* 取消订单确认弹窗 */}
+      <Dialog
+        title="取消订单"
+        visible={showCancelDialog}
+        okText="确认取消"
+        cancelText="保留订单"
+        onOk={confirmCancelOrder}
+        onCancel={handleCloseCancelDialog}
+        footer={null}
+      >
+        <View style={{ padding: "16px 0" }}>
+          <Text>确定要取消此订单吗？</Text>
+          {selectedOrderForCancel && (
+            <View
+              style={{ marginTop: "12px", fontSize: "14px", color: "#666" }}
+            >
+              <Text>
+                取消后，{selectedOrderForCancel.totalPoints} 积分将退还到账户
+              </Text>
+            </View>
+          )}
+          <View style={{ marginTop: "20px", display: "flex", gap: "10px" }}>
+            <Button
+              type="default"
+              size="small"
+              onClick={handleCloseCancelDialog}
+              style={{ flex: 1 }}
+            >
+              保留订单
+            </Button>
+            <Button
+              type="primary"
+              size="small"
+              onClick={confirmCancelOrder}
+              style={{ flex: 1 }}
+            >
+              确认取消
+            </Button>
+          </View>
+        </View>
+      </Dialog>
     </View>
   );
 }

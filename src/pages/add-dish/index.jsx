@@ -320,30 +320,25 @@ const AddDishPage = () => {
             />
             <Text className="form-hint">点餐时消耗的积分数量</Text>
           </View>
-
-          <View className="form-item">
-            <Text className="form-label">菜品图片</Text>
-            <View className="image-preview">
-              <image
-                src={formData.image}
-                mode="aspectFit"
-                className="preview-image"
-              />
-              <Text className="image-hint">使用默认图片，后续可更换</Text>
-            </View>
-          </View>
         </View>
 
         <View className="form-actions">
-          <Button
-            type="primary"
-            size="large"
+          <View
+            style={{
+              backgroundColor: "#f9dde6 !important",
+              width: "100%",
+              height: "80rpx",
+              textAlign: "center",
+              lineHeight: "80rpx",
+              borderRadius: "50rpx",
+              fontSize: "32rpx",
+              fontWeight: "600",
+              color: "#4a4a4a !important",
+            }}
             onClick={handleSubmit}
-            loading={loading}
-            className="submit-button"
           >
             添加菜品
-          </Button>
+          </View>
         </View>
       </ScrollView>
     </View>

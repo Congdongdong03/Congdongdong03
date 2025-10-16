@@ -156,14 +156,14 @@ const InventoryPage = () => {
       <View className="inventory-header">
         <Text className="page-title">🧊 我们的冰箱</Text>
         <Text className="page-subtitle">看看家里还有什么食材</Text>
-        <Button
+        <View
           type="primary"
           size="small"
           onClick={() => setShowAddForm(!showAddForm)}
           className="add-item-btn"
         >
           {showAddForm ? "取消添加" : "➕ 添加物品"}
-        </Button>
+        </View>
       </View>
 
       {showAddForm && (
@@ -195,14 +195,22 @@ const InventoryPage = () => {
               className="form-input"
             />
           </View>
-          <Button
-            type="primary"
-            size="large"
+          <View
             onClick={handleAddItem}
-            className="add-button"
+            style={{
+              backgroundColor: "#f9dde6 !important",
+              width: "100%",
+              height: "80rpx",
+              textAlign: "center",
+              lineHeight: "80rpx",
+              borderRadius: "50rpx",
+              fontSize: "32rpx",
+              fontWeight: "600",
+              color: "#4a4a4a !important",
+            }}
           >
             添加物品
-          </Button>
+          </View>
         </View>
       )}
 
@@ -241,14 +249,12 @@ const InventoryPage = () => {
                   />
                   <Text className="quantity-unit">{item.unit}</Text>
                 </View>
-                <Button
-                  type="primary"
-                  size="small"
+                <View
                   onClick={() => handleDeleteItem(item.id)}
                   className="delete-btn"
                 >
                   删除
-                </Button>
+                </View>
               </View>
             </View>
           ))

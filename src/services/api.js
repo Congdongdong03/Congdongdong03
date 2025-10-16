@@ -127,3 +127,8 @@ export const fetchAllUsers = async () => {
 export const login = async (code) => {
   return RealApi.login(code);
 };
+
+// 取消订单
+export const cancelOrder = async (orderId) => {
+  return RealApi.cancelOrder(orderId);
+};
