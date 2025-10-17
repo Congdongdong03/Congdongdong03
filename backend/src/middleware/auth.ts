@@ -5,8 +5,8 @@ import prisma from "../db/prisma";
 const IS_DEV = process.env.NODE_ENV !== "production";
 
 /**
- * 验证Chef权限的中间件（宽松模式）
- * 开发环境下会跳过严格验证
+ * 验证Chef权限的中间件
+ * 权限规则：昵称是 "Wesley" 或 OpenID 是 "o9k7x60psm724DLlAw97yYpxskh8"
  */
 export const verifyChefRole = async (
   req: Request,
@@ -35,8 +35,20 @@ export const verifyChefRole = async (
       return res.status(404).json({ error: "操作者用户不存在" });
     }
 
-    if (operatorUser.role !== "chef") {
-      console.log("❌ 操作者用户角色不是chef:", operatorUser.role);
+    // 新的权限验证规则：昵称是 "Wesley" 或 OpenID 是 "o9k7x60psm724DLlAw97yYpxskh8"
+    const isWesleyNickname = operatorUser.nickname === "Wesley";
+    const isWesleyOpenId =
+      operatorUser.openid === "o9k7x60psm724DLlAw97yYpxskh8";
+
+    console.log("🔍 权限检查:", {
+      nickname: operatorUser.nickname,
+      openid: operatorUser.openid,
+      isWesleyNickname,
+      isWesleyOpenId,
+    });
+
+    if (!isWesleyNickname && !isWesleyOpenId) {
+      console.log("❌ 权限验证失败：不是 Wesley 用户");
       return res.status(403).json({ error: "需要大厨权限" });
     }
 

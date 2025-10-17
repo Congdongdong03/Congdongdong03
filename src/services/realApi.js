@@ -8,8 +8,22 @@ const BASE_URL = ENV_CONFIG.apiBaseUrl;
 // 通用请求函数
 const request = async (url, options = {}) => {
   try {
+    // 处理查询参数
+    let finalUrl = `${BASE_URL}${url}`;
+    if (options.params) {
+      const queryString = Object.keys(options.params)
+        .map(
+          (key) =>
+            `${encodeURIComponent(key)}=${encodeURIComponent(
+              options.params[key]
+            )}`
+        )
+        .join("&");
+      finalUrl += `?${queryString}`;
+    }
+
     const response = await Taro.request({
-      url: `${BASE_URL}${url}`,
+      url: finalUrl,
       method: options.method || "GET",
       data: options.data,
       header: {
@@ -136,7 +150,9 @@ export const getCurrentUser = async () => {
   }
 
   // 使用真实的 openid 获取用户信息
-  return request(`/users/${openid}`);
+  const user = await request(`/users/${openid}`);
+  console.log("🔍 getCurrentUser 返回的用户对象:", user);
+  return user;
 };
 
 // 获取用户订单 - 接受userId
@@ -315,11 +331,15 @@ export const updateNoticeText = async (noticeText, userId) => {
     throw new Error("更新温馨提示需要用户ID");
   }
 
+  console.log("🔍 updateNoticeText 调用参数:", { noticeText, userId });
+
   return request("/settings/notice", {
     method: "PUT",
     data: {
       noticeText,
-      operatorUserId: userId, // 修复：使用operatorUserId而不是userId
+    },
+    params: {
+      operatorUserId: userId, // 添加操作者用户ID用于权限验证
     },
   });
 };
