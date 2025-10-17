@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: menu-backend
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: yarn install && npx prisma generate && yarn build
+    startCommand: node dist/app.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+    healthCheckPath: /
+
