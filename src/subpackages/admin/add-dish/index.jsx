@@ -375,7 +375,12 @@ const AddDishPage = () => {
             {isEditMode ? "修改菜品信息" : "为我们的菜单增添美味"}
           </Text>
         </View>
-        <View className="loading">加载中...</View>
+        <View className="loading">
+          <Text>加载中...</Text>
+          <Text>loadingDish: {loadingDish ? 'true' : 'false'}</Text>
+          <Text>categoriesLoading: {categoriesLoading ? 'true' : 'false'}</Text>
+          <Text>categories.length: {categories.length}</Text>
+        </View>
       </View>
     );
   }
@@ -388,6 +393,10 @@ const AddDishPage = () => {
         </Text>
         <Text className="page-subtitle">
           {isEditMode ? "修改菜品信息" : "为我们的菜单增添美味"}
+        </Text>
+        {/* 调试信息 */}
+        <Text style={{fontSize: '12px', color: '#999'}}>
+          调试: categories={categories.length}, loading={loadingDish || categoriesLoading}
         </Text>
       </View>
 
