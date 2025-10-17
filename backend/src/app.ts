@@ -108,38 +108,40 @@ app.get("/api/shopping-list", async (req, res) => {
 // 错误处理中间件（必须在所有路由之后）
 app.use(errorHandler);
 
-// 根据环境启动服务器
-const isProduction = process.env.NODE_ENV === 'production';
+// 启动服务器 - 智能选择 HTTP 或 HTTPS
+// 检查 SSL 证书是否存在
+const sslKeyPath = path.join(__dirname, "../ssl/key.pem");
+const sslCertPath = path.join(__dirname, "../ssl/cert.pem");
+const hasSslCerts = fs.existsSync(sslKeyPath) && fs.existsSync(sslCertPath);
 
-if (isProduction) {
-  // 生产环境：使用 HTTP，监听 0.0.0.0
-  // Render 会自动处理 HTTPS 和证书
-  app.listen(Number(PORT), '0.0.0.0', () => {
-    console.log(`✅ Server is live and listening on port ${PORT}`);
-    console.log(`🌍 Environment: production`);
-    console.log(`📍 Ready to accept external connections`);
-  });
-} else {
-  // 本地开发环境：使用 HTTPS（如果证书存在）
+if (hasSslCerts) {
+  // 如果 SSL 证书存在，使用 HTTPS（本地开发）
   try {
     const httpsOptions = {
-      key: fs.readFileSync(path.join(__dirname, "../ssl/key.pem")),
-      cert: fs.readFileSync(path.join(__dirname, "../ssl/cert.pem")),
+      key: fs.readFileSync(sslKeyPath),
+      cert: fs.readFileSync(sslCertPath),
     };
-    
-    https.createServer(httpsOptions, app).listen(Number(PORT), '0.0.0.0', () => {
-      console.log(`✅ HTTPS服务器运行在端口 ${PORT}`);
-      console.log(`📍 API地址: https://localhost:${PORT}/api`);
-      console.log(`🔒 使用HTTPS协议，支持微信小程序图片显示`);
-    });
+
+    https
+      .createServer(httpsOptions, app)
+      .listen(Number(PORT), "0.0.0.0", () => {
+        console.log(`✅ HTTPS服务器运行在端口 ${PORT}`);
+        console.log(`📍 API地址: https://localhost:${PORT}/api`);
+        console.log(`🔒 使用HTTPS协议，支持微信小程序图片显示`);
+      });
   } catch (error) {
-    // 如果 SSL 证书不存在，降级为 HTTP
-    console.log('⚠️  SSL证书未找到，使用HTTP模式');
-    app.listen(Number(PORT), '0.0.0.0', () => {
-      console.log(`✅ HTTP服务器运行在端口 ${PORT}`);
-      console.log(`📍 API地址: http://localhost:${PORT}/api`);
-    });
+    console.error("❌ HTTPS服务器启动失败:", error);
+    process.exit(1);
   }
+} else {
+  // 如果 SSL 证书不存在，使用 HTTP（生产环境 Render）
+  // Render 会自动处理 HTTPS 和证书
+  console.log("ℹ️  未找到SSL证书，使用HTTP模式（生产环境）");
+  app.listen(Number(PORT), "0.0.0.0", () => {
+    console.log(`✅ Server is live and listening on port ${PORT}`);
+    console.log(`🌍 Listening on 0.0.0.0:${PORT}`);
+    console.log(`📍 Ready to accept external connections`);
+  });
 }
 
 export default app;
