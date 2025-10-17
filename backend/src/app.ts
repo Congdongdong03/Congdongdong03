@@ -109,7 +109,8 @@ app.get("/api/shopping-list", async (req, res) => {
 app.use(errorHandler);
 
 // 启动服务器 - 根据环境选择协议
-const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER;
+const isProduction =
+  process.env.NODE_ENV === "production" || process.env.RENDER;
 
 if (isProduction) {
   // 生产环境（Render）：强制使用 HTTP
