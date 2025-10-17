@@ -1,6 +1,7 @@
 import express from "express";
 import { verifyChefRole } from "../middleware/auth";
 import { sendOrderSuccessNotice } from "../services/subscribeMessage.service";
+import { WECHAT_CONFIG } from "../config/wechat.config";
 import prisma from "../db/prisma";
 
 const router = express.Router();
@@ -203,49 +204,38 @@ router.post("/", async (req, res) => {
       return order;
     });
 
-    // 发送订阅消息通知（异步，不阻塞响应）
-    // 获取用户信息以获取 openid
-    const userWithOpenId = await prisma.user.findUnique({
-      where: { id: userId },
+    // 发送订阅消息通知给管理员（异步，不阻塞响应）
+    // 生成订单内容摘要
+    const orderContent = items
+      .map((item: any) => `${item.name}×${item.quantity}`)
+      .join("、");
+
+    // 格式化订单时间
+    const orderTime = new Date().toLocaleString("zh-CN", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
     });
 
-    console.log("🔍 查找用户信息:", userWithOpenId);
-
-    if (userWithOpenId?.openid) {
-      // 生成订单内容摘要
-      const orderContent = items
-        .map((item: any) => `${item.name}×${item.quantity}`)
-        .join("、");
-
-      // 格式化订单时间
-      const orderTime = new Date().toLocaleString("zh-CN", {
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
+    // 异步发送订阅消息给管理员（不等待结果）
+    sendOrderSuccessNotice(
+      WECHAT_CONFIG.adminOpenId,
+      orderContent,
+      remark || "无",
+      orderTime
+    )
+      .then((sendResult) => {
+        if (sendResult.success) {
+          console.log(`✅ 已向管理员发送订单通知`);
+        } else {
+          console.warn(`⚠️ 向管理员发送订单通知失败: ${sendResult.message}`);
+        }
+      })
+      .catch((err) => {
+        console.error("发送订阅消息异常:", err);
       });
-
-      // 异步发送订阅消息（不等待结果）
-      sendOrderSuccessNotice(
-        userWithOpenId.openid,
-        orderContent,
-        remark || "无",
-        orderTime
-      )
-        .then((sendResult) => {
-          if (sendResult.success) {
-            console.log(`✅ 已向用户 ${userWithOpenId.nickname} 发送订单通知`);
-          } else {
-            console.warn(
-              `⚠️ 向用户 ${userWithOpenId.nickname} 发送订单通知失败: ${sendResult.message}`
-            );
-          }
-        })
-        .catch((err) => {
-          console.error("发送订阅消息异常:", err);
-        });
-    }
 
     // 将状态转换为小写，以匹配前端期望
     const formattedResult = {
