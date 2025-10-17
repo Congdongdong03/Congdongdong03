@@ -2,7 +2,7 @@ import Taro from "@tarojs/taro";
 import { ensureLogin, getOpenId } from "../utils/auth";
 
 // 后端API基础URL
-const BASE_URL = "https://localhost:3001/api";
+const BASE_URL = "https://congdongdong03.onrender.com/api";
 
 // 通用请求函数
 const request = async (url, options = {}) => {
