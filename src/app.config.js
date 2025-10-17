@@ -1,11 +1,19 @@
 export default {
   pages: [
     "pages/Menu/MenuPage/index", // 菜单页面（一进小程序必需）
-    "pages/inventory/index", // 库存管理页面
-    "pages/order/index", // 订单页面
-    "pages/profile/index", // 我的页面
+    "pages/inventory/index", // 库存管理页面（冰箱）- tabBar页面
+    "pages/order/index", // 订单页面（训练记录）- tabBar页面
+    "pages/profile/index", // 我的页面（干饭冠军）- tabBar页面
   ],
   subpackages: [
+    {
+      root: "subpackages/user",
+      name: "user",
+      pages: [
+        "login/index", // 登录页面
+        "points/index", // 积分中心页面
+      ],
+    },
     {
       root: "subpackages/admin",
       name: "admin",
@@ -14,14 +22,6 @@ export default {
         "category-management/index", // 分类管理页面
         "add-dish/index", // 添加菜品页面
         "shopping-list/index", // 购物清单页面
-      ],
-    },
-    {
-      root: "subpackages/user",
-      name: "user",
-      pages: [
-        "points/index", // 积分中心页面
-        "login/index", // 登录页面
       ],
     },
   ],

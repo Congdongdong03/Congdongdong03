@@ -10,6 +10,7 @@
     "compileHotReLoad": false,
     "postcss": false,
     "minified": false,
+    "lazyCodeLoading": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],

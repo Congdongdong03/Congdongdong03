@@ -14,7 +14,10 @@ import {
   getNoticeText,
   updateNoticeText,
 } from "../../services/api";
-import { getUserInfo, requestUserAuthorization } from "../../utils/userInfo";
+import {
+  getUserInfo,
+  requestUserAuthorization,
+} from "../../utils/userInfo";
 import Taro from "@tarojs/taro";
 import "./index.scss";
 
