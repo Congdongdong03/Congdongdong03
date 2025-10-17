@@ -84,18 +84,18 @@ app.get("/test-db", async (req, res) => {
 // 调试端点：检查 Prisma 配置
 app.get("/debug/prisma", (req, res) => {
   const config = {
-    databaseUrl: process.env.DATABASE_URL ? 
-      process.env.DATABASE_URL.substring(0, 20) + "..." : 
-      "未设置",
+    databaseUrl: process.env.DATABASE_URL
+      ? process.env.DATABASE_URL.substring(0, 20) + "..."
+      : "未设置",
     nodeEnv: process.env.NODE_ENV,
     render: process.env.RENDER,
-    prismaClientVersion: require('@prisma/client').PrismaClient.name,
+    prismaClientVersion: require("@prisma/client").PrismaClient.name,
   };
-  
+
   res.json({
     message: "Prisma 配置信息",
     config,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
