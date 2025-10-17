@@ -309,21 +309,27 @@ const ProfilePage = () => {
       console.log("📥 后端响应:", response.data);
       Toast.hide();
 
-      if (
-        response.data.success &&
-        response.data.data &&
-        response.data.data.openid
-      ) {
-        console.log("✅ 获取到 OpenID:", response.data.data.openid);
+      // 🔧 兼容新旧两种响应格式
+      let openid = null;
+      if (response.data.success && response.data.data) {
+        // 新格式：{ success: true, data: { openid, ... } }
+        openid = response.data.data.openid;
+      } else if (response.data.openid) {
+        // 旧格式：{ openid, session_key, user }
+        openid = response.data.openid;
+      }
+
+      if (openid) {
+        console.log("✅ 获取到 OpenID:", openid);
 
         // 复制到剪贴板
         await Taro.setClipboardData({
-          data: response.data.data.openid,
+          data: openid,
         });
 
         Dialog.alert({
           title: "OpenID 已复制",
-          content: `OpenID: ${response.data.data.openid}\n\n已复制到剪贴板！`,
+          content: `OpenID: ${openid}\n\n已复制到剪贴板！`,
         });
       } else {
         console.error("❌ 响应格式错误:", response.data);

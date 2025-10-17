@@ -45,10 +45,22 @@ const AdminPage = () => {
       setLoading(true);
       console.log("🔄 开始加载管理页面数据...");
 
+      // 先测试简单的数据加载
+      console.log("🔍 测试API调用...");
+
       const [ordersData, usersData, dishesData] = await Promise.all([
-        fetchAllOrders(),
-        fetchAllUsers(),
-        fetchAllDishes(),
+        fetchAllOrders().catch((err) => {
+          console.error("❌ fetchAllOrders 失败:", err);
+          return [];
+        }),
+        fetchAllUsers().catch((err) => {
+          console.error("❌ fetchAllUsers 失败:", err);
+          return [];
+        }),
+        fetchAllDishes().catch((err) => {
+          console.error("❌ fetchAllDishes 失败:", err);
+          return [];
+        }),
       ]);
 
       console.log("📊 数据加载完成:", {
@@ -57,16 +69,20 @@ const AdminPage = () => {
         dishes: dishesData?.length || 0,
       });
 
-      setOrders(ordersData);
-      setUsers(usersData);
-      setDishes(dishesData);
+      setOrders(ordersData || []);
+      setUsers(usersData || []);
+      setDishes(dishesData || []);
     } catch (error) {
       console.error("❌ 加载数据失败:", error);
       Toast.show({
         type: "fail",
-        content: "加载数据失败",
-        duration: 2000,
+        content: `加载数据失败: ${error.message}`,
+        duration: 3000,
       });
+      // 设置默认空数据，确保页面能显示
+      setOrders([]);
+      setUsers([]);
+      setDishes([]);
     } finally {
       setLoading(false);
     }
@@ -214,7 +230,26 @@ const AdminPage = () => {
           <Text className="page-title">👨‍🍳 管理面板</Text>
           <Text className="page-subtitle">大厨专用管理界面</Text>
         </View>
-        <View className="loading">加载中...</View>
+        <View className="loading">
+          <Text>🔄 正在加载数据...</Text>
+          <Text>请稍候...</Text>
+        </View>
+      </View>
+    );
+  }
+
+  // 添加错误状态显示
+  if (!orders && !users && !dishes) {
+    return (
+      <View className="admin-page">
+        <View className="admin-header">
+          <Text className="page-title">👨‍🍳 管理面板</Text>
+          <Text className="page-subtitle">大厨专用管理界面</Text>
+        </View>
+        <View className="error-state">
+          <Text>❌ 数据加载失败</Text>
+          <Button onClick={loadData}>重试</Button>
+        </View>
       </View>
     );
   }

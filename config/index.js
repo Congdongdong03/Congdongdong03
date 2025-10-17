@@ -26,6 +26,12 @@ const config = {
     miniCssExtractPluginOption: {
       ignoreOrder: true,
     },
+    // 确保 SourceMap 配置正确
+    sourceMap: {
+      enable: true,
+      // 开发构建时生成 SourceMap
+      enableSourceMap: true,
+    },
     postcss: {
       pxtransform: {
         enable: true,

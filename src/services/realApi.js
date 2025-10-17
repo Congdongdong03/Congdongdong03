@@ -1,8 +1,9 @@
 import Taro from "@tarojs/taro";
 import { ensureLogin, getOpenId } from "../utils/auth";
+import { ENV_CONFIG } from "../config/environment";
 
-// 后端API基础URL
-const BASE_URL = "https://congdongdong03.onrender.com/api";
+// 使用环境配置的API基础URL
+const BASE_URL = ENV_CONFIG.apiBaseUrl;
 
 // 通用请求函数
 const request = async (url, options = {}) => {
@@ -176,7 +177,7 @@ export const updateOrderStatus = async (orderId, newStatus) => {
 export const fetchAllOrders = async () => {
   // 🆕 获取当前用户ID用于权限验证
   const user = await getCurrentUser();
-  return request(`/orders/all?userId=${user.id}`);
+  return request(`/orders/all?operatorUserId=${user.id}`);
 };
 
 // 获取库存
@@ -271,7 +272,7 @@ export const getPointsHistory = async () => {
 export const fetchAllUsers = async () => {
   // 🆕 获取当前用户ID用于权限验证
   const user = await getCurrentUser();
-  return request(`/users?userId=${user.id}`);
+  return request(`/users?operatorUserId=${user.id}`);
 };
 
 // 模拟登录接口
@@ -318,7 +319,7 @@ export const updateNoticeText = async (noticeText, userId) => {
     method: "PUT",
     data: {
       noticeText,
-      userId,
+      operatorUserId: userId, // 修复：使用operatorUserId而不是userId
     },
   });
 };
@@ -358,7 +359,7 @@ export const fetchAllInventory = async () => {
 export const uploadImage = async (filePath) => {
   return new Promise((resolve, reject) => {
     Taro.uploadFile({
-      url: `${BASE_URL}/upload/image`,
+      url: ENV_CONFIG.imageUploadUrl,
       filePath: filePath,
       name: "image",
       header: {
@@ -372,7 +373,7 @@ export const uploadImage = async (filePath) => {
               // 返回完整的图片URL，避免重复拼接
               const fullUrl = data.data.url.startsWith("http")
                 ? data.data.url
-                : `https://congdongdong03.onrender.com${data.data.url}`;
+                : `${ENV_CONFIG.imageBaseUrl}${data.data.url}`;
               resolve({
                 url: fullUrl,
                 filename: data.data.filename,

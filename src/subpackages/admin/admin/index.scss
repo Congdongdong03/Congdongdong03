@@ -60,6 +60,23 @@
     padding: 100rpx 0;
     color: #666;
     font-size: 32rpx;
+
+    Text {
+      display: block;
+      margin-bottom: 20rpx;
+    }
+  }
+
+  .error-state {
+    text-align: center;
+    padding: 100rpx 0;
+    color: #ff4444;
+    font-size: 32rpx;
+
+    Text {
+      display: block;
+      margin-bottom: 40rpx;
+    }
   }
 
   .empty-state {

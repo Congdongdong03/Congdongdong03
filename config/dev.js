@@ -1,9 +1,14 @@
 module.exports = {
   env: {
-    NODE_ENV: '"development"'
+    NODE_ENV: '"development"',
   },
-  defineConstants: {
+  defineConstants: {},
+  mini: {
+    // 开发环境启用 SourceMap 用于调试
+    sourceMap: true,
   },
-  mini: {},
-  h5: {}
-}
+  h5: {
+    // H5 端也启用 SourceMap
+    sourceMap: true,
+  },
+};
