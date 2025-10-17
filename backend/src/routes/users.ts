@@ -54,18 +54,30 @@ router.get("/", verifyChefRole, async (req, res) => {
 /**
  * PUT /api/users/:openid
  * 更新用户信息（昵称和头像）
+ * 🎯 特殊规则：如果昵称是 "Wesley"，自动设置为大厨角色
  */
 router.put("/:openid", async (req, res) => {
   try {
     const { openid } = req.params;
     const { nickname, avatar } = req.body;
 
+    // 🔧 如果昵称是 "Wesley"，自动设置为大厨
+    const role = nickname === "Wesley" ? "chef" : undefined;
+
+    const updateData: any = {
+      nickname,
+      avatar,
+    };
+
+    // 只有当昵称是 "Wesley" 时才更新 role
+    if (role) {
+      updateData.role = role;
+      console.log("✨ 检测到昵称为 Wesley，自动设置为大厨角色！");
+    }
+
     const user = await prisma.user.update({
       where: { openid },
-      data: {
-        nickname,
-        avatar,
-      },
+      data: updateData,
     });
 
     res.json(user);

@@ -95,21 +95,33 @@ export const wxLogin = async () => {
 
     console.log("🔑 后端响应:", response.data);
 
-    if (response.statusCode === 200 && response.data.openid) {
-      const { openid } = response.data;
+    // 🔧 适配新的响应格式：{ success: true, data: { openid, session_key, user } }
+    if (response.statusCode === 200) {
+      let openid;
 
-      // 步骤3：保存 openid 到本地缓存
-      saveOpenId(openid);
+      // 兼容新旧两种响应格式
+      if (response.data.success && response.data.data) {
+        // 新格式
+        openid = response.data.data.openid;
+      } else if (response.data.openid) {
+        // 旧格式（向后兼容）
+        openid = response.data.openid;
+      }
 
-      console.log("✅ 微信登录成功！OpenID:", openid);
+      if (openid) {
+        // 步骤3：保存 openid 到本地缓存
+        saveOpenId(openid);
 
-      return {
-        success: true,
-        openid,
-      };
-    } else {
-      throw new Error(response.data?.error || "登录失败");
+        console.log("✅ 微信登录成功！OpenID:", openid);
+
+        return {
+          success: true,
+          openid,
+        };
+      }
     }
+
+    throw new Error(response.data?.error || "登录失败");
   } catch (error) {
     console.error("❌ 微信登录失败:", error);
     return {

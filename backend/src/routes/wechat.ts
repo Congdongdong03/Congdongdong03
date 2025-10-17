@@ -35,10 +35,14 @@ router.get("/get-openid", async (req, res) => {
       },
     });
 
+    // 返回符合前端期望的格式
     res.json({
-      openid,
-      session_key,
-      user,
+      success: true,
+      data: {
+        openid,
+        session_key,
+        user,
+      },
     });
   } catch (error: any) {
     console.error("获取OpenID失败:", error);
