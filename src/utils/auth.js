@@ -128,7 +128,7 @@ export const ensureLogin = async () => {
   // 🛠️ 开发模式：直接使用测试账号（大厨）
   const DEV_MODE =
     process.env.NODE_ENV === "development" || process.env.TARO_ENV === "weapp";
-  const DEV_OPENID = "chef_openid_001"; // 测试大厨账号
+  const DEV_OPENID = "o9k7x60psm724DLlAw97yYpxskh8"; // 测试大厨账号
 
   if (DEV_MODE) {
     console.log("🛠️ 开发模式：使用测试 OpenID (大厨账号)");

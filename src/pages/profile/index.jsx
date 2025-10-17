@@ -14,10 +14,7 @@ import {
   getNoticeText,
   updateNoticeText,
 } from "../../services/api";
-import {
-  getUserInfo,
-  requestUserAuthorization,
-} from "../../utils/userInfo";
+import { getUserInfo, requestUserAuthorization } from "../../utils/userInfo";
 import Taro from "@tarojs/taro";
 import "./index.scss";
 
@@ -206,6 +203,79 @@ const ProfilePage = () => {
     setEditingNoticeText(noticeText);
   };
 
+  // 获取当前用户的 OpenID（开发者工具）
+  const handleGetOpenId = async () => {
+    console.log("🔑 开始获取 OpenID...");
+
+    try {
+      Toast.show({
+        type: "loading",
+        content: "正在获取...",
+        duration: 0,
+      });
+
+      // 调用微信登录获取 code
+      console.log("📱 调用 Taro.login()...");
+      const loginRes = await Taro.login();
+      console.log("✅ 登录成功，code:", loginRes.code);
+      const code = loginRes.code;
+
+      if (!code) {
+        console.error("❌ 未获取到 code");
+        Toast.hide();
+        Toast.show({
+          type: "fail",
+          content: "获取登录凭证失败",
+          duration: 2000,
+        });
+        return;
+      }
+
+      // 调用后端接口换取 OpenID
+      console.log("🌐 调用后端接口，code:", code);
+      const response = await Taro.request({
+        url: `http://localhost:3001/api/wechat/get-openid?code=${code}`,
+        method: "GET",
+      });
+
+      console.log("📥 后端响应:", response.data);
+      Toast.hide();
+
+      if (
+        response.data.success &&
+        response.data.data &&
+        response.data.data.openid
+      ) {
+        console.log("✅ 获取到 OpenID:", response.data.data.openid);
+
+        // 复制到剪贴板
+        await Taro.setClipboardData({
+          data: response.data.data.openid,
+        });
+
+        Dialog.alert({
+          title: "OpenID 已复制",
+          content: `OpenID: ${response.data.data.openid}\n\n已复制到剪贴板！`,
+        });
+      } else {
+        console.error("❌ 响应格式错误:", response.data);
+        Toast.show({
+          type: "fail",
+          content: response.data.message || "获取 OpenID 失败",
+          duration: 2000,
+        });
+      }
+    } catch (error) {
+      console.error("❌ 获取 OpenID 失败:", error);
+      Toast.hide();
+      Toast.show({
+        type: "fail",
+        content: `获取失败: ${error.message || "未知错误"}`,
+        duration: 2000,
+      });
+    }
+  };
+
   if (loading) {
     return (
       <View className="profile-page">
@@ -270,6 +340,21 @@ const ProfilePage = () => {
             />
           </View>
         )}
+
+        {/* 开发者工具 */}
+        <View className="developer-section">
+          <Text className="section-title">开发者工具</Text>
+          <Cell
+            title="🔑 获取 OpenID"
+            desc="获取当前用户的微信 OpenID"
+            isLink
+            onClick={() => {
+              console.log("🖱️ Cell 被点击了！");
+              handleGetOpenId();
+            }}
+            className="developer-cell"
+          />
+        </View>
       </ScrollView>
 
       {/* 编辑温馨提示弹窗 */}
