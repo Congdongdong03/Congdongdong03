@@ -297,4 +297,32 @@
       padding: 0 60rpx;
     }
   }
+
+  // 积分奖励结果弹窗样式
+  .reward-result-dialog {
+    text-align: center;
+    padding: 20rpx 0;
+
+    .reward-user-name {
+      font-size: 36rpx;
+      font-weight: bold;
+      color: #333;
+      display: block;
+      margin-bottom: 20rpx;
+    }
+
+    .reward-message {
+      font-size: 32rpx;
+      color: #666;
+      display: block;
+      margin-bottom: 20rpx;
+    }
+
+    .reward-points {
+      font-size: 40rpx;
+      font-weight: bold;
+      color: #f9dde6;
+      display: block;
+    }
+  }
 }

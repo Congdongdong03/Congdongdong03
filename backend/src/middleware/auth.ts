@@ -22,40 +22,51 @@ export const verifyChefRole = async (
   next: NextFunction
 ) => {
   try {
-    const userId =
-      req.query.userId || req.body.userId || req.body.operatorUserId;
+    // 🔧 修复：优先使用 operatorUserId（操作者ID），而不是 userId（目标用户ID）
+    const operatorUserId = req.body.operatorUserId || req.query.operatorUserId;
+    const targetUserId = req.body.userId || req.query.userId;
 
-    // 开发模式：如果没有提供userId，允许通过
-    if (IS_DEV && !userId) {
+    // 开发模式：如果没有提供操作者ID，允许通过
+    if (IS_DEV && !operatorUserId) {
       console.log("⚠️ 开发模式：跳过权限验证");
       return next();
     }
 
-    console.log("🔍 权限验证：userId =", userId);
+    console.log(
+      "🔍 权限验证：操作者ID =",
+      operatorUserId,
+      "目标用户ID =",
+      targetUserId
+    );
 
-    if (!userId) {
-      return res.status(401).json({ error: "缺少用户ID" });
+    if (!operatorUserId) {
+      return res.status(401).json({ error: "缺少操作者用户ID" });
     }
 
-    // 查询用户角色
-    console.log("🔍 查询用户角色，userId:", userId);
-    const user = await prisma.user.findUnique({
-      where: { id: userId as string },
+    // 查询操作者用户角色（不是目标用户）
+    console.log("🔍 查询操作者用户角色，operatorUserId:", operatorUserId);
+    const operatorUser = await prisma.user.findUnique({
+      where: { id: operatorUserId as string },
     });
 
-    console.log("🔍 查询结果:", user);
+    console.log("🔍 操作者查询结果:", operatorUser);
 
-    if (!user) {
-      console.log("❌ 用户不存在");
-      return res.status(404).json({ error: "用户不存在" });
+    if (!operatorUser) {
+      console.log("❌ 操作者用户不存在");
+      return res.status(404).json({ error: "操作者用户不存在" });
     }
 
-    if (user.role !== "chef") {
-      console.log("❌ 用户角色不是chef:", user.role);
+    if (operatorUser.role !== "chef") {
+      console.log("❌ 操作者用户角色不是chef:", operatorUser.role);
       return res.status(403).json({ error: "需要大厨权限" });
     }
 
-    console.log("✅ 权限验证通过");
+    console.log(
+      "✅ 权限验证通过，操作者:",
+      operatorUser.nickname,
+      "角色:",
+      operatorUser.role
+    );
 
     // 验证通过，继续执行
     next();

@@ -8,6 +8,7 @@ import {
   Cell,
   InputNumber,
   Avatar,
+  Dialog,
 } from "@nutui/nutui-react-taro";
 import {
   fetchAllOrders,
@@ -31,6 +32,13 @@ const AdminPage = () => {
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [userPointsInput, setUserPointsInput] = useState({}); // 每个用户的积分输入状态
+  const [showRewardDialog, setShowRewardDialog] = useState(false); // 奖励结果弹窗
+  const [rewardResult, setRewardResult] = useState({
+    success: false,
+    message: "",
+    points: 0,
+    userName: "",
+  }); // 奖励结果信息
 
   const loadData = async () => {
     try {
@@ -118,25 +126,36 @@ const AdminPage = () => {
 
   const handleRewardPoints = async (userOpenid, userId) => {
     const points = userPointsInput[userId];
+    const user = users.find((u) => u.id === userId);
+    const userName = user ? user.nickname : "用户";
 
     // 验证输入
     if (!points || points <= 0) {
-      Toast.show({
-        type: "warn",
-        content: "请输入有效的积分数值",
-        duration: 2000,
+      setRewardResult({
+        success: false,
+        message: "请输入有效的积分数值",
+        points: 0,
+        userName: userName,
       });
+      setShowRewardDialog(true);
       return;
     }
 
     try {
+      console.log(`🎁 开始奖励积分: ${userName} +${points} 积分`);
+
       const result = await rewardPoints(userOpenid, points);
-      if (result.success) {
-        Toast.show({
-          type: "success",
-          content: `成功奖励 ${points} 积分！`,
-          duration: 2000,
+      // 检查响应是否包含用户和积分历史记录
+      if (result && result.user && result.history) {
+        console.log(`✅ 积分奖励成功: ${userName} +${points} 积分`);
+
+        setRewardResult({
+          success: true,
+          message: `成功奖励 ${points} 积分！`,
+          points: points,
+          userName: userName,
         });
+        setShowRewardDialog(true);
 
         // 清空输入框
         setUserPointsInput((prev) => ({ ...prev, [userId]: undefined }));
@@ -147,12 +166,15 @@ const AdminPage = () => {
         throw new Error("奖励失败");
       }
     } catch (error) {
-      console.error("奖励积分失败:", error);
-      Toast.show({
-        type: "fail",
-        content: "奖励失败，请重试",
-        duration: 2000,
+      console.error("❌ 奖励积分失败:", error);
+
+      setRewardResult({
+        success: false,
+        message: `奖励失败: ${error.message || "请重试"}`,
+        points: points,
+        userName: userName,
       });
+      setShowRewardDialog(true);
     }
   };
 
@@ -394,6 +416,23 @@ const AdminPage = () => {
           </ScrollView>
         </Tabs.TabPane>
       </Tabs>
+
+      {/* 积分奖励结果弹窗 */}
+      <Dialog
+        title={rewardResult.success ? "🎉 奖励成功" : "❌ 奖励失败"}
+        visible={showRewardDialog}
+        onConfirm={() => setShowRewardDialog(false)}
+        confirmText="确定"
+        closeOnOverlayClick={false}
+      >
+        <View className="reward-result-dialog">
+          <Text className="reward-user-name">{rewardResult.userName}</Text>
+          <Text className="reward-message">{rewardResult.message}</Text>
+          {rewardResult.success && rewardResult.points > 0 && (
+            <Text className="reward-points">+{rewardResult.points} 积分</Text>
+          )}
+        </View>
+      </Dialog>
     </View>
   );
 };

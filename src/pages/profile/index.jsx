@@ -42,10 +42,10 @@ const ProfilePage = () => {
   useEffect(() => {
     loadUserInfo(); // 首次加载
 
-    // 定时刷新（每 5 秒）
+    // 定时刷新（每 30 秒）
     const refreshTimer = setInterval(() => {
       loadUserInfo();
-    }, 5000);
+    }, 30000);
 
     // 清理定时器
     return () => clearInterval(refreshTimer);
