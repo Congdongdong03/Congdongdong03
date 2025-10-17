@@ -3,6 +3,16 @@
 
 // 判断是否为开发环境
 const isDevelopment = () => {
+  // 强制生产环境模式（如果设置了环境变量）
+  if (process.env.FORCE_PRODUCTION === "true") {
+    return false;
+  }
+
+  // 优先检查：如果明确设置了生产环境标志
+  if (process.env.NODE_ENV === "production") {
+    return false;
+  }
+
   // 方法1: 检查是否在微信开发者工具中
   if (typeof wx !== "undefined" && wx.getSystemInfoSync) {
     const systemInfo = wx.getSystemInfoSync();
@@ -34,6 +44,7 @@ const isDevelopment = () => {
     return true;
   }
 
+  // 默认返回false（生产环境）
   return false;
 };
 
