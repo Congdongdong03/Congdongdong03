@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
 import { Button, Toast, Dialog } from "@nutui/nutui-react-taro";
+import Taro, { useDidShow } from "@tarojs/taro";
 import {
   fetchUserOrders,
   getCurrentUser,
@@ -17,44 +18,6 @@ function OrderPage() {
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [selectedOrderForCancel, setSelectedOrderForCancel] = useState(null);
   const [isCancelling, setIsCancelling] = useState(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadOrdersWithCheck = async () => {
-      try {
-        setLoading(true);
-        const user = await getCurrentUser();
-        if (!isMounted) return; // 组件已卸载，停止执行
-
-        setCurrentUser(user);
-        const userOrders = await fetchUserOrders(user.id); // 使用userId避免重复请求
-        if (!isMounted) return; // 组件已卸载，停止执行
-
-        setOrders(userOrders);
-      } catch (error) {
-        if (!isMounted) return; // 组件已卸载，停止执行
-
-        console.error("加载订单失败:", error);
-        Toast.show({
-          type: "fail",
-          content: "加载订单失败",
-          duration: 2000,
-        });
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadOrdersWithCheck();
-
-    // 清理函数：标记组件已卸载
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   const loadOrders = async () => {
     try {
@@ -74,6 +37,16 @@ function OrderPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadOrders();
+  }, []);
+
+  // 页面每次显示时自动刷新
+  useDidShow(() => {
+    console.log("OrderPage 页面显示，刷新订单数据");
+    loadOrders();
+  });
 
   // 处理取消订单
   const handleCancelOrder = (order) => {

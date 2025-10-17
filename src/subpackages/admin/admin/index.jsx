@@ -21,7 +21,7 @@ import {
 } from "../../../services/api";
 import { formatDate } from "../../../utils/formatDate";
 import { getStatusText, getStatusColor } from "../../../utils/statusHelper";
-import Taro from "@tarojs/taro";
+import Taro, { useDidShow } from "@tarojs/taro";
 import "./index.scss";
 
 const AdminPage = () => {
@@ -30,11 +30,6 @@ const AdminPage = () => {
   const [users, setUsers] = useState([]);
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    console.log("🏗️ AdminPage 组件已加载");
-    loadData();
-  }, []);
 
   const loadData = async () => {
     try {
@@ -67,6 +62,17 @@ const AdminPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    console.log("🏗️ AdminPage 组件已加载");
+    loadData();
+  }, []);
+
+  // 页面每次显示时自动刷新
+  useDidShow(() => {
+    console.log("AdminPage 页面显示，刷新管理数据");
+    loadData();
+  });
 
   const handleOrderStatusChange = async (orderId, newStatus) => {
     try {

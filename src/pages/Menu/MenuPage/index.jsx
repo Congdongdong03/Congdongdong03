@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { View, Text } from "@tarojs/components";
 import BusinessHeader from "../Businessheader";
 import CategoryMenu from "../CategoryMenu";
-import Taro from "@tarojs/taro";
+import Taro, { useDidShow } from "@tarojs/taro";
 import "./index.scss";
 import { fetchCategoriesWithDishes } from "../../../services/api";
 
@@ -11,20 +11,30 @@ const MenuPage = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const loadData = async () => {
+    try {
+      console.log("MenuPage 开始加载数据");
+      setLoading(true);
+      const data = await fetchCategoriesWithDishes();
+      console.log("接口调用成功：", data);
+      console.log("数据长度：", data?.length);
+      setCategories(data);
+    } catch (err) {
+      console.error("接口调用失败：", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    console.log("MenuPage useEffect 开始执行");
-    fetchCategoriesWithDishes()
-      .then((data) => {
-        console.log("接口调用成功：", data);
-        console.log("数据长度：", data?.length);
-        setCategories(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("接口调用失败：", err);
-        setLoading(false);
-      });
+    loadData();
   }, []);
+
+  // 页面每次显示时自动刷新
+  useDidShow(() => {
+    console.log("MenuPage 页面显示，刷新数据");
+    loadData();
+  });
 
   // 加载状态
   if (loading) {

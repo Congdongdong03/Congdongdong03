@@ -1,6 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { View, Text, ScrollView } from "@tarojs/components";
+import Taro, { useDidShow } from "@tarojs/taro";
 import {
   Button,
   Toast,
@@ -27,10 +28,6 @@ const InventoryPage = () => {
     unit: "个",
   });
 
-  useEffect(() => {
-    loadInventory();
-  }, []);
-
   const loadInventory = async () => {
     try {
       setLoading(true);
@@ -47,6 +44,16 @@ const InventoryPage = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    loadInventory();
+  }, []);
+
+  // 页面每次显示时自动刷新
+  useDidShow(() => {
+    console.log("InventoryPage 页面显示，刷新库存数据");
+    loadInventory();
+  });
 
   const handleQuantityChange = async (itemId, newQuantity) => {
     if (newQuantity < 0) {
