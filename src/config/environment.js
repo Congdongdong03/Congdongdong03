@@ -88,9 +88,9 @@ export const ENV_CONFIG = {
   },
 };
 
-// 打印环境信息（仅在开发环境）
-if (ENV_CONFIG.isDevelopment) {
-  console.log("🔧 环境配置信息:", ENV_CONFIG.debug);
-}
+// 打印环境信息（开发和生产环境都打印，便于调试）
+console.log("🔧 环境配置信息:", ENV_CONFIG.debug);
+console.log("🌍 当前环境:", ENV_CONFIG.isDevelopment ? "开发环境" : "生产环境");
+console.log("🔗 API地址:", ENV_CONFIG.apiBaseUrl);
 
 export default ENV_CONFIG;

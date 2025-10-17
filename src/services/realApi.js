@@ -43,6 +43,24 @@ const request = async (url, options = {}) => {
     }
   } catch (error) {
     console.error("API请求失败:", error);
+    console.error("请求URL:", finalUrl);
+    console.error("错误详情:", {
+      errMsg: error.errMsg,
+      errno: error.errno,
+      statusCode: error.statusCode,
+    });
+
+    // 特殊处理连接被拒绝的错误
+    if (error.errMsg && error.errMsg.includes("ERR_CONNECTION_REFUSED")) {
+      const connectionError = new Error(
+        "网络连接失败，请检查网络设置或联系管理员"
+      );
+      connectionError.errMsg = error.errMsg;
+      connectionError.errno = error.errno;
+      connectionError.type = "CONNECTION_REFUSED";
+      throw connectionError;
+    }
+
     // 如果是Taro.request抛出的错误，添加errMsg信息
     if (error.errMsg && !error.data) {
       const enhancedError = new Error(error.errMsg);
