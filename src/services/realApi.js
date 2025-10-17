@@ -138,16 +138,10 @@ export const getCurrentUser = async () => {
   return request(`/users/${openid}`);
 };
 
-// 获取用户订单 - 接受userId或openid
-export const fetchUserOrders = async (userIdOrOpenid) => {
-  // 如果传入的是数字ID，直接使用；否则先获取用户信息
-  if (typeof userIdOrOpenid === "number") {
-    return request(`/orders/${userIdOrOpenid}`);
-  } else {
-    // openid格式，需要先获取用户信息
-    const user = await request(`/users/${userIdOrOpenid}`);
-    return request(`/orders/${user.id}`);
-  }
+// 获取用户订单 - 接受userId
+export const fetchUserOrders = async (userId) => {
+  // 直接使用userId获取订单列表
+  return request(`/orders/${userId}`);
 };
 
 // 创建订单
