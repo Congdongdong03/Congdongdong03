@@ -22,7 +22,6 @@
   }
 
   .add-dish-content {
-    padding: 20rpx;
     height: calc(100vh - 200rpx);
   }
 
@@ -103,11 +102,32 @@
       overflow: hidden;
       border: 2rpx solid #f9dde6; // 晨曦粉边框
       background-color: #f4f6f8; // 冰川灰背景
+      position: relative;
 
       .preview-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
+      }
+
+      // 🆕 上传中的遮罩层
+      .uploading-mask {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 15rpx;
+
+        .uploading-text {
+          color: #ffffff;
+          font-size: 24rpx;
+          font-weight: 600;
+        }
       }
     }
 
@@ -118,6 +138,14 @@
       font-size: 26rpx;
       padding: 15rpx 30rpx;
       color: #4a4a4a; // 主文本色
+    }
+
+    // 🆕 上传提示文字
+    .upload-hint {
+      font-size: 22rpx;
+      color: #888888; // 次文本色
+      text-align: center;
+      margin-top: 5rpx;
     }
   }
 

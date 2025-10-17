@@ -223,7 +223,7 @@ const CategoryManagementPage = () => {
   return (
     <View className="category-management-page">
       <View className="page-header">
-        <Text className="page-title">📂 分类管理</Text>
+        <Text className="page-title">分类管理</Text>
         <Text className="page-subtitle">管理菜品分类</Text>
         <Button
           type="primary"
@@ -231,12 +231,16 @@ const CategoryManagementPage = () => {
           onClick={() => setShowAddDialog(true)}
           className="add-category-btn"
         >
-          ➕ 添加分类
+          添加分类
         </Button>
       </View>
 
       <ScrollView scrollY className="page-content">
-        {categories.length === 0 ? (
+        {loading ? (
+          <View className="empty-state">
+            <Text className="empty-text">加载中...</Text>
+          </View>
+        ) : categories.length === 0 ? (
           <View className="empty-state">
             <Text className="empty-text">暂无分类</Text>
             <Text className="empty-hint">点击"添加分类"开始创建</Text>
@@ -302,7 +306,7 @@ const CategoryManagementPage = () => {
             <Input
               value={formData.name}
               onChange={(value) => setFormData({ ...formData, name: value })}
-              placeholder="请输入分类名称"
+              placeholder="例如：主食、素菜、汤品..."
               maxLength={20}
               className="form-input"
             />
@@ -354,7 +358,7 @@ const CategoryManagementPage = () => {
             <Input
               value={formData.name}
               onChange={(value) => setFormData({ ...formData, name: value })}
-              placeholder="请输入分类名称"
+              placeholder="例如：主食、素菜、汤品..."
               maxLength={20}
               className="form-input"
             />

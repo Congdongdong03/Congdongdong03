@@ -8,6 +8,7 @@ import {
   InputNumber,
   Cell,
   Picker,
+  Dialog,
 } from "@nutui/nutui-react-taro";
 import {
   addDish,
@@ -19,6 +20,7 @@ import {
   addDishMaterial,
   deleteDishMaterial,
   fetchAllInventory,
+  uploadImage,
 } from "../../../services/api";
 import Taro from "@tarojs/taro";
 import "./index.scss";
@@ -35,6 +37,7 @@ const AddDishPage = () => {
   const [categories, setCategories] = useState([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false); // 🆕 图片上传状态
 
   // 编辑模式相关状态
   const [isEditMode, setIsEditMode] = useState(false);
@@ -224,33 +227,52 @@ const AddDishPage = () => {
     }));
   };
 
-  // 选择图片
-  const handleChooseImage = () => {
-    Taro.chooseImage({
-      count: 1,
-      sizeType: ["compressed"],
-      sourceType: ["album", "camera"],
-      success: (res) => {
-        const tempFilePath = res.tempFilePaths[0];
-        setFormData((prev) => ({
-          ...prev,
-          image: tempFilePath,
-        }));
-        Toast.show({
-          type: "success",
-          content: "图片选择成功",
-          duration: 1500,
-        });
-      },
-      fail: (error) => {
-        console.error("选择图片失败:", error);
-        Toast.show({
-          type: "fail",
-          content: "选择图片失败",
-          duration: 2000,
-        });
-      },
-    });
+  // 🆕 选择并上传图片
+  const handleChooseImage = async () => {
+    try {
+      // 1. 选择图片
+      const chooseResult = await Taro.chooseImage({
+        count: 1,
+        sizeType: ["compressed"], // 压缩图片
+        sourceType: ["album", "camera"],
+      });
+
+      const tempFilePath = chooseResult.tempFilePaths[0];
+
+      // 2. 显示加载提示
+      setUploadingImage(true);
+      Toast.show({
+        type: "loading",
+        content: "正在上传图片...",
+        duration: 0, // 不自动关闭
+      });
+
+      // 3. 上传到服务器
+      const uploadResult = await uploadImage(tempFilePath);
+
+      // 4. 更新表单数据
+      setFormData((prev) => ({
+        ...prev,
+        image: uploadResult.url,
+      }));
+
+      Toast.show({
+        type: "success",
+        content: "图片上传成功！",
+        duration: 2000,
+      });
+
+      console.log("图片上传成功:", uploadResult);
+    } catch (error) {
+      console.error("图片上传失败:", error);
+      Toast.show({
+        type: "fail",
+        content: error.message || "图片上传失败，请重试",
+        duration: 2000,
+      });
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -402,15 +424,25 @@ const AddDishPage = () => {
                   mode="aspectFill"
                   className="preview-image"
                 />
+                {uploadingImage && (
+                  <View className="uploading-mask">
+                    <Text className="uploading-text">上传中...</Text>
+                  </View>
+                )}
               </View>
               <Button
                 type="primary"
                 size="small"
                 onClick={handleChooseImage}
                 className="upload-btn"
+                loading={uploadingImage}
+                disabled={uploadingImage}
               >
-                📷 选择图片
+                {uploadingImage ? "上传中..." : "📷 选择并上传图片"}
               </Button>
+              <Text className="upload-hint">
+                支持 JPG、PNG、GIF 格式，文件不超过 5MB
+              </Text>
             </View>
           </View>
 

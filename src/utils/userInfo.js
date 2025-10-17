@@ -4,7 +4,7 @@ import { updateUserInfo } from "../services/api";
 // 默认用户信息
 const DEFAULT_USER_INFO = {
   nickname: "亲爱的",
-  avatar: "/src/pages/picture/user_picture.jpg", // 粉色狐狸头像
+  avatar: "",
 };
 
 // 存储键

@@ -17,6 +17,7 @@ import {
   fetchAllDishes,
   updateDish,
   deleteDish,
+  cancelOrder,
 } from "../../../services/api";
 import { formatDate } from "../../../utils/formatDate";
 import { getStatusText, getStatusColor } from "../../../utils/statusHelper";
@@ -81,6 +82,28 @@ const AdminPage = () => {
       Toast.show({
         type: "fail",
         content: "更新失败，请重试",
+        duration: 2000,
+      });
+    }
+  };
+
+  // 🆕 大厨取消订单（会退还积分和库存）
+  const handleCancelOrder = async (orderId) => {
+    try {
+      await cancelOrder(orderId);
+      Toast.show({
+        type: "success",
+        content: "订单已取消，积分和库存已退还",
+        duration: 2000,
+      });
+      loadData(); // 重新加载数据
+    } catch (error) {
+      console.error("取消订单失败:", error);
+      const errorMessage =
+        error.data?.error || error.message || "取消失败，请重试";
+      Toast.show({
+        type: "fail",
+        content: errorMessage,
         duration: 2000,
       });
     }
@@ -215,10 +238,8 @@ const AdminPage = () => {
                           </Button>
                           <Button
                             size="small"
-                            type="primary"
-                            onClick={() =>
-                              handleOrderStatusChange(order.id, "cancelled")
-                            }
+                            type="danger"
+                            onClick={() => handleCancelOrder(order.id)}
                           >
                             取消
                           </Button>

@@ -168,17 +168,21 @@ export const createOrder = async (cartItems, totalPoints, remark = "") => {
   });
 };
 
-// 更新订单状态
+// 更新订单状态（需要大厨权限）
 export const updateOrderStatus = async (orderId, newStatus) => {
+  // 🆕 获取当前用户ID用于权限验证
+  const user = await getCurrentUser();
   return request(`/orders/${orderId}/status`, {
     method: "PUT",
-    data: { status: newStatus },
+    data: { status: newStatus, userId: user.id },
   });
 };
 
-// 获取所有订单（Chef用）
+// 获取所有订单（Chef用，需要大厨权限）
 export const fetchAllOrders = async () => {
-  return request("/orders/all");
+  // 🆕 获取当前用户ID用于权限验证
+  const user = await getCurrentUser();
+  return request(`/orders/all?userId=${user.id}`);
 };
 
 // 获取库存
@@ -214,32 +218,40 @@ export const fetchShoppingList = async () => {
   return request("/shopping-list");
 };
 
-// 奖励积分
+// 奖励积分（需要大厨权限）
 export const rewardPoints = async (targetUserOpenid, points, description) => {
-  // 先获取目标用户信息
-  const user = await request(`/users/${targetUserOpenid}`);
+  // 🆕 获取当前用户（操作者）和目标用户信息
+  const [currentUser, targetUser] = await Promise.all([
+    getCurrentUser(),
+    request(`/users/${targetUserOpenid}`),
+  ]);
 
   return request("/points/reward", {
     method: "POST",
     data: {
-      userId: user.id,
+      userId: targetUser.id,
       amount: points,
       description: description || `管理员奖励 ${points} 积分`,
+      operatorUserId: currentUser.id, // 操作者ID用于权限验证
     },
   });
 };
 
-// 扣减积分
+// 扣减积分（需要大厨权限）
 export const deductPoints = async (targetUserOpenid, points, description) => {
-  // 先获取目标用户信息
-  const user = await request(`/users/${targetUserOpenid}`);
+  // 🆕 获取当前用户（操作者）和目标用户信息
+  const [currentUser, targetUser] = await Promise.all([
+    getCurrentUser(),
+    request(`/users/${targetUserOpenid}`),
+  ]);
 
   return request("/points/deduct", {
     method: "POST",
     data: {
-      userId: user.id,
+      userId: targetUser.id,
       amount: points,
       description: description || `管理员扣减 ${points} 积分`,
+      operatorUserId: currentUser.id, // 操作者ID用于权限验证
     },
   });
 };
@@ -261,10 +273,11 @@ export const getPointsHistory = async () => {
   return request(`/points/history/${user.id}`);
 };
 
-// 获取所有用户（Chef用）
+// 获取所有用户（Chef用，需要大厨权限）
 export const fetchAllUsers = async () => {
-  // 🆕 调用真实的后端接口获取所有用户
-  return request("/users");
+  // 🆕 获取当前用户ID用于权限验证
+  const user = await getCurrentUser();
+  return request(`/users?userId=${user.id}`);
 };
 
 // 模拟登录接口
@@ -301,11 +314,10 @@ export const getNoticeText = async () => {
 };
 
 // 更新温馨提示
-export const updateNoticeText = async (noticeText, userId = null) => {
-  // 如果没有传入userId，则获取当前用户（向后兼容）
+export const updateNoticeText = async (noticeText, userId) => {
+  // 🆕 必须传入userId以确保权限验证
   if (!userId) {
-    const user = await getCurrentUser();
-    userId = user.id;
+    throw new Error("更新温馨提示需要用户ID");
   }
 
   return request("/settings/notice", {
@@ -341,4 +353,48 @@ export const deleteDishMaterial = async (dishId, materialId) => {
 // 获取所有原材料（用于选择）
 export const fetchAllInventory = async () => {
   return request("/inventory/all");
+};
+
+// 🆕 图片上传API
+/**
+ * 上传图片到服务器
+ * @param {string} filePath - 本地文件路径
+ * @returns {Promise<{url: string, filename: string}>}
+ */
+export const uploadImage = async (filePath) => {
+  return new Promise((resolve, reject) => {
+    Taro.uploadFile({
+      url: `${BASE_URL}/upload/image`,
+      filePath: filePath,
+      name: "image",
+      header: {
+        "Content-Type": "multipart/form-data",
+      },
+      success: (res) => {
+        if (res.statusCode === 200) {
+          try {
+            const data = JSON.parse(res.data);
+            if (data.success) {
+              // 返回完整的图片URL
+              const fullUrl = `http://localhost:3001${data.data.url}`;
+              resolve({
+                url: fullUrl,
+                filename: data.data.filename,
+              });
+            } else {
+              reject(new Error(data.error || "上传失败"));
+            }
+          } catch (error) {
+            reject(new Error("解析响应失败"));
+          }
+        } else {
+          reject(new Error(`上传失败，状态码: ${res.statusCode}`));
+        }
+      },
+      fail: (error) => {
+        console.error("图片上传失败:", error);
+        reject(new Error(error.errMsg || "图片上传失败"));
+      },
+    });
+  });
 };

@@ -163,3 +163,8 @@ export const deductPoints = async (targetUserOpenid, points, description) => {
 export const updateUserInfo = async (openid, nickname, avatar) => {
   return RealApi.updateUserInfo(openid, nickname, avatar);
 };
+
+// 上传图片
+export const uploadImage = async (filePath) => {
+  return RealApi.uploadImage(filePath);
+};

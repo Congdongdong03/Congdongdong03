@@ -18,15 +18,12 @@ import { getUserInfo, requestUserAuthorization } from "../../utils/userInfo";
 import Taro from "@tarojs/taro";
 import "./index.scss";
 
-// 默认头像
-import userPicture from "/src/pages/picture/user_picture.jpg";
-
 const ProfilePage = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userDisplayInfo, setUserDisplayInfo] = useState({
     nickname: "亲爱的",
-    avatar: userPicture,
+    avatar: "",
     hasAuthorized: false,
   });
 

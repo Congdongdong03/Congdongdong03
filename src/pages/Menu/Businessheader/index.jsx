@@ -5,16 +5,13 @@ import { useState, useEffect } from "react";
 import { getCurrentUser, getNoticeText } from "../../../services/api";
 import { getUserInfo, requestUserAuthorization } from "../../../utils/userInfo";
 import { Toast } from "@nutui/nutui-react-taro";
-
-// 图片引入
-import userPicture from "/src/pages/picture/user_picture.jpg";
 import "./index.scss";
 
 const BusinessHeader = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [userDisplayInfo, setUserDisplayInfo] = useState({
     nickname: "亲爱的",
-    avatar: userPicture,
+    avatar: "",
     hasAuthorized: false,
   });
   const [noticeText, setNoticeText] = useState("欢迎光临，请按需点餐~");
