@@ -2,7 +2,7 @@ import Taro from "@tarojs/taro";
 import { ensureLogin, getOpenId } from "../utils/auth";
 
 // 后端API基础URL
-const BASE_URL = "http://localhost:3001/api";
+const BASE_URL = "https://localhost:3001/api";
 
 // 通用请求函数
 const request = async (url, options = {}) => {
@@ -369,8 +369,10 @@ export const uploadImage = async (filePath) => {
           try {
             const data = JSON.parse(res.data);
             if (data.success) {
-              // 返回完整的图片URL
-              const fullUrl = `http://localhost:3001${data.data.url}`;
+              // 返回完整的图片URL，避免重复拼接
+              const fullUrl = data.data.url.startsWith("http")
+                ? data.data.url
+                : `https://localhost:3001${data.data.url}`;
               resolve({
                 url: fullUrl,
                 filename: data.data.filename,

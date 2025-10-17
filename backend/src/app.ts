@@ -1,6 +1,8 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
 import path from "path";
+import https from "https";
+import fs from "fs";
 import { errorHandler } from "./middleware/errorHandler";
 
 // 导入所有路由
@@ -106,10 +108,16 @@ app.get("/api/shopping-list", async (req, res) => {
 // 错误处理中间件（必须在所有路由之后）
 app.use(errorHandler);
 
-// 启动服务器
-app.listen(PORT, () => {
-  console.log(`✅ 服务器运行在端口 ${PORT}`);
-  console.log(`📍 API地址: http://localhost:${PORT}/api`);
+// 启动HTTPS服务器
+const httpsOptions = {
+  key: fs.readFileSync(path.join(__dirname, "../ssl/key.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "../ssl/cert.pem")),
+};
+
+https.createServer(httpsOptions, app).listen(PORT, () => {
+  console.log(`✅ HTTPS服务器运行在端口 ${PORT}`);
+  console.log(`📍 API地址: https://localhost:${PORT}/api`);
+  console.log(`🔒 使用HTTPS协议，支持微信小程序图片显示`);
 });
 
 export default app;
