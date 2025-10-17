@@ -1,6 +1,12 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { View, Text, ScrollView, Input } from "@tarojs/components";
+import {
+  View,
+  Text,
+  ScrollView,
+  Input,
+  Button as TaroButton,
+} from "@tarojs/components";
 import {
   Button,
   Avatar,
@@ -14,7 +20,7 @@ import {
   getNoticeText,
   updateNoticeText,
 } from "../../services/api";
-import { getUserInfo, requestUserAuthorization } from "../../utils/userInfo";
+import { getUserInfo, saveAndSyncUserInfo } from "../../utils/userInfo";
 import Taro from "@tarojs/taro";
 import "./index.scss";
 
@@ -62,40 +68,94 @@ const ProfilePage = () => {
     }
   };
 
-  // 点击头像请求授权
-  const handleAvatarClick = async () => {
-    if (userDisplayInfo.hasAuthorized) {
-      // 已授权，可以显示提示
-      Toast.show({
-        type: "text",
-        content: "已授权",
-        duration: 1000,
-      });
-      return;
-    }
-
+  // 处理头像选择（微信新版API）
+  const handleChooseAvatar = async (e) => {
     try {
-      const result = await requestUserAuthorization();
+      const { avatarUrl } = e.detail;
+      console.log("📸 用户选择了头像:", avatarUrl);
+
+      // 保存头像（使用当前昵称）
+      const result = await saveAndSyncUserInfo(
+        userDisplayInfo.nickname,
+        avatarUrl
+      );
+
       if (result.success) {
         setUserDisplayInfo({
-          nickname: result.nickname,
-          avatar: result.avatar,
+          ...userDisplayInfo,
+          avatar: avatarUrl,
           hasAuthorized: true,
         });
         Toast.show({
           type: "success",
-          content: "授权成功！",
+          content: "头像更新成功！",
           duration: 2000,
         });
+        // 刷新用户信息
+        loadUserInfo();
       } else {
-        Toast.show({
-          type: "text",
-          content: "授权失败，将使用默认信息",
-          duration: 2000,
-        });
+        throw new Error(result.error);
       }
     } catch (error) {
-      console.error("授权失败:", error);
+      console.error("更新头像失败:", error);
+      Toast.show({
+        type: "fail",
+        content: "头像更新失败: " + error.message,
+        duration: 2000,
+      });
+    }
+  };
+
+  // 处理昵称输入（微信新版API - 用户点击键盘完成按钮时触发）
+  const handleNicknameConfirm = async (e) => {
+    try {
+      const { value } = e.detail;
+      console.log("✏️ 用户确认了昵称:", value);
+
+      if (!value || !value.trim()) {
+        Toast.show({
+          type: "warn",
+          content: "昵称不能为空",
+          duration: 2000,
+        });
+        return;
+      }
+
+      // 保存昵称（使用当前头像）
+      const result = await saveAndSyncUserInfo(value, userDisplayInfo.avatar);
+
+      if (result.success) {
+        setUserDisplayInfo({
+          ...userDisplayInfo,
+          nickname: value,
+          hasAuthorized: true,
+        });
+        Toast.show({
+          type: "success",
+          content: "昵称更新成功！",
+          duration: 2000,
+        });
+        // 刷新用户信息
+        loadUserInfo();
+      } else {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error("更新昵称失败:", error);
+      Toast.show({
+        type: "fail",
+        content: "昵称更新失败: " + error.message,
+        duration: 2000,
+      });
+    }
+  };
+
+  // 处理昵称失去焦点（备用方案）
+  const handleNicknameBlur = async (e) => {
+    const { value } = e.detail;
+    // 如果昵称有变化，也保存一下
+    if (value && value.trim() && value !== userDisplayInfo.nickname) {
+      handleNicknameConfirm(e);
     }
   };
 
@@ -288,14 +348,30 @@ const ProfilePage = () => {
     <View className="profile-page">
       <View className="profile-header">
         <View className="user-info">
-          <Avatar
-            size="large"
-            src={userDisplayInfo.avatar}
-            className="user-avatar"
-            onClick={handleAvatarClick}
-          />
+          {/* 使用微信新版 open-type="chooseAvatar" 获取头像 */}
+          <TaroButton
+            className="avatar-button"
+            openType="chooseAvatar"
+            onChooseAvatar={handleChooseAvatar}
+          >
+            <Avatar
+              size="large"
+              src={userDisplayInfo.avatar}
+              className="user-avatar"
+            />
+          </TaroButton>
+
           <View className="user-details">
-            <Text className="user-name">{userDisplayInfo.nickname}</Text>
+            {/* 使用微信新版 type="nickname" 获取昵称 */}
+            <Input
+              type="nickname"
+              className="nickname-input"
+              value={userDisplayInfo.nickname}
+              onConfirm={handleNicknameConfirm}
+              onBlur={handleNicknameBlur}
+              placeholder="点击输入昵称"
+              confirmType="done"
+            />
             <Text className="user-role">
               {currentUser?.role === "chef" ? "👨‍🍳 大厨" : "🍽️ 食客"}
             </Text>
@@ -316,7 +392,7 @@ const ProfilePage = () => {
               💰 {currentUser?.points || 0} 积分
             </Text>
             {!userDisplayInfo.hasAuthorized && (
-              <Text className="auth-hint-text">点击头像授权获取微信信息</Text>
+              <Text className="auth-hint-text">点击头像选择，点击昵称编辑</Text>
             )}
           </View>
         </View>

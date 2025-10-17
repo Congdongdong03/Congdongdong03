@@ -61,46 +61,54 @@ export const saveUserInfo = (nickname, avatar) => {
 };
 
 /**
- * 请求用户授权获取微信用户信息
- * 注意：wx.getUserProfile 需要用户主动触发（例如点击按钮）
+ * 同步用户信息到后端数据库
+ * @param {string} nickname - 昵称
+ * @param {string} avatar - 头像URL
  */
-export const requestUserAuthorization = async () => {
+export const syncUserInfoToBackend = async (nickname, avatar) => {
   try {
-    // 使用 getUserProfile 替代已废弃的 getUserInfo
-    const res = await Taro.getUserProfile({
-      desc: "用于完善会员资料", // 必填，说明获取用户信息的用途
-    });
+    // 动态导入避免循环依赖
+    const { getOpenId } = await import("./auth");
+    const { updateUserInfo } = await import("../services/realApi");
 
-    if (res.userInfo) {
-      const { nickName, avatarUrl } = res.userInfo;
-
-      // 保存到本地缓存
-      saveUserInfo(nickName, avatarUrl);
-
-      // 同步到后端
-      try {
-        // 获取当前用户的openid（这里需要从登录状态获取）
-        // 由于当前使用的是固定openid，这里暂时跳过同步
-        // 在实际应用中，应该从登录状态获取真实的openid
-        console.log("用户授权成功，信息已保存到本地");
-      } catch (syncError) {
-        console.error("同步用户信息到后端失败:", syncError);
-        // 即使同步失败，本地授权仍然成功
-      }
-
-      return {
-        success: true,
-        nickname: nickName,
-        avatar: avatarUrl,
-      };
+    const openid = getOpenId();
+    if (!openid) {
+      throw new Error("未找到用户OpenID，无法同步");
     }
 
-    throw new Error("获取用户信息失败");
+    console.log("🔄 正在同步用户信息到后端...", { openid, nickname, avatar });
+
+    // 调用后端API更新用户信息
+    await updateUserInfo(openid, nickname, avatar);
+
+    console.log("✅ 用户信息已同步到后端数据库");
+    return true;
   } catch (error) {
-    console.error("请求用户授权失败:", error);
+    console.error("❌ 同步用户信息到后端失败:", error);
+    throw error;
+  }
+};
+
+/**
+ * 保存用户信息（同时保存到本地和后端）
+ * @param {string} nickname - 昵称
+ * @param {string} avatar - 头像URL
+ */
+export const saveAndSyncUserInfo = async (nickname, avatar) => {
+  try {
+    // 1. 保存到本地缓存
+    saveUserInfo(nickname, avatar);
+    console.log("✅ 用户信息已保存到本地缓存");
+
+    // 2. 同步到后端数据库
+    await syncUserInfoToBackend(nickname, avatar);
+
+    return { success: true };
+  } catch (error) {
+    console.error("保存用户信息失败:", error);
     return {
       success: false,
-      error: error.errMsg || error.message,
+      error: error.message || "保存失败",
     };
   }
 };

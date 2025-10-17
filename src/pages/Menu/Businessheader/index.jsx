@@ -3,7 +3,7 @@ import Taro from "@tarojs/taro";
 import React from "react";
 import { useState, useEffect } from "react";
 import { getCurrentUser, getNoticeText } from "../../../services/api";
-import { getUserInfo, requestUserAuthorization } from "../../../utils/userInfo";
+import { getUserInfo } from "../../../utils/userInfo";
 import { Toast } from "@nutui/nutui-react-taro";
 import "./index.scss";
 
@@ -63,36 +63,11 @@ const BusinessHeader = () => {
     }
   };
 
-  // 点击头像请求授权
-  const handleAvatarClick = async () => {
-    if (userDisplayInfo.hasAuthorized) {
-      // 已授权，不需要再次请求
-      return;
-    }
-
-    try {
-      const result = await requestUserAuthorization();
-      if (result.success) {
-        setUserDisplayInfo({
-          nickname: result.nickname,
-          avatar: result.avatar,
-          hasAuthorized: true,
-        });
-        Toast.show({
-          type: "success",
-          content: "授权成功！",
-          duration: 2000,
-        });
-      } else {
-        Toast.show({
-          type: "text",
-          content: "授权失败，将使用默认信息",
-          duration: 2000,
-        });
-      }
-    } catch (error) {
-      console.error("授权失败:", error);
-    }
+  // 点击头像跳转到个人中心
+  const handleAvatarClick = () => {
+    Taro.switchTab({
+      url: "/pages/profile/index",
+    });
   };
 
   const handleAddDish = () => {
@@ -104,12 +79,9 @@ const BusinessHeader = () => {
   return (
     <View className="business-header">
       <View className="header-area">
-        {/* 头像 - 点击可授权获取微信信息 */}
+        {/* 头像 - 点击跳转到个人中心 */}
         <View className="header-userPicture" onClick={handleAvatarClick}>
           <Image src={userDisplayInfo.avatar} mode="aspectFit" />
-          {!userDisplayInfo.hasAuthorized && (
-            <View className="auth-hint">点击授权</View>
-          )}
         </View>
         <View className="business-info">
           <View className="business-details">{userDisplayInfo.nickname}</View>

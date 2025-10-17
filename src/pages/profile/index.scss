@@ -11,13 +11,45 @@
       display: flex;
       align-items: center;
 
-      .user-avatar {
+      // 头像按钮样式（微信新版API）
+      .avatar-button {
+        padding: 0;
+        margin: 0;
         margin-right: 30rpx;
-        border: 4rpx solid rgba(249, 221, 230, 0.5); // 晨曦粉边框
+        background: transparent;
+        border: none;
+        line-height: 1;
+
+        &::after {
+          border: none;
+        }
+
+        .user-avatar {
+          border: 4rpx solid rgba(249, 221, 230, 0.5); // 晨曦粉边框
+          transition: transform 0.2s ease;
+        }
+
+        &:active .user-avatar {
+          transform: scale(0.95);
+        }
       }
 
       .user-details {
         flex: 1;
+
+        // 昵称输入框样式（微信新版API）
+        .nickname-input {
+          font-size: 40rpx;
+          font-weight: 600;
+          color: #4a4a4a;
+          background: transparent;
+          border: none;
+          padding: 0;
+          margin: 0;
+          margin-bottom: 10rpx;
+          width: 100%;
+          min-height: 50rpx;
+        }
 
         .user-name {
           font-size: 40rpx;
