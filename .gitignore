@@ -1,7 +1,48 @@
-dist/
-deploy_versions/
-.temp/
-.rn_temp/
+# Dependencies
 node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Database
+backend/prisma/dev.db
+backend/prisma/*.db
+*.db
+*.sqlite
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
 .DS_Store
-.swc
+Thumbs.db
+
+# Uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# SSL certificates
+backend/ssl/*
+!backend/ssl/.gitkeep
+
+# Temp files
+*.tmp
+.cache/
