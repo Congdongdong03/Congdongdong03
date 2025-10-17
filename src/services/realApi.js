@@ -372,7 +372,7 @@ export const uploadImage = async (filePath) => {
               // 返回完整的图片URL，避免重复拼接
               const fullUrl = data.data.url.startsWith("http")
                 ? data.data.url
-                : `https://localhost:3001${data.data.url}`;
+                : `https://congdongdong03.onrender.com${data.data.url}`;
               resolve({
                 url: fullUrl,
                 filename: data.data.filename,

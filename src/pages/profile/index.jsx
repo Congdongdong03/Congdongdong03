@@ -302,7 +302,7 @@ const ProfilePage = () => {
       // 调用后端接口换取 OpenID
       console.log("🌐 调用后端接口，code:", code);
       const response = await Taro.request({
-        url: `https://localhost:3001/api/wechat/get-openid?code=${code}`,
+        url: `https://congdongdong03.onrender.com/api/wechat/get-openid?code=${code}`,
         method: "GET",
       });
 
