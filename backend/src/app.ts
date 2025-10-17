@@ -105,6 +105,41 @@ app.get("/api/shopping-list", async (req, res) => {
   }
 });
 
+// 数据库种子初始化端点（仅在生产环境可用）
+app.post("/api/seed", async (req, res) => {
+  // 只在生产环境允许运行种子
+  if (!process.env.RENDER) {
+    return res.status(403).json({ error: "种子功能仅在生产环境可用" });
+  }
+
+  try {
+    console.log("🌱 开始运行数据库种子...");
+    
+    // 动态导入种子函数
+    const { execSync } = require('child_process');
+    
+    // 运行种子脚本
+    execSync('node dist/seed.js', { stdio: 'pipe' });
+    
+    console.log("✅ 数据库种子运行完成");
+    res.json({ 
+      success: true, 
+      message: "数据库种子数据初始化成功！",
+      data: {
+        categories: ["主食", "素菜", "凉菜", "汤品", "甜品"],
+        dishes: ["可乐鸡翅", "番茄炒蛋", "红烧肉", "蒜蓉西兰花", "拍黄瓜"],
+        users: ["亲爱的(chef)", "小美(diner)"]
+      }
+    });
+  } catch (error: any) {
+    console.error("❌ 数据库种子运行失败:", error);
+    res.status(500).json({ 
+      error: "数据库种子运行失败", 
+      details: error.message 
+    });
+  }
+});
+
 // 错误处理中间件（必须在所有路由之后）
 app.use(errorHandler);
 
