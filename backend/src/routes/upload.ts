@@ -63,7 +63,7 @@ router.post("/image", upload.single("image"), (req, res) => {
     res.json({
       success: true,
       data: {
-        url: `https://localhost:3001${imageUrl}`,
+        url: imageUrl, // 只返回相对路径，由前端根据环境拼接完整URL
         filename: req.file.filename,
       },
     });
