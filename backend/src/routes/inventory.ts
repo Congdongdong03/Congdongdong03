@@ -1,9 +1,8 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import { generateShoppingList } from "../services/shopping.service";
+import prisma from "../db/prisma";
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 /**
  * GET /api/inventory

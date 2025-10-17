@@ -1,16 +1,9 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import { verifyChefRole } from "../middleware/auth";
 import { sendOrderSuccessNotice } from "../services/subscribeMessage.service";
+import prisma from "../db/prisma";
 
 const router = express.Router();
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL || "file:../../prisma/dev.db",
-    },
-  },
-});
 
 // 测试接口
 router.get("/test", async (req, res) => {
@@ -36,8 +29,34 @@ router.get("/test", async (req, res) => {
   }
 });
 
+// 调试权限验证接口
+router.get("/debug-auth", async (req, res) => {
+  try {
+    const operatorUserId = req.query.operatorUserId;
+    console.log("🔍 调试权限验证，operatorUserId:", operatorUserId);
+
+    if (!operatorUserId) {
+      return res.json({ error: "缺少 operatorUserId 参数" });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: operatorUserId as string },
+    });
+
+    res.json({
+      operatorUserId,
+      user,
+      userExists: !!user,
+      userRole: user?.role,
+      isChef: user?.role === "chef",
+    });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 /**
- * GET /api/orders/all?userId=xxx
+ * GET /api/orders/all?operatorUserId=xxx
  * 获取所有订单（需要Chef权限）
  */
 router.get("/all", verifyChefRole, async (req, res) => {

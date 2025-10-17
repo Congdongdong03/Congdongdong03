@@ -1,13 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL || "file:../../prisma/dev.db",
-    },
-  },
-});
+import prisma from "../db/prisma";
 
 // 开发模式标识
 const IS_DEV = process.env.NODE_ENV !== "production";
@@ -21,35 +13,22 @@ export const verifyChefRole = async (
   res: Response,
   next: NextFunction
 ) => {
+  console.log("🔍 权限验证中间件开始执行");
+
   try {
-    // 🔧 修复：优先使用 operatorUserId（操作者ID），而不是 userId（目标用户ID）
-    const operatorUserId = req.body.operatorUserId || req.query.operatorUserId;
-    const targetUserId = req.body.userId || req.query.userId;
-
-    // 开发模式：如果没有提供操作者ID，允许通过
-    if (IS_DEV && !operatorUserId) {
-      console.log("⚠️ 开发模式：跳过权限验证");
-      return next();
-    }
-
-    console.log(
-      "🔍 权限验证：操作者ID =",
-      operatorUserId,
-      "目标用户ID =",
-      targetUserId
-    );
+    const operatorUserId = req.query.operatorUserId;
+    console.log("🔍 获取到的 operatorUserId:", operatorUserId);
 
     if (!operatorUserId) {
+      console.log("❌ 缺少操作者用户ID");
       return res.status(401).json({ error: "缺少操作者用户ID" });
     }
 
-    // 查询操作者用户角色（不是目标用户）
-    console.log("🔍 查询操作者用户角色，operatorUserId:", operatorUserId);
+    console.log("🔍 开始查询用户，ID:", operatorUserId);
     const operatorUser = await prisma.user.findUnique({
       where: { id: operatorUserId as string },
     });
-
-    console.log("🔍 操作者查询结果:", operatorUser);
+    console.log("🔍 查询结果:", operatorUser);
 
     if (!operatorUser) {
       console.log("❌ 操作者用户不存在");
@@ -61,17 +40,10 @@ export const verifyChefRole = async (
       return res.status(403).json({ error: "需要大厨权限" });
     }
 
-    console.log(
-      "✅ 权限验证通过，操作者:",
-      operatorUser.nickname,
-      "角色:",
-      operatorUser.role
-    );
-
-    // 验证通过，继续执行
+    console.log("✅ 权限验证通过");
     next();
-  } catch (error) {
-    console.error("权限验证失败:", error);
-    res.status(500).json({ error: "权限验证失败" });
+  } catch (error: any) {
+    console.error("❌ 权限验证异常:", error);
+    res.status(500).json({ error: "权限验证失败", details: error.message });
   }
 };

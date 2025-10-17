@@ -1,9 +1,8 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import { getOpenIdByCode } from "../services/wechat.service";
+import prisma from "../db/prisma";
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 /**
  * GET /api/wechat/get-openid

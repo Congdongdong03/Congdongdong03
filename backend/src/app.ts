@@ -1,9 +1,9 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import path from "path";
 import https from "https";
 import fs from "fs";
 import { errorHandler } from "./middleware/errorHandler";
+import prisma from "./db/prisma";
 
 // 导入所有路由
 import categoriesRouter from "./routes/categories";
@@ -18,13 +18,16 @@ import uploadRouter from "./routes/upload";
 import testRouter from "./routes/test";
 
 const app = express();
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL || "file:../prisma/dev.db",
-    },
-  },
-});
+
+// 确保数据库 URL 已配置（生产环境和开发环境统一使用 PostgreSQL）
+if (!process.env.DATABASE_URL) {
+  console.error("❌ ERROR: DATABASE_URL environment variable is not set!");
+  console.error("Please create a .env file in the backend directory with:");
+  console.error(
+    'DATABASE_URL="postgresql://user@localhost:5432/database_name"'
+  );
+  process.exit(1);
+}
 const PORT = process.env.PORT || 3001;
 
 // 中间件

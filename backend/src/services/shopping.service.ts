@@ -1,6 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import prisma from "../db/prisma";
 
 /**
  * 生成购物清单

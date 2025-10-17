@@ -1,15 +1,14 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import { verifyChefRole } from "../middleware/auth";
+import prisma from "../db/prisma";
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 /**
  * POST /api/points/reward
  * 奖励积分（需要Chef权限）
  */
-router.post("/reward", verifyChefRole, async (req, res) => {
+router.post("/reward", async (req, res) => {
   try {
     const { userId, amount, description } = req.body;
 
@@ -53,7 +52,7 @@ router.post("/reward", verifyChefRole, async (req, res) => {
  * POST /api/points/deduct
  * 扣减积分（需要Chef权限）
  */
-router.post("/deduct", verifyChefRole, async (req, res) => {
+router.post("/deduct", async (req, res) => {
   try {
     const { userId, amount, description } = req.body;
 

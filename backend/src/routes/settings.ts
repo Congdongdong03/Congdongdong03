@@ -1,9 +1,8 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import { verifyChefRole } from "../middleware/auth";
+import prisma from "../db/prisma";
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 /**
  * GET /api/settings/notice

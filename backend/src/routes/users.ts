@@ -1,15 +1,8 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
 import { verifyChefRole } from "../middleware/auth";
+import prisma from "../db/prisma";
 
 const router = express.Router();
-const prisma = new PrismaClient({
-  datasources: {
-    db: {
-      url: process.env.DATABASE_URL || "file:../../prisma/dev.db",
-    },
-  },
-});
 
 /**
  * GET /api/users/:openid
@@ -35,7 +28,7 @@ router.get("/:openid", async (req, res) => {
 });
 
 /**
- * GET /api/users?userId=xxx
+ * GET /api/users?operatorUserId=xxx
  * 获取所有用户列表（需要Chef权限）
  */
 router.get("/", verifyChefRole, async (req, res) => {

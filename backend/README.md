@@ -4,20 +4,44 @@
 
 ## 🚀 快速开始
 
-### 安装依赖
+### 1. 配置数据库
+
+**重要**: 本项目使用 PostgreSQL（开发环境和生产环境统一）
+
+详细配置步骤请查看: [DATABASE_SETUP.md](./DATABASE_SETUP.md)
+
+快速配置：
+
+```bash
+# 安装 PostgreSQL
+brew install postgresql@15
+brew services start postgresql@15
+
+# 创建数据库
+createdb menu_miniprogram_dev
+
+# 配置环境变量（复制 .env.example 并修改）
+cp .env.example .env
+# 编辑 .env 文件，设置 DATABASE_URL
+```
+
+### 2. 安装依赖
 
 ```bash
 npm install
 ```
 
-### 初始化数据库
+### 3. 初始化数据库
 
 ```bash
+# 生成 Prisma Client
+npx prisma generate
+
 # 运行数据库迁移
-npm run db:migrate
+npx prisma migrate deploy
 
 # 初始化种子数据
-npm run db:seed
+npx ts-node src/seed.ts
 ```
 
 ### 启动服务
