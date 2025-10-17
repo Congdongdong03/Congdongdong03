@@ -114,28 +114,28 @@ app.post("/api/seed", async (req, res) => {
 
   try {
     console.log("🌱 开始运行数据库种子...");
-    
+
     // 动态导入种子函数
-    const { execSync } = require('child_process');
-    
+    const { execSync } = require("child_process");
+
     // 运行种子脚本
-    execSync('node dist/seed.js', { stdio: 'pipe' });
-    
+    execSync("node dist/seed.js", { stdio: "pipe" });
+
     console.log("✅ 数据库种子运行完成");
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       message: "数据库种子数据初始化成功！",
       data: {
         categories: ["主食", "素菜", "凉菜", "汤品", "甜品"],
         dishes: ["可乐鸡翅", "番茄炒蛋", "红烧肉", "蒜蓉西兰花", "拍黄瓜"],
-        users: ["亲爱的(chef)", "小美(diner)"]
-      }
+        users: ["亲爱的(chef)", "小美(diner)"],
+      },
     });
   } catch (error: any) {
     console.error("❌ 数据库种子运行失败:", error);
-    res.status(500).json({ 
-      error: "数据库种子运行失败", 
-      details: error.message 
+    res.status(500).json({
+      error: "数据库种子运行失败",
+      details: error.message,
     });
   }
 });
