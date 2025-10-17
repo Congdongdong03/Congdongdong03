@@ -86,7 +86,7 @@ export const wxLogin = async () => {
     // 步骤2：将 code 发送到后端，换取 openid
     // 注意：在真实环境中，后端会调用微信API，用 code 换取 openid 和 session_key
     const response = await Taro.request({
-      url: "http://localhost:3001/api/wechat/get-openid",
+      url: "https://localhost:3001/api/wechat/get-openid",
       method: "GET",
       data: {
         code: loginRes.code,

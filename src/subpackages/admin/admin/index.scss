@@ -187,6 +187,17 @@
       display: flex;
       gap: 10rpx;
     }
+
+    .reward-input-section {
+      display: flex;
+      align-items: center;
+      gap: 10rpx;
+
+      :global(.nut-inputnumber) {
+        flex: 1;
+        max-width: 120px;
+      }
+    }
   }
 
   // 菜品卡片样式

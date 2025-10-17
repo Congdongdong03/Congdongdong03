@@ -40,7 +40,15 @@ const ProfilePage = () => {
   const [saveLoading, setSaveLoading] = useState(false);
 
   useEffect(() => {
-    loadUserInfo();
+    loadUserInfo(); // 首次加载
+
+    // 定时刷新（每 5 秒）
+    const refreshTimer = setInterval(() => {
+      loadUserInfo();
+    }, 5000);
+
+    // 清理定时器
+    return () => clearInterval(refreshTimer);
   }, []);
 
   const loadUserInfo = async () => {
@@ -294,7 +302,7 @@ const ProfilePage = () => {
       // 调用后端接口换取 OpenID
       console.log("🌐 调用后端接口，code:", code);
       const response = await Taro.request({
-        url: `http://localhost:3001/api/wechat/get-openid?code=${code}`,
+        url: `https://localhost:3001/api/wechat/get-openid?code=${code}`,
         method: "GET",
       });
 

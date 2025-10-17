@@ -30,6 +30,7 @@ const AdminPage = () => {
   const [users, setUsers] = useState([]);
   const [dishes, setDishes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [userPointsInput, setUserPointsInput] = useState({}); // 每个用户的积分输入状态
 
   const loadData = async () => {
     try {
@@ -115,7 +116,19 @@ const AdminPage = () => {
     }
   };
 
-  const handleRewardPoints = async (userOpenid, points) => {
+  const handleRewardPoints = async (userOpenid, userId) => {
+    const points = userPointsInput[userId];
+
+    // 验证输入
+    if (!points || points <= 0) {
+      Toast.show({
+        type: "warn",
+        content: "请输入有效的积分数值",
+        duration: 2000,
+      });
+      return;
+    }
+
     try {
       const result = await rewardPoints(userOpenid, points);
       if (result.success) {
@@ -124,7 +137,12 @@ const AdminPage = () => {
           content: `成功奖励 ${points} 积分！`,
           duration: 2000,
         });
-        loadData(); // 重新加载数据
+
+        // 清空输入框
+        setUserPointsInput((prev) => ({ ...prev, [userId]: undefined }));
+
+        // 重新加载数据
+        loadData();
       } else {
         throw new Error("奖励失败");
       }
@@ -286,27 +304,24 @@ const AdminPage = () => {
                       <Text className="user-points">💰 {user.points} 积分</Text>
                     </View>
                   </View>
-                  <View className="reward-actions">
+                  <View className="reward-input-section">
+                    <InputNumber
+                      value={userPointsInput[user.id] || undefined}
+                      onChange={(value) =>
+                        setUserPointsInput((prev) => ({
+                          ...prev,
+                          [user.id]: value,
+                        }))
+                      }
+                      min={1}
+                      placeholder="输入积分"
+                    />
                     <Button
                       size="small"
                       type="primary"
-                      onClick={() => handleRewardPoints(user.openid, 10)}
+                      onClick={() => handleRewardPoints(user.openid, user.id)}
                     >
-                      +10分
-                    </Button>
-                    <Button
-                      size="small"
-                      type="primary"
-                      onClick={() => handleRewardPoints(user.openid, 50)}
-                    >
-                      +50分
-                    </Button>
-                    <Button
-                      size="small"
-                      type="primary"
-                      onClick={() => handleRewardPoints(user.openid, 100)}
-                    >
-                      +100分
+                      奖励
                     </Button>
                   </View>
                 </View>
