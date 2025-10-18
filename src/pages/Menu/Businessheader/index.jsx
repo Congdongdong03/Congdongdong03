@@ -92,12 +92,6 @@ const BusinessHeader = () => {
         <View className="add-dish-btn" onClick={handleAddDish}>
           <Text className="add-dish-text">➕ 添加新菜</Text>
         </View>
-        {/* 开发环境显示清除缓存按钮 */}
-        {process.env.NODE_ENV === "development" && (
-          <View className="clear-cache-btn" onClick={handleClearCache}>
-            <Text className="clear-cache-text">🧹 清除缓存</Text>
-          </View>
-        )}
       </View>
       <View className="notice-area">
         <View className="notice-info">

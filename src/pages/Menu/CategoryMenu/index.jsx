@@ -307,7 +307,7 @@ const CategoryMenu = ({ categories }) => {
         Taro.showModal({
           title: "积分不足",
           content: `您还需要 ${neededPoints} 积分才能下单。\n\n获取积分的方法：\n• 完成订单可获得10%积分奖励\n• 联系大厨获得积分奖励\n• 等待系统活动`,
-          confirmText: "去积分中心",
+          confirmText: "积分中心",
           cancelText: "取消",
           success: (res) => {
             if (res.confirm) {
