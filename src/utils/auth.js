@@ -41,65 +41,6 @@ export const saveOpenId = (openid, sessionKey) => {
 };
 
 /**
- * 清除用户登录信息
- */
-export const clearAuth = () => {
-  try {
-    Taro.removeStorageSync(STORAGE_KEYS.USER_OPENID);
-    Taro.removeStorageSync(STORAGE_KEYS.USER_SESSION_KEY);
-    console.log("✅ 用户登录信息已清除");
-    return true;
-  } catch (error) {
-    console.error("清除登录信息失败:", error);
-    return false;
-  }
-};
-
-/**
- * 清除所有用户相关缓存（包括登录信息、用户信息等）
- * 用于测试或重置用户状态
- */
-export const clearAllUserCache = () => {
-  try {
-    // 清除登录信息
-    Taro.removeStorageSync(STORAGE_KEYS.USER_OPENID);
-    Taro.removeStorageSync(STORAGE_KEYS.USER_SESSION_KEY);
-
-    // 清除用户信息缓存
-    Taro.removeStorageSync("user_nickname");
-    Taro.removeStorageSync("user_avatar");
-    Taro.removeStorageSync("user_has_authorized");
-
-    // 清除其他可能的缓存
-    Taro.removeStorageSync("user_openid");
-    Taro.removeStorageSync("user_session_key");
-
-    // 🔧 清除所有可能的缓存键
-    Taro.removeStorageSync("user_openid");
-    Taro.removeStorageSync("user_session_key");
-    Taro.removeStorageSync("user_nickname");
-    Taro.removeStorageSync("user_avatar");
-    Taro.removeStorageSync("user_has_authorized");
-    Taro.removeStorageSync("user_openid");
-    Taro.removeStorageSync("user_session_key");
-
-    // 🔧 强制清除所有存储
-    try {
-      Taro.clearStorageSync();
-    } catch (e) {
-      console.log("清除所有存储失败，继续执行");
-    }
-
-    console.log("🧹 所有用户缓存已清除");
-    console.log("🔄 下次启动将重新登录");
-    return true;
-  } catch (error) {
-    console.error("清除用户缓存失败:", error);
-    return false;
-  }
-};
-
-/**
  * 检查是否已登录（是否有 OpenID）
  * @returns {boolean}
  */

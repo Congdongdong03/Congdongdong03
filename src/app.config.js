@@ -4,7 +4,6 @@ export default {
     "pages/inventory/index", // 库存管理页面（冰箱）- tabBar页面
     "pages/order/index", // 订单页面（训练记录）- tabBar页面
     "pages/profile/index", // 我的页面（干饭冠军）- tabBar页面
-    "pages/test-cache/index", // 缓存测试页面（开发环境）
   ],
   subpackages: [
     {

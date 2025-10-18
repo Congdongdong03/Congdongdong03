@@ -4,7 +4,6 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { getCurrentUser, getNoticeText } from "../../../services/api";
 import { getUserInfo } from "../../../utils/userInfo";
-import { clearAllUserCache } from "../../../utils/auth";
 import { Toast } from "@nutui/nutui-react-taro";
 import "./index.scss";
 
@@ -74,30 +73,6 @@ const BusinessHeader = () => {
   const handleAddDish = () => {
     Taro.navigateTo({
       url: "/subpackages/admin/add-dish/index",
-    });
-  };
-
-  // 清除所有缓存（用于测试）
-  const handleClearCache = () => {
-    Taro.showModal({
-      title: "清除缓存",
-      content: "确定要清除所有用户缓存吗？这将需要重新登录。",
-      success: (res) => {
-        if (res.confirm) {
-          clearAllUserCache();
-          Toast.show({
-            type: "success",
-            content: "缓存已清除，请重新启动小程序",
-            duration: 2000,
-          });
-          // 延迟重启
-          setTimeout(() => {
-            Taro.reLaunch({
-              url: "/pages/Menu/MenuPage/index",
-            });
-          }, 2000);
-        }
-      },
     });
   };
 

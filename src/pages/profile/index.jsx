@@ -26,6 +26,7 @@ import {
   saveAndSyncUserInfo,
 } from "../../utils/userInfo";
 import Taro from "@tarojs/taro";
+import { ENV_CONFIG } from "../../config/environment";
 import "./index.scss";
 
 const ProfilePage = () => {
@@ -335,7 +336,7 @@ const ProfilePage = () => {
       // 调用后端接口换取 OpenID
       console.log("🌐 调用后端接口，code:", code);
       const response = await Taro.request({
-        url: `https://congdongdong03.onrender.com/api/wechat/get-openid?code=${code}`,
+        url: `${ENV_CONFIG.apiBaseUrl}/wechat/get-openid?code=${code}`,
         method: "GET",
       });
 
@@ -477,20 +478,6 @@ const ProfilePage = () => {
             }}
             className="developer-cell"
           />
-          {/* 开发环境显示缓存测试 */}
-          {process.env.NODE_ENV === "development" && (
-            <Cell
-              title="🧪 缓存测试"
-              desc="测试和清除用户缓存"
-              isLink
-              onClick={() => {
-                Taro.navigateTo({
-                  url: "/pages/test-cache/index",
-                });
-              }}
-              className="developer-cell"
-            />
-          )}
         </View>
       </ScrollView>
 

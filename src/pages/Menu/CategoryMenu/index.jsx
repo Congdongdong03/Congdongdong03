@@ -14,7 +14,6 @@ import ProductImage from "../../../components/index";
 import plusIcon from "../../../assets/icons/plus.png";
 import shoppingCar from "../../../assets/icons/shoppingcar.png";
 import { createOrder, getCurrentUser } from "../../../services/api";
-import { getIngredientsSuggestions } from "../../../constants/dishIngredients";
 import { WECHAT_CONFIG } from "../../../constants/api";
 import { debounce } from "../../../utils/debounce";
 import "./index.scss";
@@ -100,19 +99,6 @@ const CategoryMenu = ({ categories }) => {
       setCartShake(false);
     }, 500);
   }, []);
-
-  // 检查购物建议
-  // 使用配置文件中的菜品原材料映射
-  // TODO: 未来应该从后端API获取菜品的原材料信息
-  const checkShoppingSuggestions = async (items) => {
-    try {
-      const dishes = Object.values(items);
-      return getIngredientsSuggestions(dishes);
-    } catch (error) {
-      console.error("检查购物建议失败:", error);
-      return [];
-    }
-  };
 
   // 保存购物车到本地存储
   const saveCartToStorage = useCallback(
@@ -365,24 +351,6 @@ const CategoryMenu = ({ categories }) => {
 
       // 清空购物车
       clearCart();
-
-      // 检查是否需要添加购物建议
-      const shoppingSuggestions = await checkShoppingSuggestions(selectedItems);
-
-      if (shoppingSuggestions.length > 0) {
-        const suggestionText = shoppingSuggestions.join("、");
-        Toast.show({
-          type: "success",
-          content: `下单成功！温馨提示：做这些菜可能需要${suggestionText}哦，已经帮你加入购物清单！`,
-          duration: 4000,
-        });
-      } else {
-        Toast.show({
-          type: "success",
-          content: "下单成功！大厨马上开始准备~",
-          duration: 2000,
-        });
-      }
 
       // 跳转到订单页面
       setTimeout(() => {
