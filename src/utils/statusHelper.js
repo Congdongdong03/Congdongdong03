@@ -4,7 +4,7 @@
 
 /**
  * 获取订单状态的文本描述
- * @param {string} status - 订单状态（大写格式）
+ * @param {string} status - 订单状态（大写格式：PENDING, IN_PROGRESS, COMPLETED, CANCELLED）
  * @returns {string} 状态文本
  */
 export const getStatusText = (status) => {
@@ -19,7 +19,7 @@ export const getStatusText = (status) => {
 
 /**
  * 获取订单状态的颜色
- * @param {string} status - 订单状态（大写格式）
+ * @param {string} status - 订单状态（大写格式：PENDING, IN_PROGRESS, COMPLETED, CANCELLED）
  * @returns {string} 状态颜色
  */
 export const getStatusColor = (status) => {
