@@ -183,9 +183,9 @@ function OrderPage() {
       <Dialog
         title="取消订单"
         visible={showCancelDialog}
-        okText="确认取消"
+        confirmText="确认取消"
         cancelText="保留订单"
-        onOk={confirmCancelOrder}
+        onConfirm={confirmCancelOrder}
         onCancel={handleCloseCancelDialog}
       >
         <View style={{ padding: "16px 0" }}>
