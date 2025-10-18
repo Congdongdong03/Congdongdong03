@@ -24,8 +24,39 @@ const environments = {
 // 现代前端项目（React, Vue, Taro等）最标准的做法是依赖构建工具注入的 `process.env.NODE_ENV` 变量
 // 在开发模式下（npm run dev/start），它通常是 'development'
 // 在生产构建后（npm run build），它通常是 'production'
-const isDevelopment = process.env.NODE_ENV === "development";
-const currentEnv = isDevelopment ? "development" : "production";
+
+// 多重环境判断策略，确保生产环境配置正确
+function getEnvironment() {
+  // 策略1: 检查 process.env.NODE_ENV
+  if (process.env.NODE_ENV === "production") {
+    return "production";
+  }
+
+  // 策略2: 检查是否在微信小程序环境中且不是开发工具
+  if (typeof wx !== "undefined" && wx.getSystemInfoSync) {
+    const systemInfo = wx.getSystemInfoSync();
+    // 如果是在真机上运行（不是开发工具），认为是生产环境
+    if (systemInfo.platform !== "devtools") {
+      return "production";
+    }
+  }
+
+  // 策略3: 检查 API 地址是否包含 localhost（开发环境特征）
+  if (typeof window !== "undefined" && window.location) {
+    if (
+      window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1"
+    ) {
+      return "development";
+    }
+  }
+
+  // 策略4: 默认根据 NODE_ENV 判断
+  return process.env.NODE_ENV === "development" ? "development" : "production";
+}
+
+const currentEnv = getEnvironment();
+const isDevelopment = currentEnv === "development";
 
 // --- 导出配置 ---
 // 根据当前环境，从上面定义的对象中选择对应的配置
@@ -49,6 +80,11 @@ export const ENV_CONFIG = {
     currentEnv,
     apiUrl: selectedConfig.apiBaseUrl,
     timestamp: new Date().toISOString(),
+    nodeEnv: process.env.NODE_ENV,
+    wxPlatform:
+      typeof wx !== "undefined" && wx.getSystemInfoSync
+        ? wx.getSystemInfoSync().platform
+        : "not-available",
   },
 };
 
