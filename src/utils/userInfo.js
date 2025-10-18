@@ -3,7 +3,7 @@ import { updateUserInfo } from "../services/api";
 
 // 默认用户信息
 const DEFAULT_USER_INFO = {
-  nickname: "亲爱的",
+  nickname: "微信用户",
   avatar: "",
 };
 

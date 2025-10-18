@@ -75,6 +75,27 @@
         font-weight: 500; // 中等字重
       }
     }
+
+    .clear-cache-btn {
+      background-color: #ff6b6b; // 红色背景
+      border: 2rpx solid #ff5252; // 红色边框
+      border-radius: 25rpx;
+      padding: 12rpx 20rpx;
+      margin-left: 10rpx;
+      box-shadow: 0 2rpx 8rpx rgba(255, 107, 107, 0.2);
+      transition: all 0.2s ease;
+
+      &:active {
+        transform: scale(0.95);
+        background-color: #ff5252;
+      }
+
+      .clear-cache-text {
+        color: #ffffff; // 白色文字
+        font-size: 22rpx;
+        font-weight: 500;
+      }
+    }
   }
   .notice-area {
     background-color: #f4f6f8; // 冰川灰背景

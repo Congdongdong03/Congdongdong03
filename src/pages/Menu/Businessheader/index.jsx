@@ -4,13 +4,14 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { getCurrentUser, getNoticeText } from "../../../services/api";
 import { getUserInfo } from "../../../utils/userInfo";
+import { clearAllUserCache } from "../../../utils/auth";
 import { Toast } from "@nutui/nutui-react-taro";
 import "./index.scss";
 
 const BusinessHeader = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [userDisplayInfo, setUserDisplayInfo] = useState({
-    nickname: "亲爱的",
+    nickname: "微信用户",
     avatar: "",
     hasAuthorized: false,
   });
@@ -76,6 +77,30 @@ const BusinessHeader = () => {
     });
   };
 
+  // 清除所有缓存（用于测试）
+  const handleClearCache = () => {
+    Taro.showModal({
+      title: "清除缓存",
+      content: "确定要清除所有用户缓存吗？这将需要重新登录。",
+      success: (res) => {
+        if (res.confirm) {
+          clearAllUserCache();
+          Toast.show({
+            type: "success",
+            content: "缓存已清除，请重新启动小程序",
+            duration: 2000,
+          });
+          // 延迟重启
+          setTimeout(() => {
+            Taro.reLaunch({
+              url: "/pages/Menu/MenuPage/index",
+            });
+          }, 2000);
+        }
+      },
+    });
+  };
+
   return (
     <View className="business-header">
       <View className="header-area">
@@ -92,6 +117,12 @@ const BusinessHeader = () => {
         <View className="add-dish-btn" onClick={handleAddDish}>
           <Text className="add-dish-text">➕ 添加新菜</Text>
         </View>
+        {/* 开发环境显示清除缓存按钮 */}
+        {process.env.NODE_ENV === "development" && (
+          <View className="clear-cache-btn" onClick={handleClearCache}>
+            <Text className="clear-cache-text">🧹 清除缓存</Text>
+          </View>
+        )}
       </View>
       <View className="notice-area">
         <View className="notice-info">

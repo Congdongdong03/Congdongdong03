@@ -20,7 +20,11 @@ import {
   getNoticeText,
   updateNoticeText,
 } from "../../services/api";
-import { getUserInfo, saveAndSyncUserInfo } from "../../utils/userInfo";
+import {
+  getUserInfo,
+  saveUserInfo,
+  saveAndSyncUserInfo,
+} from "../../utils/userInfo";
 import Taro from "@tarojs/taro";
 import "./index.scss";
 
@@ -28,7 +32,7 @@ const ProfilePage = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userDisplayInfo, setUserDisplayInfo] = useState({
-    nickname: "亲爱的",
+    nickname: "微信用户",
     avatar: "",
     hasAuthorized: false,
   });
@@ -38,6 +42,9 @@ const ProfilePage = () => {
   const [noticeText, setNoticeText] = useState("");
   const [editingNoticeText, setEditingNoticeText] = useState("");
   const [saveLoading, setSaveLoading] = useState(false);
+
+  // 首次进入引导弹窗
+  const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
 
   useEffect(() => {
     loadUserInfo(); // 首次加载
@@ -54,13 +61,34 @@ const ProfilePage = () => {
   const loadUserInfo = async () => {
     try {
       setLoading(true);
-      // 获取后端用户信息（角色、积分等）
+      // 获取后端用户信息（角色、积分、头像、昵称等）
       const user = await getCurrentUser();
       setCurrentUser(user);
 
-      // 获取本地缓存的用户显示信息（头像、名字）
-      const displayInfo = getUserInfo();
-      setUserDisplayInfo(displayInfo);
+      // 🔧 统一使用后端数据作为权威数据源
+      // 后端返回的用户信息一定是最新、最准确的
+      const backendDisplayInfo = {
+        nickname: user.nickname || "微信用户",
+        avatar: user.avatar || "",
+        hasAuthorized: user.nickname !== "微信用户" && !!user.nickname, // 只有用户修改过昵称才算已授权
+      };
+
+      // 同步到本地缓存
+      saveUserInfo(backendDisplayInfo.nickname, backendDisplayInfo.avatar);
+      setUserDisplayInfo(backendDisplayInfo);
+
+      console.log("✅ 使用后端用户数据:", backendDisplayInfo);
+      console.log(
+        `📊 用户状态 - 昵称: ${backendDisplayInfo.nickname}, 积分: ${user.points}, 角色: ${user.role}`
+      );
+
+      // 🎉 如果用户未设置个人信息（昵称仍是默认值），显示欢迎引导弹窗
+      if (!backendDisplayInfo.hasAuthorized) {
+        // 延迟500ms显示，让页面先加载完成
+        setTimeout(() => {
+          setShowWelcomeDialog(true);
+        }, 500);
+      }
     } catch (error) {
       console.error("加载用户信息失败:", error);
       Toast.show({
@@ -68,7 +96,7 @@ const ProfilePage = () => {
         content: "加载用户信息失败",
         duration: 2000,
       });
-      // 使用默认值
+      // 使用本地缓存作为备用
       const displayInfo = getUserInfo();
       setUserDisplayInfo(displayInfo);
     } finally {
@@ -138,12 +166,17 @@ const ProfilePage = () => {
           nickname: value,
           hasAuthorized: true,
         });
+
+        // Close welcome dialog after successful nickname update
+        setShowWelcomeDialog(false);
+
         Toast.show({
           type: "success",
           content: "昵称更新成功！",
           duration: 2000,
         });
-        // 刷新用户信息
+
+        // Refresh user info to get updated role
         loadUserInfo();
       } else {
         throw new Error(result.error);
@@ -444,6 +477,20 @@ const ProfilePage = () => {
             }}
             className="developer-cell"
           />
+          {/* 开发环境显示缓存测试 */}
+          {process.env.NODE_ENV === "development" && (
+            <Cell
+              title="🧪 缓存测试"
+              desc="测试和清除用户缓存"
+              isLink
+              onClick={() => {
+                Taro.navigateTo({
+                  url: "/pages/test-cache/index",
+                });
+              }}
+              className="developer-cell"
+            />
+          )}
         </View>
       </ScrollView>
 
@@ -469,6 +516,28 @@ const ProfilePage = () => {
           />
           <Text className="notice-hint">
             当前字数：{editingNoticeText.length}/50
+          </Text>
+        </View>
+      </Dialog>
+
+      {/* 首次进入欢迎引导弹窗 */}
+      <Dialog
+        title="🎉 欢迎来到点餐小程序"
+        visible={showWelcomeDialog}
+        onConfirm={() => setShowWelcomeDialog(false)}
+        confirmText="知道了"
+        closeOnOverlayClick={false}
+      >
+        <View className="welcome-dialog">
+          <Text className="welcome-text">
+            您好！为了获得更好的体验，请设置您的个人信息：
+          </Text>
+          <View className="welcome-steps">
+            <Text className="step-item">1️⃣ 点击头像，选择您的头像</Text>
+            <Text className="step-item">2️⃣ 点击昵称，输入您的名字</Text>
+          </View>
+          <Text className="welcome-hint">
+            设置后，您的积分记录和订单将与您的账号绑定。
           </Text>
         </View>
       </Dialog>

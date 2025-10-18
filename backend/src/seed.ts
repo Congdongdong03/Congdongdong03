@@ -26,32 +26,12 @@ async function main() {
     createdCategories.map((c) => c.name)
   );
 
-  // 创建测试用户
-  const chef = await prisma.user.upsert({
-    where: { openid: "o9k7x60psm724DLlAw97yYpxskh8" },
-    update: {},
-    create: {
-      openid: "o9k7x60psm724DLlAw97yYpxskh8",
-      nickname: "亲爱的",
-      role: "chef",
-      points: 10000,
-    },
-  });
+  // 🔧 移除硬编码用户创建，让系统自然创建用户
+  // 不再强制创建特定OpenID的用户
 
-  const diner = await prisma.user.upsert({
-    where: { openid: "diner_openid_001" },
-    update: {},
-    create: {
-      openid: "diner_openid_001",
-      nickname: "小美",
-      role: "diner",
-      points: 5000,
-    },
-  });
-  console.log("✅ 用户创建完成:", {
-    chef: chef.nickname,
-    diner: diner.nickname,
-  });
+  // 🔧 移除所有硬编码用户创建
+  // 让系统通过微信登录自然创建用户
+  console.log("✅ 用户创建完成: 系统将通过微信登录自然创建用户");
 
   // 创建测试菜品
   const dishesData = [
@@ -214,8 +194,7 @@ async function main() {
   console.log("✅ 系统设置创建完成");
 
   console.log("\n🎉 数据库种子数据创建完成！");
-  console.log("Chef用户:", chef);
-  console.log("Diner用户:", diner);
+  console.log("系统将通过微信登录自然创建用户");
 }
 
 main()

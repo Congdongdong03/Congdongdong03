@@ -1,114 +1,62 @@
-// 环境配置
-// 自动识别开发/生产环境
+/**
+ * @file Environment Configuration
+ * @description Automatically identifies and configures settings for development and production environments.
+ */
 
-// 判断是否为开发环境
-const isDevelopment = () => {
-  // 🔧 临时强制生产环境 - 解决环境判断问题
-  // 在生产环境中，直接返回 false
-  return false;
-
-  // 原始逻辑（暂时注释，因为环境判断有问题）
-  /*
-  // 强制生产环境模式（如果设置了环境变量）
-  if (process.env.FORCE_PRODUCTION === "true") {
-    return false;
-  }
-
-  // 优先检查：如果明确设置了生产环境标志
-  if (process.env.NODE_ENV === "production") {
-    return false;
-  }
-
-  // 方法1: 检查是否在微信开发者工具中
-  if (typeof wx !== "undefined" && wx.getSystemInfoSync) {
-    const systemInfo = wx.getSystemInfoSync();
-    // 微信开发者工具的特征
-    if (systemInfo.platform === "devtools") {
-      return true;
-    }
-  }
-
-  // 方法2: 检查Taro环境变量
-  if (process.env.NODE_ENV === "development") {
-    return true;
-  }
-
-  // 方法3: 检查是否在本地开发服务器
-  if (typeof window !== "undefined" && window.location) {
-    return (
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1" ||
-      window.location.hostname.includes("localhost")
-    );
-  }
-
-  // 方法4: 检查Taro编译环境
-  if (
-    process.env.TARO_ENV === "weapp" &&
-    process.env.NODE_ENV === "development"
-  ) {
-    return true;
-  }
-
-  // 默认返回false（生产环境）
-  return false;
-  */
+// --- 核心配置 ---
+// 为不同环境定义基础配置，方便统一管理和扩展（例如未来增加'staging'环境）
+const environments = {
+  development: {
+    // 开发环境 API 地址
+    apiBaseUrl: "https://localhost:3001/api",
+    // 开发环境静态资源（如图片）基础地址
+    imageBaseUrl: "https://localhost:3001",
+  },
+  production: {
+    // 生产环境 API 地址
+    apiBaseUrl: "https://congdongdong03.onrender.com/api",
+    // 生产环境静态资源（如图片）基础地址
+    imageBaseUrl: "https://congdongdong03.onrender.com",
+  },
 };
 
-// 获取API基础URL
-const getApiBaseUrl = () => {
-  const isDev = isDevelopment();
+// --- 环境判断 ---
+// 现代前端项目（React, Vue, Taro等）最标准的做法是依赖构建工具注入的 `process.env.NODE_ENV` 变量
+// 在开发模式下（npm run dev/start），它通常是 'development'
+// 在生产构建后（npm run build），它通常是 'production'
+const isDevelopment = process.env.NODE_ENV === "development";
+const currentEnv = isDevelopment ? "development" : "production";
 
-  if (isDev) {
-    // 开发环境：使用本地HTTPS服务器
-    return "https://localhost:3001/api";
-  } else {
-    // 生产环境：使用Render部署的服务器
-    return "https://congdongdong03.onrender.com/api";
-  }
-};
+// --- 导出配置 ---
+// 根据当前环境，从上面定义的对象中选择对应的配置
+const selectedConfig = environments[currentEnv];
 
-// 获取图片上传URL
-const getImageUploadUrl = () => {
-  const isDev = isDevelopment();
-
-  if (isDev) {
-    return "https://localhost:3001/api/upload/image";
-  } else {
-    return "https://congdongdong03.onrender.com/api/upload/image";
-  }
-};
-
-// 获取图片基础URL（用于显示）
-const getImageBaseUrl = () => {
-  const isDev = isDevelopment();
-
-  if (isDev) {
-    return "https://localhost:3001";
-  } else {
-    return "https://congdongdong03.onrender.com";
-  }
-};
-
-// 环境配置对象
+// 组装最终导出的配置对象
 export const ENV_CONFIG = {
-  isDevelopment: isDevelopment(),
-  isProduction: !isDevelopment(),
-  apiBaseUrl: getApiBaseUrl(),
-  imageUploadUrl: getImageUploadUrl(),
-  imageBaseUrl: getImageBaseUrl(),
+  // 布尔值标志，方便在代码中进行逻辑判断
+  isDevelopment,
+  isProduction: !isDevelopment,
 
-  // 调试信息
+  // 从选择的配置中获取对应的 URL
+  apiBaseUrl: selectedConfig.apiBaseUrl,
+  imageBaseUrl: selectedConfig.imageBaseUrl,
+
+  // 图片上传地址可以基于 apiBaseUrl 动态生成，减少重复配置
+  imageUploadUrl: `${selectedConfig.apiBaseUrl}/upload/image`,
+
+  // 调试信息，方便排查问题
   debug: {
-    currentEnv: isDevelopment() ? "development" : "production",
-    apiUrl: getApiBaseUrl(),
+    currentEnv,
+    apiUrl: selectedConfig.apiBaseUrl,
     timestamp: new Date().toISOString(),
   },
 };
 
-// 打印环境信息（开发和生产环境都打印，便于调试）
+// --- 启动时打印信息 ---
+// 在项目启动时打印关键配置信息，有助于快速定位环境问题
 console.log("🔧 环境配置信息:", ENV_CONFIG.debug);
-console.log("🌍 当前环境:", ENV_CONFIG.isDevelopment ? "开发环境" : "生产环境");
-console.log("🔗 API地址:", ENV_CONFIG.apiBaseUrl);
+console.log(`🌍 当前环境: ${ENV_CONFIG.debug.currentEnv.toUpperCase()}`);
+console.log("🔗 API 地址:", ENV_CONFIG.apiBaseUrl);
 
+// 默认导出，兼容不同的导入方式
 export default ENV_CONFIG;

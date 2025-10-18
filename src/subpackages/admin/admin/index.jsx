@@ -355,9 +355,18 @@ const AdminPage = () => {
               users.map((user) => (
                 <View key={user.id} className="user-card">
                   <View className="user-info">
-                    <Avatar src={user.avatar} size="normal" />
+                    <Avatar
+                      src={user.avatar || ""}
+                      size="normal"
+                      icon={!user.avatar ? "my" : undefined}
+                    />
                     <View className="user-details">
-                      <Text className="user-name">{user.nickname}</Text>
+                      <Text className="user-name">
+                        {user.nickname}
+                        {user.nickname === "微信用户" && (
+                          <Text className="user-status-hint"> (未设置)</Text>
+                        )}
+                      </Text>
                       <Text className="user-points">💰 {user.points} 积分</Text>
                     </View>
                   </View>

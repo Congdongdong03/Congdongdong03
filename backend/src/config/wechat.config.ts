@@ -13,7 +13,8 @@ export const WECHAT_CONFIG = {
 
   // 商家（管理员）OpenID - 需要通过临时接口获取后填入
   // 获取方式：启动后端后访问 http://localhost:3001/api/wechat/get-openid?code=YOUR_CODE
-  adminOpenId: "o9k7x60psm724DLlAw97yYpxskh8", // 正确的 OpenID
+  // 🔧 移除硬编码，改为从环境变量或数据库获取
+  adminOpenId: process.env.ADMIN_OPENID || "", // 从环境变量获取
 
   // 微信 API 地址
   apiBaseUrl: "https://api.weixin.qq.com",

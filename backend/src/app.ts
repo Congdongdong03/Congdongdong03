@@ -16,6 +16,7 @@ import wechatRouter from "./routes/wechat";
 import settingsRouter from "./routes/settings";
 import uploadRouter from "./routes/upload";
 import testRouter from "./routes/test";
+import adminRouter from "./routes/admin";
 
 const app = express();
 
@@ -113,6 +114,7 @@ app.use("/api/wechat", wechatRouter);
 app.use("/api/settings", settingsRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/test", testRouter);
+app.use("/api/admin", adminRouter);
 
 // 购物清单路由（特殊处理，因为它不在 /api/inventory 下）
 import { generateShoppingList } from "./services/shopping.service";

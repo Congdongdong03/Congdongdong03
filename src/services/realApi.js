@@ -7,9 +7,9 @@ const BASE_URL = ENV_CONFIG.apiBaseUrl;
 
 // 通用请求函数
 const request = async (url, options = {}) => {
+  let finalUrl = `${BASE_URL}${url}`; // 🔧 移到外层，避免作用域问题
   try {
     // 处理查询参数
-    let finalUrl = `${BASE_URL}${url}`;
     if (options.params) {
       const queryString = Object.keys(options.params)
         .map(
@@ -161,14 +161,24 @@ export const checkDishNameExists = async (name) => {
 // 获取当前用户信息
 export const getCurrentUser = async () => {
   // 🆕 使用真实的微信登录流程
-  const openid = await ensureLogin();
+  const loginResult = await ensureLogin();
 
-  if (!openid) {
+  if (!loginResult || !loginResult.openid) {
     throw new Error("登录失败，无法获取用户信息");
   }
 
-  // 使用真实的 openid 获取用户信息
-  const user = await request(`/users/${openid}`);
+  // 🎯 关键优化：如果登录时已经返回了用户信息（新用户注册），直接使用
+  if (loginResult.user) {
+    console.log(
+      "✅ 使用登录返回的用户信息（新用户或刚登录）:",
+      loginResult.user
+    );
+    return loginResult.user;
+  }
+
+  // 老用户：需要从后端查询最新的用户信息
+  console.log("🔄 查询用户信息，OpenID:", loginResult.openid);
+  const user = await request(`/users/${loginResult.openid}`);
   console.log("🔍 getCurrentUser 返回的用户对象:", user);
   return user;
 };
