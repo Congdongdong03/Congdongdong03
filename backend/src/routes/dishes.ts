@@ -121,4 +121,84 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
+/**
+ * GET /api/dishes/:dishId/materials
+ * 获取菜品的原材料列表
+ */
+router.get("/:dishId/materials", async (req, res) => {
+  try {
+    const { dishId } = req.params;
+    const materials = await prisma.dishMaterial.findMany({
+      where: { dishId },
+      include: {
+        item: true,
+      },
+      orderBy: { createdAt: "asc" },
+    });
+    res.json(materials);
+  } catch (error) {
+    console.error("获取菜品原材料失败:", error);
+    res.status(500).json({ error: "获取菜品原材料失败" });
+  }
+});
+
+/**
+ * POST /api/dishes/:dishId/materials
+ * 为菜品添加原材料
+ */
+router.post("/:dishId/materials", async (req, res) => {
+  try {
+    const { dishId } = req.params;
+    const { itemId, amount } = req.body;
+
+    // 检查是否已存在相同的原材料
+    const existing = await prisma.dishMaterial.findUnique({
+      where: {
+        dishId_itemId: {
+          dishId,
+          itemId,
+        },
+      },
+    });
+
+    if (existing) {
+      return res.status(400).json({ error: "该原材料已添加" });
+    }
+
+    const material = await prisma.dishMaterial.create({
+      data: {
+        dishId,
+        itemId,
+        amount,
+      },
+      include: {
+        item: true,
+      },
+    });
+    res.json(material);
+  } catch (error) {
+    console.error("添加菜品原材料失败:", error);
+    res.status(500).json({ error: "添加菜品原材料失败" });
+  }
+});
+
+/**
+ * DELETE /api/dishes/:dishId/materials/:materialId
+ * 删除菜品的原材料
+ */
+router.delete("/:dishId/materials/:materialId", async (req, res) => {
+  try {
+    const { materialId } = req.params;
+
+    await prisma.dishMaterial.delete({
+      where: { id: materialId },
+    });
+
+    res.json({ message: "删除成功" });
+  } catch (error) {
+    console.error("删除菜品原材料失败:", error);
+    res.status(500).json({ error: "删除菜品原材料失败" });
+  }
+});
+
 export default router;

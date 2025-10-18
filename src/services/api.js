@@ -54,6 +54,21 @@ export const checkDishNameExists = async (name) => {
   return RealApi.checkDishNameExists(name);
 };
 
+// 获取菜品的原材料列表
+export const fetchDishMaterials = async (dishId) => {
+  return RealApi.fetchDishMaterials(dishId);
+};
+
+// 为菜品添加原材料
+export const addDishMaterial = async (dishId, itemId, amount) => {
+  return RealApi.addDishMaterial(dishId, itemId, amount);
+};
+
+// 删除菜品的原材料
+export const deleteDishMaterial = async (dishId, materialId) => {
+  return RealApi.deleteDishMaterial(dishId, materialId);
+};
+
 // 获取当前用户信息
 export const getCurrentUser = async () => {
   return RealApi.getCurrentUser();
@@ -82,6 +97,11 @@ export const fetchAllOrders = async () => {
 // 获取库存
 export const fetchInventory = async () => {
   return RealApi.fetchInventory();
+};
+
+// 获取所有库存
+export const fetchAllInventory = async () => {
+  return RealApi.fetchAllInventory();
 };
 
 // 更新库存

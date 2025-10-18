@@ -158,6 +158,26 @@ export const checkDishNameExists = async (name) => {
   return dishes.some((dish) => dish.name === name);
 };
 
+// 获取菜品的原材料列表
+export const fetchDishMaterials = async (dishId) => {
+  return request(`/dishes/${dishId}/materials`);
+};
+
+// 为菜品添加原材料
+export const addDishMaterial = async (dishId, itemId, amount) => {
+  return request(`/dishes/${dishId}/materials`, {
+    method: "POST",
+    data: { itemId, amount },
+  });
+};
+
+// 删除菜品的原材料
+export const deleteDishMaterial = async (dishId, materialId) => {
+  return request(`/dishes/${dishId}/materials/${materialId}`, {
+    method: "DELETE",
+  });
+};
+
 // 获取当前用户信息
 export const getCurrentUser = async () => {
   // 🆕 使用真实的微信登录流程
@@ -227,6 +247,11 @@ export const fetchAllOrders = async () => {
 // 获取库存
 export const fetchInventory = async () => {
   return request("/inventory");
+};
+
+// 获取所有库存（包括已删除）
+export const fetchAllInventory = async () => {
+  return request("/inventory/all");
 };
 
 // 更新库存

@@ -51,6 +51,7 @@ model Dish {
 
   category   Category    @relation(fields: [categoryId], references: [id])
   orderItems OrderItem[]
+  materials  DishMaterial[]
 }
 
 model Order {
@@ -87,6 +88,22 @@ model Inventory {
   status   String   @default("NORMAL") // "NORMAL", "OUT_OF_STOCK"
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  dishMaterials DishMaterial[]
+}
+
+model DishMaterial {
+  id       String @id @default(cuid())
+  dishId   String
+  itemId   String
+  amount   Float  // 所需数量
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  dish Dish      @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  item Inventory @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@unique([dishId, itemId])
 }
 
 model PointsHistory {
