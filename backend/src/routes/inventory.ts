@@ -1,5 +1,4 @@
 import express from "express";
-import { generateShoppingList } from "../services/shopping.service";
 import prisma from "../db/prisma";
 
 const router = express.Router();
@@ -100,20 +99,6 @@ router.delete("/:id", async (req, res) => {
   } catch (error) {
     console.error("删除库存项失败:", error);
     res.status(500).json({ error: "删除库存项失败" });
-  }
-});
-
-/**
- * GET /api/shopping-list
- * 获取购物清单（库存不足的项目）
- */
-router.get("/shopping-list", async (req, res) => {
-  try {
-    const shoppingList = await generateShoppingList();
-    res.json(shoppingList);
-  } catch (error) {
-    console.error("获取购物清单失败:", error);
-    res.status(500).json({ error: "获取购物清单失败" });
   }
 });
 

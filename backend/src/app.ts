@@ -116,18 +116,6 @@ app.use("/api/upload", uploadRouter);
 app.use("/api/test", testRouter);
 app.use("/api/admin", adminRouter);
 
-// 购物清单路由（特殊处理，因为它不在 /api/inventory 下）
-import { generateShoppingList } from "./services/shopping.service";
-app.get("/api/shopping-list", async (req, res) => {
-  try {
-    const shoppingList = await generateShoppingList();
-    res.json(shoppingList);
-  } catch (error) {
-    console.error("获取购物清单失败:", error);
-    res.status(500).json({ error: "获取购物清单失败" });
-  }
-});
-
 // 数据库种子初始化端点（仅在生产环境可用）
 app.post("/api/seed", async (req, res) => {
   // 只在生产环境允许运行种子

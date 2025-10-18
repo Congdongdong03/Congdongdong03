@@ -90,14 +90,8 @@ router.get("/all", verifyChefRole, async (req, res) => {
       );
     });
 
-    // 将状态转换为小写，以匹配前端期望
-    const formattedOrders = orders.map((order) => ({
-      ...order,
-      status: order.status.toLowerCase(),
-    }));
-
-    console.log("📤 返回格式化后的订单数量:", formattedOrders.length);
-    res.json(formattedOrders);
+    console.log("📤 返回订单数量:", orders.length);
+    res.json(orders);
   } catch (error: any) {
     console.error("获取所有订单失败:", error);
     console.error("错误详情:", error.message);
@@ -122,13 +116,7 @@ router.get("/:userId", async (req, res) => {
       orderBy: { createdAt: "desc" },
     });
 
-    // 将状态转换为小写，以匹配前端期望
-    const formattedOrders = orders.map((order) => ({
-      ...order,
-      status: order.status.toLowerCase(),
-    }));
-
-    res.json(formattedOrders);
+    res.json(orders);
   } catch (error) {
     console.error("获取用户订单失败:", error);
     res.status(500).json({ error: "获取用户订单失败" });
@@ -237,13 +225,7 @@ router.post("/", async (req, res) => {
         console.error("发送订阅消息异常:", err);
       });
 
-    // 将状态转换为小写，以匹配前端期望
-    const formattedResult = {
-      ...result,
-      status: result.status.toLowerCase(),
-    };
-
-    res.json(formattedResult);
+    res.json(result);
   } catch (error) {
     console.error("创建订单失败:", error);
     res.status(500).json({ error: "创建订单失败" });

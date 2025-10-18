@@ -139,23 +139,6 @@ export const updateNoticeText = async (noticeText, userId = null) => {
   return RealApi.updateNoticeText(noticeText, userId);
 };
 
-// 菜品原材料相关API
-export const fetchDishMaterials = async (dishId) => {
-  return RealApi.fetchDishMaterials(dishId);
-};
-
-export const addDishMaterial = async (dishId, itemId, amount) => {
-  return RealApi.addDishMaterial(dishId, itemId, amount);
-};
-
-export const deleteDishMaterial = async (dishId, materialId) => {
-  return RealApi.deleteDishMaterial(dishId, materialId);
-};
-
-export const fetchAllInventory = async () => {
-  return RealApi.fetchAllInventory();
-};
-
 export const deductPoints = async (targetUserOpenid, points, description) => {
   return RealApi.deductPoints(targetUserOpenid, points, description);
 };

@@ -160,7 +160,7 @@ function OrderPage() {
                   <Text className="order-total">
                     总计: {order.totalPoints} 积分
                   </Text>
-                  {order.status === "pending" && (
+                  {order.status === "PENDING" && (
                     <Button
                       size="small"
                       type="primary"

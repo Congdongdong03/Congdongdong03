@@ -306,13 +306,13 @@ const AdminPage = () => {
                       总计: {order.totalPoints} 积分
                     </Text>
                     <View className="order-actions">
-                      {order.status === "pending" && (
+                      {order.status === "PENDING" && (
                         <>
                           <Button
                             size="small"
                             type="primary"
                             onClick={() =>
-                              handleOrderStatusChange(order.id, "in_progress")
+                              handleOrderStatusChange(order.id, "IN_PROGRESS")
                             }
                           >
                             接单
@@ -326,12 +326,12 @@ const AdminPage = () => {
                           </Button>
                         </>
                       )}
-                      {order.status === "in_progress" && (
+                      {order.status === "IN_PROGRESS" && (
                         <Button
                           size="small"
                           type="success"
                           onClick={() =>
-                            handleOrderStatusChange(order.id, "completed")
+                            handleOrderStatusChange(order.id, "COMPLETED")
                           }
                         >
                           完成

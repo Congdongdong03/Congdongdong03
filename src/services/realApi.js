@@ -372,32 +372,6 @@ export const updateNoticeText = async (noticeText, userId) => {
   });
 };
 
-// 菜品原材料相关API
-// 获取菜品的原材料列表
-export const fetchDishMaterials = async (dishId) => {
-  return request(`/dishes/${dishId}/materials`);
-};
-
-// 添加菜品原材料
-export const addDishMaterial = async (dishId, itemId, amount) => {
-  return request(`/dishes/${dishId}/materials`, {
-    method: "POST",
-    data: { itemId, amount },
-  });
-};
-
-// 删除菜品原材料
-export const deleteDishMaterial = async (dishId, materialId) => {
-  return request(`/dishes/${dishId}/materials/${materialId}`, {
-    method: "DELETE",
-  });
-};
-
-// 获取所有原材料（用于选择）
-export const fetchAllInventory = async () => {
-  return request("/inventory/all");
-};
-
 // 🆕 图片上传API
 /**
  * 上传图片到服务器
